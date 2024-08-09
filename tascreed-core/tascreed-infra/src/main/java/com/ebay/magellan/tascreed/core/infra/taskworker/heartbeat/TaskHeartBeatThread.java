@@ -1,0 +1,155 @@
+package com.ebay.magellan.tascreed.core.infra.taskworker.heartbeat;
+
+import com.ebay.magellan.tascreed.core.infra.constant.TumblerConstants;
+import com.ebay.magellan.tascreed.core.infra.storage.bulletin.TaskBulletin;
+import com.ebay.magellan.tascreed.depend.common.exception.TumblerErrorEnum;
+import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
+import com.ebay.magellan.tascreed.depend.common.exception.TumblerExceptionBuilder;
+import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.retry.RetryBackoffStrategy;
+import com.ebay.magellan.tascreed.depend.common.retry.RetryCounter;
+import com.ebay.magellan.tascreed.depend.common.retry.RetryCounterFactory;
+import com.ebay.magellan.tascreed.depend.common.retry.RetryStrategy;
+import com.ebay.magellan.tascreed.depend.common.util.ExceptionUtil;
+import com.ebay.magellan.tascreed.depend.ext.etcd.constant.EtcdConstants;
+import com.ebay.magellan.tascreed.core.domain.occupy.OccupyInfo;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+@Getter
+@Setter
+@Component
+@Scope("prototype")
+public class TaskHeartBeatThread implements Runnable {
+    private static final String THIS_CLASS_NAME = TaskHeartBeatThread.class.getSimpleName();
+
+    private RetryStrategy retryStrategyForHeartBeat = RetryBackoffStrategy.newDefaultInstance();
+
+    @Autowired
+    private EtcdConstants etcdConstants;
+    @Autowired
+    private TumblerConstants tumblerConstants;
+
+    @Autowired
+    private TaskBulletin taskBulletin;
+
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+    @Autowired
+    private TumblerLogger logger;
+
+    private volatile OccupyInfo occupyInfo;
+
+    // active state, only set by worker thread
+    private volatile boolean active = true;
+
+    @Override
+    public void run() {
+        long sleepMilliseconds = getSleepMilliseconds();
+        RetryCounter retryCounter = RetryCounterFactory.buildRetryCounter(retryStrategyForHeartBeat);
+        while (isActive()) {
+            try {
+                heartBeat();        // heart beat
+                Thread.sleep(sleepMilliseconds);
+                retryCounter.reset();
+            } catch (TumblerException e) {
+                if (e.isRetry()) {     // retry-able
+                    retryCounter.grow();
+                    String head = String.format("heart beat fails by retryable exception:\n%s", ExceptionUtil.getStackTrace(e));
+                    logger.warn(THIS_CLASS_NAME, retryCounter.status(head));
+                } else {        // nont-retry-able
+                    retryCounter.forceStop();
+                    String head = String.format("heart beat fails by non-retryable exception:\n%s", ExceptionUtil.getStackTrace(e));
+                    logger.error(THIS_CLASS_NAME, retryCounter.status(head));
+                }
+            } catch (InterruptedException e) {
+                logger.error(THIS_CLASS_NAME, "heart beat thread interrupted");
+            } catch (Exception e) {        //NOSONAR
+                // unknown, retry for certain times
+                retryCounter.grow();
+                String head = String.format("heart beat fails by unknown exception:\n%s", ExceptionUtil.getStackTrace(e));
+                logger.error(THIS_CLASS_NAME, retryCounter.status(head));
+            }
+
+            if (!retryCounter.isAlive()) {
+                break;
+            }
+            retryCounter.waitForNextRetry();
+        }
+
+        endHeartBeatThread();
+    }
+
+    boolean needHeartBeat() {
+        return occupyInfo != null && !occupyInfo.isFinished();
+    }
+
+    long getHeartbeatMillisecondsFromTumblerConstants() {
+        return tumblerConstants.getOccupyWorkerHeartbeatPeriodInSeconds() > 0 ?
+                1000L * tumblerConstants.getOccupyWorkerHeartbeatPeriodInSeconds() :
+                1000L * tumblerConstants.getOccupyWorkerLeaseInSeconds() / 3;
+    }
+    long getHeartbeatMillisecondsFromEtcdConstants() {
+        return etcdConstants.getHeartbeatPeriodSeconds() > 0 ?
+                1000L * etcdConstants.getHeartbeatPeriodSeconds() :
+                1000L * etcdConstants.getOccupyLeaseSeconds() / 3;
+    }
+    long getSleepMilliseconds() {
+        long ms = getHeartbeatMillisecondsFromTumblerConstants();
+        if (ms <= 0) {
+            ms = getHeartbeatMillisecondsFromEtcdConstants();
+        }
+        return ms;
+    }
+
+    // workerThread may setPackInfo at the same time, need synchronized
+    public synchronized void heartBeat() throws TumblerException {
+        if (!needHeartBeat()) {
+            String key = occupyInfo != null ? occupyInfo.getOccupyKey() : "null";
+            logger.info(THIS_CLASS_NAME, String.format("%s no need to heart beat, just ignore ...", key));
+            return;
+        }
+
+        String key = occupyInfo.getOccupyKey();
+        // no need to retry heart beat, just throw retry-able exception
+        long leaseId = taskBulletin.heartBeat(occupyInfo);
+
+        occupyInfo.setAlive(leaseId >= 0);        // update pack alive state
+
+        if (leaseId >= 0) {
+            occupyInfo.setOccupyLeaseId(leaseId);
+            logger.info(THIS_CLASS_NAME, String.format("%s heart beat, with leaseId: %d", key, leaseId));
+        } else {
+            String msg = String.format("heart beat fails: %s heart beat leaseId < 0, leaseId is %d", key, leaseId);
+            logger.error(THIS_CLASS_NAME, msg);
+            TumblerExceptionBuilder.throwTumblerException(
+                    TumblerErrorEnum.TUMBLER_NON_RETRY_HEARTBEAT_EXCEPTION, msg);
+        }
+    }
+
+    public synchronized void setOccupiedInfo(OccupyInfo occupyInfo) {
+        this.occupyInfo = occupyInfo;
+    }
+
+    synchronized void endHeartBeatThread() {
+        inactiveCurrentHeartBeat();
+        setActive(false);
+    }
+
+    // -----
+
+    // inactive heartbeat for the current occupied task, will just ignore heartbeat
+    public synchronized void inactiveCurrentHeartBeat() {
+        if (occupyInfo != null) {
+            occupyInfo.setAlive(false);
+        }
+        occupyInfo = null;
+    }
+
+    // inactive the heartbeat thread, will gracefully end thread
+    public void inactiveHeartBeat() {
+        setActive(false);
+    }
+}
