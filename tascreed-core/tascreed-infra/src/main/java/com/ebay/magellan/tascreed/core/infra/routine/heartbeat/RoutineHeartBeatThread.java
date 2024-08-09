@@ -3,10 +3,10 @@ package com.ebay.magellan.tascreed.core.infra.routine.heartbeat;
 import com.ebay.magellan.tascreed.core.domain.occupy.OccupyInfo;
 import com.ebay.magellan.tascreed.core.infra.constant.TumblerConstants;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.RoutineBulletin;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerErrorEnum;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerExceptionBuilder;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.exception.TcErrorEnum;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcExceptionBuilder;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import com.ebay.magellan.tascreed.depend.common.retry.RetryBackoffStrategy;
 import com.ebay.magellan.tascreed.depend.common.retry.RetryCounter;
 import com.ebay.magellan.tascreed.depend.common.retry.RetryCounterFactory;
@@ -38,7 +38,7 @@ public class RoutineHeartBeatThread implements Runnable {
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
-    private TumblerLogger logger;
+    private TcLogger logger;
 
     private volatile OccupyInfo occupyInfo;
 
@@ -54,7 +54,7 @@ public class RoutineHeartBeatThread implements Runnable {
                 heartBeat();        // heart beat
                 Thread.sleep(sleepMilliseconds);
                 retryCounter.reset();
-            } catch (TumblerException e) {
+            } catch (TcException e) {
                 if (e.isRetry()) {     // retry-able
                     retryCounter.grow();
                     String head = String.format("heart beat fails by retryable exception:\n%s", ExceptionUtil.getStackTrace(e));
@@ -105,7 +105,7 @@ public class RoutineHeartBeatThread implements Runnable {
     }
 
     // routineThread may occupy lease at the same time, need synchronized
-    public synchronized void heartBeat() throws TumblerException {
+    public synchronized void heartBeat() throws TcException {
         if (!needHeartBeat()) {
             String key = occupyInfo != null ? occupyInfo.getOccupyKey() : "null";
             logger.info(THIS_CLASS_NAME, String.format("%s no need to heart beat, just ignore ...", key));
@@ -124,8 +124,8 @@ public class RoutineHeartBeatThread implements Runnable {
         } else {
             String msg = String.format("heart beat fails: %s heart beat leaseId < 0, leaseId is %d", key, leaseId);
             logger.error(THIS_CLASS_NAME, msg);
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_NON_RETRY_HEARTBEAT_EXCEPTION, msg);
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_NON_RETRY_HEARTBEAT_EXCEPTION, msg);
         }
     }
 

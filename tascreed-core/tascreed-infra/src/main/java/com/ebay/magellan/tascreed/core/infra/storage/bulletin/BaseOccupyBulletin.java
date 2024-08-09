@@ -1,7 +1,7 @@
 package com.ebay.magellan.tascreed.core.infra.storage.bulletin;
 
 import com.ebay.magellan.tascreed.core.domain.occupy.OccupyInfo;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
 
 public interface BaseOccupyBulletin extends BaseBulletin {
 
@@ -9,6 +9,6 @@ public interface BaseOccupyBulletin extends BaseBulletin {
 
     boolean deleteAdoption(OccupyInfo occupyInfo) throws Exception;
 
-    long heartBeat(OccupyInfo occupyInfo) throws TumblerException;
+    long heartBeat(OccupyInfo occupyInfo) throws TcException;
 
 }

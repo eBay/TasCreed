@@ -3,7 +3,7 @@ package com.ebay.magellan.tascreed.core.infra.storage.bulletin.etcd;
 import io.etcd.jetcd.ByteSequence;
 import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.BaseBulletin;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import com.ebay.magellan.tascreed.depend.ext.etcd.constant.EtcdConstants;
 import com.ebay.magellan.tascreed.depend.ext.etcd.lock.EtcdLock;
 import com.ebay.magellan.tascreed.depend.ext.etcd.util.EtcdUtil;
@@ -12,12 +12,12 @@ public abstract class BaseEtcdBulletin implements BaseBulletin {
     protected TumblerKeys tumblerKeys;
     protected EtcdConstants etcdConstants;
     protected EtcdUtil etcdUtil;
-    protected TumblerLogger logger;
+    protected TcLogger logger;
 
     public BaseEtcdBulletin(TumblerKeys tumblerKeys,
                             EtcdConstants etcdConstants,
                             EtcdUtil etcdUtil,
-                            TumblerLogger logger) {
+                            TcLogger logger) {
         this.tumblerKeys = tumblerKeys;
         this.etcdConstants = etcdConstants;
         this.etcdUtil = etcdUtil;

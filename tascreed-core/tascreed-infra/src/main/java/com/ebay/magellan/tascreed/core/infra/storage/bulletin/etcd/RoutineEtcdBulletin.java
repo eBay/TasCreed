@@ -9,9 +9,9 @@ import io.etcd.jetcd.options.PutOption;
 import com.ebay.magellan.tascreed.core.domain.routine.Routine;
 import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.RoutineBulletin;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerExceptionBuilder;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcExceptionBuilder;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import com.ebay.magellan.tascreed.depend.ext.etcd.constant.EtcdConstants;
 import com.ebay.magellan.tascreed.depend.ext.etcd.lock.EtcdLock;
 import com.ebay.magellan.tascreed.depend.ext.etcd.util.EtcdUtil;
@@ -31,7 +31,7 @@ public class RoutineEtcdBulletin extends BaseOccupyEtcdBulletin implements Routi
     public RoutineEtcdBulletin(TumblerKeys tumblerKeys,
                                EtcdConstants etcdConstants,
                                EtcdUtil etcdUtil,
-                               TumblerLogger logger) {
+                               TcLogger logger) {
         super(tumblerKeys, etcdConstants, etcdUtil, logger);
     }
 
@@ -42,12 +42,12 @@ public class RoutineEtcdBulletin extends BaseOccupyEtcdBulletin implements Routi
         return tumblerKeys.getRoutineAdoptionKey(routine.getFullName());
     }
 
-    public String checkRoutineAdoption(Routine routine) throws TumblerException {
+    public String checkRoutineAdoption(Routine routine) throws TcException {
         try {
             String key = getRoutineAdoptionKey(routine);
             return etcdUtil.getSingleValue(key);
         } catch (Exception e) {
-            TumblerExceptionBuilder.throwEtcdRetryableException(e);
+            TcExceptionBuilder.throwEtcdRetryableException(e);
         }
         return null;
     }
@@ -58,18 +58,18 @@ public class RoutineEtcdBulletin extends BaseOccupyEtcdBulletin implements Routi
 
     // -----
 
-    public String readRoutineCheckpoint(Routine routine) throws TumblerException {
+    public String readRoutineCheckpoint(Routine routine) throws TcException {
         if (routine == null) return null;
         try {
             String checkpointKey = tumblerKeys.getRoutineCheckpointKey(routine.getFullName());
             return etcdUtil.getSingleValue(checkpointKey);
         } catch (Exception e) {
-            TumblerExceptionBuilder.throwEtcdRetryableException(e);
+            TcExceptionBuilder.throwEtcdRetryableException(e);
         }
         return null;
     }
 
-    public boolean updateRoutineCheckpoint(Routine routine, String adoptionValue) throws TumblerException {
+    public boolean updateRoutineCheckpoint(Routine routine, String adoptionValue) throws TcException {
         if (routine == null) return false;
 
         String value = routine.getCheckpointValue();
@@ -83,15 +83,15 @@ public class RoutineEtcdBulletin extends BaseOccupyEtcdBulletin implements Routi
         try {
             lock = etcdUtil.lock(routineUpdateLock);
             success = updateRoutineCheckpointImpl(routine, value, adoptionValue);
-        } catch (TumblerException e) {
+        } catch (TcException e) {
             throw e;
         } catch (Exception e) {
-            TumblerExceptionBuilder.throwEtcdRetryableException(e);
+            TcExceptionBuilder.throwEtcdRetryableException(e);
         } finally {
             try {
                 etcdUtil.unlock(lock);
             } catch (Exception e) {
-                TumblerExceptionBuilder.throwEtcdRetryableException(e);
+                TcExceptionBuilder.throwEtcdRetryableException(e);
             }
         }
 

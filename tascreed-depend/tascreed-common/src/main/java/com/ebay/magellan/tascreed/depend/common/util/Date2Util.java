@@ -1,8 +1,8 @@
 package com.ebay.magellan.tascreed.depend.common.util;
 
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerErrorEnum;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerExceptionBuilder;
+import com.ebay.magellan.tascreed.depend.common.exception.TcErrorEnum;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcExceptionBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
@@ -14,16 +14,16 @@ public class Date2Util {
 
     // -----
 
-    public static Date parseDate(String s) throws TumblerException {
+    public static Date parseDate(String s) throws TcException {
         return parseDate(s, DatePattern.UTC);
     }
-    public static Date parseDate(String s, DatePattern datePattern) throws TumblerException {
+    public static Date parseDate(String s, DatePattern datePattern) throws TcException {
         if (datePattern == null) return null;
         try {
             return datePattern.getFormatter().parseDateTime(s).toDate();
         } catch (IllegalArgumentException e) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_FATAL_VALIDATION_EXCEPTION, e.getMessage());
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_FATAL_VALIDATION_EXCEPTION, e.getMessage());
             return null;
         }
     }

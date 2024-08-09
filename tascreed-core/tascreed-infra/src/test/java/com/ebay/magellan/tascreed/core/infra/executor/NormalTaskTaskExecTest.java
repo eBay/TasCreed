@@ -3,7 +3,7 @@ package com.ebay.magellan.tascreed.core.infra.executor;
 import com.ebay.magellan.tascreed.core.domain.state.TaskStateEnum;
 import com.ebay.magellan.tascreed.core.domain.task.Task;
 import com.ebay.magellan.tascreed.core.infra.executor.help.TestNmExecutor;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -24,7 +24,7 @@ public class NormalTaskTaskExecTest {
         assertEquals(TaskStateEnum.SUCCESS, task.getTaskState());
     }
 
-    @Test(expected = TumblerException.class)
+    @Test(expected = TcException.class)
     public void test1() throws Exception {
         TestNmExecutor testExecutor = new TestNmExecutor();
         Task task = new Task();

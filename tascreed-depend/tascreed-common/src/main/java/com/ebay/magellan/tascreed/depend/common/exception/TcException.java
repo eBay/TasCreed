@@ -10,12 +10,12 @@ import org.apache.commons.lang.StringUtils;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TumblerException extends Exception {
+public class TcException extends Exception {
 
-    private TumblerErrorEnum error;
+    private TcErrorEnum error;
     private String shortMessage;
 
-    public TumblerException(TumblerErrorEnum error, String shortMessage, Throwable cause) {
+    public TcException(TcErrorEnum error, String shortMessage, Throwable cause) {
         super(cause);
         this.setShortMessage(shortMessage);
         this.error = error;

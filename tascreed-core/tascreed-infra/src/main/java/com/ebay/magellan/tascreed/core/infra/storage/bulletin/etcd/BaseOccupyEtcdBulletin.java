@@ -5,10 +5,10 @@ import io.etcd.jetcd.options.PutOption;
 import com.ebay.magellan.tascreed.core.domain.occupy.OccupyInfo;
 import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.BaseOccupyBulletin;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerErrorEnum;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerExceptionBuilder;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.exception.TcErrorEnum;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcExceptionBuilder;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import com.ebay.magellan.tascreed.depend.ext.etcd.constant.EtcdConstants;
 import com.ebay.magellan.tascreed.depend.ext.etcd.util.EtcdUtil;
 import org.apache.commons.lang.StringUtils;
@@ -23,7 +23,7 @@ public abstract class BaseOccupyEtcdBulletin extends BaseEtcdBulletin implements
     public BaseOccupyEtcdBulletin(TumblerKeys tumblerKeys,
                                   EtcdConstants etcdConstants,
                                   EtcdUtil etcdUtil,
-                                  TumblerLogger logger) {
+                                  TcLogger logger) {
         super(tumblerKeys, etcdConstants, etcdUtil, logger);
     }
 
@@ -65,7 +65,7 @@ public abstract class BaseOccupyEtcdBulletin extends BaseEtcdBulletin implements
 
     // -----
 
-    public long heartBeat(OccupyInfo occupyInfo) throws TumblerException {
+    public long heartBeat(OccupyInfo occupyInfo) throws TcException {
         try {
             String key = occupyInfo.getOccupyKey();
             String value = occupyInfo.getOccupyValue();
@@ -83,8 +83,8 @@ public abstract class BaseOccupyEtcdBulletin extends BaseEtcdBulletin implements
 
             return leaseResp.get().getID();
         } catch (Exception e) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_RETRY_EXCEPTION, "heart beat exception", e);
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_RETRY_EXCEPTION, "heart beat exception", e);
         }
         return -1L;
     }

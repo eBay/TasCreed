@@ -1,9 +1,9 @@
 package com.ebay.magellan.tascreed.depend.ext.es.util;
 
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerErrorEnum;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerExceptionBuilder;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.exception.TcErrorEnum;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcExceptionBuilder;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import com.ebay.magellan.tascreed.depend.ext.es.doc.*;
 import com.ebay.magellan.tascreed.depend.ext.es.help.UriBuilder;
 import org.rocksdb.Options;
@@ -27,7 +27,7 @@ public class DiskEsUtil implements EsUtil {
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
-    private TumblerLogger logger;
+    private TcLogger logger;
 
     // -----
 
@@ -49,7 +49,7 @@ public class DiskEsUtil implements EsUtil {
 
     // ----- read -----
 
-    public DocValue getDocValue(DocKey docKey) throws TumblerException, UnsupportedEncodingException {
+    public DocValue getDocValue(DocKey docKey) throws TcException, UnsupportedEncodingException {
         String key = UriBuilder.base64Encode(docKey.uniqueKey());
         DocValue ret = null;
         try {
@@ -60,15 +60,15 @@ public class DiskEsUtil implements EsUtil {
         } catch (Exception e) {
             String errMsg = String.format("getDocValue failed, key: %s, error: %s", key, e.getMessage());
             logger.error(THIS_CLASS_NAME, errMsg);
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_NON_RETRY_EXCEPTION, errMsg);
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_NON_RETRY_EXCEPTION, errMsg);
         }
         return ret;
     }
 
     // ----- write -----
 
-    public void syncPutDoc(DocKey docKey, DocValue docValue) throws TumblerException, UnsupportedEncodingException {
+    public void syncPutDoc(DocKey docKey, DocValue docValue) throws TcException, UnsupportedEncodingException {
         String key = UriBuilder.base64Encode(docKey.uniqueKey());
         try {
             String value = docValue.toJson();
@@ -76,8 +76,8 @@ public class DiskEsUtil implements EsUtil {
         } catch (Exception e) {
             String errMsg = String.format("syncPutDoc failed, key: %s, value: %s, error: %s", key, docValue, e.getMessage());
             logger.error(THIS_CLASS_NAME, errMsg);
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_NON_RETRY_EXCEPTION, errMsg);
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_NON_RETRY_EXCEPTION, errMsg);
         }
     }
 
@@ -88,7 +88,7 @@ public class DiskEsUtil implements EsUtil {
         for (Map.Entry<DocKey, DocValue> entry : docKvs.entrySet()) {
             try {
                 syncPutDoc(entry.getKey(), entry.getValue());
-            } catch (TumblerException e) {
+            } catch (TcException e) {
                 String errMsg = String.format("asyncPutDocs failed, key: %s, value: %s, error: %s", entry.getKey(), entry.getValue(), e.getMessage());
                 logger.error(THIS_CLASS_NAME, errMsg);
                 break;

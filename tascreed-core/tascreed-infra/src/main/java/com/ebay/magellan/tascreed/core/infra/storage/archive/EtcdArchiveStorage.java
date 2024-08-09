@@ -8,7 +8,7 @@ import com.ebay.magellan.tascreed.core.domain.task.Task;
 import com.ebay.magellan.tascreed.core.domain.task.TaskInstKey;
 import com.ebay.magellan.tascreed.core.domain.util.JsonUtil;
 import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import com.ebay.magellan.tascreed.depend.ext.etcd.constant.EtcdConstants;
 import com.ebay.magellan.tascreed.depend.ext.etcd.util.EtcdUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +42,7 @@ public class EtcdArchiveStorage implements ArchiveStorage {
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
-    private TumblerLogger logger;
+    private TcLogger logger;
 
     // -----
 

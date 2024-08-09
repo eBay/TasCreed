@@ -14,9 +14,9 @@ import com.ebay.magellan.tascreed.core.infra.conf.TumblerGlobalConfig;
 import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
 import com.ebay.magellan.tascreed.core.infra.executor.TaskExecutorFactory;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.TaskBulletin;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerExceptionBuilder;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcExceptionBuilder;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import com.ebay.magellan.tascreed.depend.common.util.DateUtil;
 import com.ebay.magellan.tascreed.depend.ext.etcd.lock.EtcdLock;
 import org.apache.commons.collections4.CollectionUtils;
@@ -52,7 +52,7 @@ public class TaskOccupyHelper {
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
-    private TumblerLogger logger;
+    private TcLogger logger;
 
     // -----
 
@@ -64,9 +64,9 @@ public class TaskOccupyHelper {
      * Try to pick one task from todoTask prefix
      * @param adoptionValue the value of task adoption, it is the thread name by default
      * @return task if picked success, null if no task to pick
-     * @throws TumblerException if any exception
+     * @throws TcException if any exception
      */
-    public Task tryPickOneTask(String adoptionValue) throws TumblerException {
+    public Task tryPickOneTask(String adoptionValue) throws TcException {
         Task task = null;
 
         String taskAdoptionLock = getTaskAdoptionLockKey();
@@ -76,12 +76,12 @@ public class TaskOccupyHelper {
 
             task = tryPickOneTaskImpl(adoptionValue);
         } catch (Exception e) {
-            TumblerExceptionBuilder.throwEtcdRetryableException(e);
+            TcExceptionBuilder.throwEtcdRetryableException(e);
         } finally {
             try {
                 taskBulletin.unlock(lock);
             } catch (Exception e) {
-                TumblerExceptionBuilder.throwEtcdRetryableException(e);
+                TcExceptionBuilder.throwEtcdRetryableException(e);
             }
         }
         return task;
@@ -89,7 +89,7 @@ public class TaskOccupyHelper {
 
     // -----
 
-    Task tryPickOneTaskImpl(String adoptionValue) throws TumblerException {
+    Task tryPickOneTaskImpl(String adoptionValue) throws TcException {
         Task pickedTask = null;
         try {
             String adoptionKey = null;
@@ -122,7 +122,7 @@ public class TaskOccupyHelper {
                 pickedTask.setOccupyInfo(occupyInfo);
             }
         } catch (Exception e) {
-            TumblerExceptionBuilder.throwEtcdRetryableException(e);
+            TcExceptionBuilder.throwEtcdRetryableException(e);
         }
         return pickedTask;
     }
@@ -136,7 +136,7 @@ public class TaskOccupyHelper {
     }
 
     List<TaskCandidate> filterTaskCandidates(Map<String, String> adoptions,
-                                             Map<String, String> todoTasks) throws TumblerException {
+                                             Map<String, String> todoTasks) throws TcException {
         // 1. build ban context
         BanContext banContext = banHelper.buildBanContext(BanLevelEnum.TASK_PICK, false);
 

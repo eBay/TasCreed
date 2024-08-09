@@ -16,10 +16,10 @@ import com.ebay.magellan.tascreed.core.infra.monitor.Metrics;
 import com.ebay.magellan.tascreed.core.infra.opr.OprEnum;
 import com.ebay.magellan.tascreed.core.infra.storage.archive.ArchiveStorageFactory;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.JobBulletin;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerErrorEnum;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerExceptionBuilder;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.exception.TcErrorEnum;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcExceptionBuilder;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import com.ebay.magellan.tascreed.core.domain.builder.JobBuilder;
 import com.ebay.magellan.tascreed.core.infra.repo.JobDefineRepo;
 import com.ebay.magellan.tascreed.core.domain.define.JobDefine;
@@ -46,7 +46,7 @@ public class JobServer {
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
-    private TumblerLogger logger;
+    private TcLogger logger;
 
     @Autowired
     private JobDefineRepo jobDefineRepo;
@@ -121,30 +121,30 @@ public class JobServer {
 
     // -----
 
-    public Job createNewJob(JobRequest jr) throws TumblerException {
+    public Job createNewJob(JobRequest jr) throws TcException {
         if (jr == null) return null;
         JobInstKey id = new JobInstKey(jr.getJobName(), jr.getTrigger());
 
         logger.info(THIS_CLASS_NAME, String.format("the job instance key %s is fresh, will create new job", id));
         JobDefine jd = jobDefineRepo.getDefine(jr.getJobName());
         if (jd == null) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
                     String.format("create new job fails: job define %s not found", jr.getJobName()));
         }
 
         // do not submit new job if banned
         BanContext banContext = banHelper.buildBanContext(BanLevelEnum.JOB_SUBMIT, true);
         if (banHelper.isJobSubmitBanned(banContext, jr.getJobName())) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
                     String.format("create new job fails: job define %s is banned", jr.getJobName()));
         }
 
         if (jd.isUniqueAliveInstance()) {
             if (existAliveJobInstanceWithSameJobName(jr.getJobName())) {
-                TumblerExceptionBuilder.throwTumblerException(
-                        TumblerErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
+                TcExceptionBuilder.throwTumblerException(
+                        TcErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
                         String.format("create new job fails: alive job %s exists, only one alive job is allowed", id));
             }
         }
@@ -153,8 +153,8 @@ public class JobServer {
 
         ValidateResult vr = jobValidator.validate(job);
         if (!vr.isValid()) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_FATAL_VALIDATION_EXCEPTION, vr.showMsg());
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_FATAL_VALIDATION_EXCEPTION, vr.showMsg());
         }
 
         return job;
@@ -166,9 +166,9 @@ public class JobServer {
      * submit job request to create new job
      * @param jr job request
      * @return new created job if success; or existed job if already created before; or null if create fails
-     * @throws TumblerException if any exception
+     * @throws TcException if any exception
      */
-    public Job submitJobRequest(JobRequest jr) throws TumblerException {
+    public Job submitJobRequest(JobRequest jr) throws TcException {
         dutyHelper.dutyEnableCheck(NodeDutyEnum.JOB_SERVER);
 
         if (jr == null) return null;
@@ -181,7 +181,7 @@ public class JobServer {
             logger.info(THIS_CLASS_NAME, String.format("submit job %s without build tasks", id));
             try {
                 success = jobHelper.submitJobWithTasks(job, null, null, null);
-            } catch (TumblerException e) {
+            } catch (TcException e) {
                 logger.error(THIS_CLASS_NAME, String.format("submit job fails: %s", e.getMessage()));
                 throw e;
             }
@@ -212,9 +212,9 @@ public class JobServer {
      * not locked before query job, so submit might fail if the job changes after queried
      * @param jr job request
      * @return updated job if success; or null if submit fails
-     * @throws TumblerException if any exception
+     * @throws TcException if any exception
      */
-    public Job updateAliveJob(JobRequest jr) throws TumblerException {
+    public Job updateAliveJob(JobRequest jr) throws TcException {
         dutyHelper.dutyEnableCheck(NodeDutyEnum.JOB_SERVER);
 
         if (jr == null) return null;
@@ -224,16 +224,16 @@ public class JobServer {
         // 1. find alive job
         Job job = findAliveJobByJobIdPair(id);
         if (job == null) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
                     String.format("alive job %s does not exist", id));
         }
 
         // 2. assemble with job define
         JobDefine jd = jobDefineRepo.getDefine(jr.getJobName());
         if (jd == null) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
                     String.format("job define %s not found", jr.getJobName()));
         }
         jobBuilder.assembleJob(job, jd);
@@ -241,25 +241,25 @@ public class JobServer {
         // 3. update job by request
         boolean updated = jobUpdateBuilder.updateJob(job, jr);
         if (!updated) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
                     String.format("alive job %s no need to update", id));
         }
 
         // 4. validate job
         ValidateResult vr = jobValidator.validate(job);
         if (!vr.isValid()) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_FATAL_VALIDATION_EXCEPTION, vr.showMsg());
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_FATAL_VALIDATION_EXCEPTION, vr.showMsg());
         }
 
         // 5. submit job
         logger.info(THIS_CLASS_NAME, String.format("update alive job %s", id));
         try {
             success = jobHelper.submitJobWithTasks(job, null, null, null);
-        } catch (TumblerException e) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
+        } catch (TcException e) {
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
                     String.format("update alive job fails: %s", e.getMessage()), e);
         }
 
@@ -282,9 +282,9 @@ public class JobServer {
      * retry alive error job, reset the error job/step state, and retry error tasks
      * @param jr job request
      * @return retry error job if success; or null if submit fails
-     * @throws TumblerException if any exception
+     * @throws TcException if any exception
      */
-    public Job retryAliveErrorJob(JobRequest jr) throws TumblerException {
+    public Job retryAliveErrorJob(JobRequest jr) throws TcException {
         dutyHelper.dutyEnableCheck(NodeDutyEnum.JOB_SERVER);
 
         if (jr == null) return null;
@@ -294,16 +294,16 @@ public class JobServer {
         // 1. find alive job
         Job job = findAliveJobByJobIdPair(id);
         if (job == null) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
                     String.format("alive job %s does not exist", id));
         }
 
         // 2. assemble with job define
         JobDefine jd = jobDefineRepo.getDefine(jr.getJobName());
         if (jd == null) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
                     String.format("job define %s not found", jr.getJobName()));
         }
         jobBuilder.assembleJob(job, jd);
@@ -311,8 +311,8 @@ public class JobServer {
         // 3. find error tasks
         List<Task> errorTasks = fetchErrorTasksOfJob(job);
         if (CollectionUtils.isEmpty(errorTasks)) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
                     String.format("alive job %s has no error task, no need to retry", id));
         }
 
@@ -326,8 +326,8 @@ public class JobServer {
             updated = task.resetForRetry() || updated;
         }
         if (!updated) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
                     String.format("alive job %s no state updated, no need to retry", id));
         }
 
@@ -335,9 +335,9 @@ public class JobServer {
         logger.info(THIS_CLASS_NAME, String.format("retry alive error job %s", id));
         try {
             success = jobHelper.submitJobWithTasks(job, errorTasks, doneTasks, errorTasks);
-        } catch (TumblerException e) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
+        } catch (TcException e) {
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
                     String.format("retry alive error job fails: %s", e.getMessage()), e);
         }
 
@@ -354,7 +354,7 @@ public class JobServer {
         return job;
     }
 
-    List<Task> fetchDoneTasksOfJob(Job job) throws TumblerException {
+    List<Task> fetchDoneTasksOfJob(Job job) throws TcException {
         List<Task> tasks = new ArrayList<>();
         if (job != null) {
             try {
@@ -362,13 +362,13 @@ public class JobServer {
                         job.getJobName(), job.getTrigger());
                 tasks = JsonUtil.parseTasks(map.values());
             } catch (Exception e) {
-                TumblerExceptionBuilder.throwTumblerException(
-                        TumblerErrorEnum.TUMBLER_RETRY_EXCEPTION, e.getMessage());
+                TcExceptionBuilder.throwTumblerException(
+                        TcErrorEnum.TUMBLER_RETRY_EXCEPTION, e.getMessage());
             }
         }
         return tasks;
     }
-    List<Task> fetchErrorTasksOfJob(Job job) throws TumblerException {
+    List<Task> fetchErrorTasksOfJob(Job job) throws TcException {
         List<Task> tasks = new ArrayList<>();
         if (job != null) {
             try {
@@ -376,8 +376,8 @@ public class JobServer {
                         job.getJobName(), job.getTrigger());
                 tasks = JsonUtil.parseTasks(map.values());
             } catch (Exception e) {
-                TumblerExceptionBuilder.throwTumblerException(
-                        TumblerErrorEnum.TUMBLER_RETRY_EXCEPTION, e.getMessage());
+                TcExceptionBuilder.throwTumblerException(
+                        TcErrorEnum.TUMBLER_RETRY_EXCEPTION, e.getMessage());
             }
         }
         return tasks;

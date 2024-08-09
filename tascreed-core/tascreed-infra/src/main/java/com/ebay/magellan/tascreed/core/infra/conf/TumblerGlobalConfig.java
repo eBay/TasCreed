@@ -4,10 +4,10 @@ import com.ebay.magellan.tascreed.core.domain.ban.BanLevelEnum;
 import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.ConfigBulletin;
 import com.ebay.magellan.tascreed.depend.common.cache.CacheItem;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerErrorEnum;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerExceptionBuilder;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.exception.TcErrorEnum;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcExceptionBuilder;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import com.ebay.magellan.tascreed.depend.common.retry.RetryBackoffStrategy;
 import com.ebay.magellan.tascreed.depend.common.retry.RetryCounter;
 import com.ebay.magellan.tascreed.depend.common.retry.RetryCounterFactory;
@@ -46,7 +46,7 @@ public class TumblerGlobalConfig {
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
-    private TumblerLogger logger;
+    private TcLogger logger;
 
     // -----
 
@@ -86,7 +86,7 @@ public class TumblerGlobalConfig {
     // -----
 
     private final RetryStrategy retryStrategy = RetryBackoffStrategy.newDefaultInstance();
-    private <V> V loop(Callable<V> c, String errMsg, int retryNum) throws TumblerException {
+    private <V> V loop(Callable<V> c, String errMsg, int retryNum) throws TcException {
         RetryCounter retryCounter = RetryCounterFactory.buildRetryCounter(retryNum, retryStrategy);
         while (true) {
             String lastErrMsg = null;
@@ -101,21 +101,21 @@ public class TumblerGlobalConfig {
             if (retryCounter.isAlive()) {
                 retryCounter.waitForNextRetry();
             } else {
-                TumblerExceptionBuilder.throwTumblerException(
-                        TumblerErrorEnum.TUMBLER_NON_RETRY_EXCEPTION, lastErrMsg);
+                TcExceptionBuilder.throwTumblerException(
+                        TcErrorEnum.TUMBLER_NON_RETRY_EXCEPTION, lastErrMsg);
             }
         }
     }
 
     // retry 5 times by default, to avoid infinite loop to access config center
     private final int DEFAULT_RETRY_TIMES = 5;
-    private <V> V loop(Callable<V> c, String errMsg) throws TumblerException {
+    private <V> V loop(Callable<V> c, String errMsg) throws TcException {
         return loop(c, errMsg, DEFAULT_RETRY_TIMES);
     }
 
     // -----
 
-    Boolean readRoutineWatcherSwitchOn() throws TumblerException {
+    Boolean readRoutineWatcherSwitchOn() throws TcException {
         String key = tumblerKeys.buildRoutineWatcherSwitchOnKey();
         return loop(() -> {
             String value = configBulletin.readConfig(key,
@@ -124,7 +124,7 @@ public class TumblerGlobalConfig {
         }, "read routine watcher switch on failed");
     }
 
-    Boolean readTaskWatcherSwitchOn() throws TumblerException {
+    Boolean readTaskWatcherSwitchOn() throws TcException {
         String key = tumblerKeys.buildTaskWatcherSwitchOnKey();
         return loop(() -> {
             String value = configBulletin.readConfig(key,
@@ -133,7 +133,7 @@ public class TumblerGlobalConfig {
         }, "read task watcher switch on failed");
     }
 
-    Integer readWorkerCountOverall() throws TumblerException {
+    Integer readWorkerCountOverall() throws TcException {
         String key = tumblerKeys.buildMaxWorkerCountOverallKey();
         return loop(() -> {
             String value = configBulletin.readConfig(key,
@@ -142,7 +142,7 @@ public class TumblerGlobalConfig {
         }, "read max worker count overall failed");
     }
 
-    Integer readMaxWorkerCountPerHost() throws TumblerException {
+    Integer readMaxWorkerCountPerHost() throws TcException {
         String key = tumblerKeys.buildMaxWorkerCountPerHostKey();
         return loop(() -> {
             String value = configBulletin.readConfig(key,
@@ -151,7 +151,7 @@ public class TumblerGlobalConfig {
         }, "read max worker count per host failed");
     }
 
-    Integer readRoutineCountOverall() throws TumblerException {
+    Integer readRoutineCountOverall() throws TcException {
         String key = tumblerKeys.buildMaxRoutineCountOverallKey();
         return loop(() -> {
             String value = configBulletin.readConfig(key,
@@ -160,7 +160,7 @@ public class TumblerGlobalConfig {
         }, "read max routine count overall failed");
     }
 
-    Integer readMaxRoutineCountPerHost() throws TumblerException {
+    Integer readMaxRoutineCountPerHost() throws TcException {
         String key = tumblerKeys.buildMaxRoutineCountPerHostKey();
         return loop(() -> {
             String value = configBulletin.readConfig(key,
@@ -171,13 +171,13 @@ public class TumblerGlobalConfig {
 
     // -----
 
-    BanLevelEnum readBanGlobal() throws TumblerException {
+    BanLevelEnum readBanGlobal() throws TcException {
         String key = tumblerKeys.buildBanGlobalKey();
         return loop(() -> BanLevelEnum.buildByName(configBulletin.readConfig(key)),
                 "read ban global failed");
     }
 
-    Map<String, BanLevelEnum> readBanJobDefines() throws TumblerException {
+    Map<String, BanLevelEnum> readBanJobDefines() throws TcException {
         Map<String, BanLevelEnum> banJobDefines = new HashMap<>();
         String keyPrefix = tumblerKeys.buildBanJobDefinePrefix();
         Map<String, String> kvs = loop(() -> configBulletin.readConfigs(keyPrefix),
@@ -193,7 +193,7 @@ public class TumblerGlobalConfig {
         return banJobDefines;
     }
 
-    Map<String, BanLevelEnum> readBanJobs() throws TumblerException {
+    Map<String, BanLevelEnum> readBanJobs() throws TcException {
         Map<String, BanLevelEnum> banJobs = new HashMap<>();
         String keyPrefix = tumblerKeys.buildBanJobPrefix();
         Map<String, String> kvs = loop(() -> configBulletin.readConfigs(keyPrefix),
@@ -209,7 +209,7 @@ public class TumblerGlobalConfig {
         return banJobs;
     }
 
-    Map<String, BanLevelEnum> readBanRoutineDefines() throws TumblerException {
+    Map<String, BanLevelEnum> readBanRoutineDefines() throws TcException {
         Map<String, BanLevelEnum> banRoutineDefines = new HashMap<>();
         String keyPrefix = tumblerKeys.buildBanRoutineDefinePrefix();
         Map<String, String> kvs = loop(() -> configBulletin.readConfigs(keyPrefix),
@@ -225,7 +225,7 @@ public class TumblerGlobalConfig {
         return banRoutineDefines;
     }
 
-    Map<String, BanLevelEnum> readBanRoutines() throws TumblerException {
+    Map<String, BanLevelEnum> readBanRoutines() throws TcException {
         Map<String, BanLevelEnum> banRoutines = new HashMap<>();
         String keyPrefix = tumblerKeys.buildBanRoutinePrefix();
         Map<String, String> kvs = loop(() -> configBulletin.readConfigs(keyPrefix),
@@ -241,7 +241,7 @@ public class TumblerGlobalConfig {
         return banRoutines;
     }
 
-    String readNodeDutyRulesStr() throws TumblerException {
+    String readNodeDutyRulesStr() throws TcException {
         String key = tumblerKeys.buildDutyRulesGlobalKey();
         return loop(() -> configBulletin.readConfig(key),
                 "read node duty rules failed");
@@ -262,7 +262,7 @@ public class TumblerGlobalConfig {
         Boolean b = null;
         try {
             b = routineWatcherSwitchOnCache.getCacheValue(forceRefresh).getValue();
-        } catch (TumblerException e) {
+        } catch (TcException e) {
             logger.error(THIS_CLASS_NAME,
                     String.format("isRoutineWatcherSwitchOn error: %s", e.getMessage()));
         }
@@ -278,7 +278,7 @@ public class TumblerGlobalConfig {
         Boolean b = null;
         try {
             b = taskWatcherSwitchOnCache.getCacheValue(forceRefresh).getValue();
-        } catch (TumblerException e) {
+        } catch (TcException e) {
             logger.error(THIS_CLASS_NAME,
                     String.format("isTaskWatcherSwitchOn error: %s", e.getMessage()));
         }
@@ -294,7 +294,7 @@ public class TumblerGlobalConfig {
         Integer i = null;
         try {
             i = maxWorkerCountOverallCache.getCacheValue().getValue();
-        } catch (TumblerException e) {
+        } catch (TcException e) {
             logger.error(THIS_CLASS_NAME,
                     String.format("getMaxWorkerCountOverall error: %s", e.getMessage()));
         }
@@ -310,7 +310,7 @@ public class TumblerGlobalConfig {
         Integer i = null;
         try {
             i = maxWorkerCountPerHostCache.getCacheValue().getValue();
-        } catch (TumblerException e) {
+        } catch (TcException e) {
             logger.error(THIS_CLASS_NAME,
                     String.format("getMaxWorkerCountPerHost error: %s", e.getMessage()));
         }
@@ -326,7 +326,7 @@ public class TumblerGlobalConfig {
         Integer i = null;
         try {
             i = maxRoutineCountOverallCache.getCacheValue().getValue();
-        } catch (TumblerException e) {
+        } catch (TcException e) {
             logger.error(THIS_CLASS_NAME,
                     String.format("getMaxRoutineCountOverall error: %s", e.getMessage()));
         }
@@ -342,7 +342,7 @@ public class TumblerGlobalConfig {
         Integer i = null;
         try {
             i = maxRoutineCountPerHostCache.getCacheValue().getValue();
-        } catch (TumblerException e) {
+        } catch (TcException e) {
             logger.error(THIS_CLASS_NAME,
                     String.format("getMaxRoutineCountPerHost error: %s", e.getMessage()));
         }
@@ -356,9 +356,9 @@ public class TumblerGlobalConfig {
      * so no default value can be used
      * @param forceRefresh force refresh the cache or not
      * @return global ban level
-     * @throws TumblerException
+     * @throws TcException
      */
-    public BanLevelEnum getBanGlobal(boolean forceRefresh) throws TumblerException {
+    public BanLevelEnum getBanGlobal(boolean forceRefresh) throws TcException {
         return banGlobalCache.getCacheValue(forceRefresh).getValue();
     }
 
@@ -367,9 +367,9 @@ public class TumblerGlobalConfig {
      * so no default value can be used
      * @param forceRefresh force refresh the cache or not
      * @return the banned job defines
-     * @throws TumblerException
+     * @throws TcException
      */
-    public Map<String, BanLevelEnum> getBanJobDefines(boolean forceRefresh) throws TumblerException {
+    public Map<String, BanLevelEnum> getBanJobDefines(boolean forceRefresh) throws TcException {
         return banJobDefinesCache.getCacheValue(forceRefresh).getValue();
     }
 
@@ -378,9 +378,9 @@ public class TumblerGlobalConfig {
      * so no default value can be used
      * @param forceRefresh force refresh the cache or not
      * @return the banned jobs
-     * @throws TumblerException
+     * @throws TcException
      */
-    public Map<String, BanLevelEnum> getBanJobs(boolean forceRefresh) throws TumblerException {
+    public Map<String, BanLevelEnum> getBanJobs(boolean forceRefresh) throws TcException {
         return banJobsCache.getCacheValue(forceRefresh).getValue();
     }
 
@@ -389,9 +389,9 @@ public class TumblerGlobalConfig {
      * so no default value can be used
      * @param forceRefresh force refresh the cache or not
      * @return the banned routine defines
-     * @throws TumblerException
+     * @throws TcException
      */
-    public Map<String, BanLevelEnum> getBanRoutineDefines(boolean forceRefresh) throws TumblerException {
+    public Map<String, BanLevelEnum> getBanRoutineDefines(boolean forceRefresh) throws TcException {
         return banRoutineDefinesCache.getCacheValue(forceRefresh).getValue();
     }
 
@@ -400,9 +400,9 @@ public class TumblerGlobalConfig {
      * so no default value can be used
      * @param forceRefresh force refresh the cache or not
      * @return the banned routines
-     * @throws TumblerException
+     * @throws TcException
      */
-    public Map<String, BanLevelEnum> getBanRoutines(boolean forceRefresh) throws TumblerException {
+    public Map<String, BanLevelEnum> getBanRoutines(boolean forceRefresh) throws TcException {
         return banRoutinesCache.getCacheValue(forceRefresh).getValue();
     }
 
@@ -413,9 +413,9 @@ public class TumblerGlobalConfig {
      * so no default value can be used
      * @param forceRefresh force refresh the cache or not
      * @return the node duty rules in string format
-     * @throws TumblerException
+     * @throws TcException
      */
-    public String getNodeDutyRulesStr(boolean forceRefresh) throws TumblerException {
+    public String getNodeDutyRulesStr(boolean forceRefresh) throws TcException {
         return nodeDutyRulesStr.getCacheValue(forceRefresh).getValue();
     }
 

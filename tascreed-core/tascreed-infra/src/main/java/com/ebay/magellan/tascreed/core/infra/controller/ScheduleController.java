@@ -2,7 +2,7 @@ package com.ebay.magellan.tascreed.core.infra.controller;
 
 import com.ebay.magellan.tascreed.core.domain.schedule.Schedule;
 import com.ebay.magellan.tascreed.core.infra.scheduleserver.ScheduleServer;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ public class ScheduleController {
     // -----
 
     @PostMapping("")
-    public Schedule submitSchedule(@Valid @RequestBody Schedule sch) throws TumblerException {
+    public Schedule submitSchedule(@Valid @RequestBody Schedule sch) throws TcException {
         Schedule schedule = scheduleServer.submitSchedule(sch);
         return schedule;
     }
@@ -32,7 +32,7 @@ public class ScheduleController {
     // -----
 
     @PutMapping("")
-    public Schedule updateSchedule(@Valid @RequestBody Schedule sch) throws TumblerException {
+    public Schedule updateSchedule(@Valid @RequestBody Schedule sch) throws TcException {
         Schedule schedule = scheduleServer.updateSchedule(sch);
         return schedule;
     }

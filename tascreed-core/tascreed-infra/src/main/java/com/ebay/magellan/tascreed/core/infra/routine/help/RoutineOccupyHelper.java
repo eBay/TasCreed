@@ -14,9 +14,9 @@ import com.ebay.magellan.tascreed.core.infra.routine.execute.RoutineExecutorFact
 import com.ebay.magellan.tascreed.core.infra.routine.repo.RoutineRepo;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.RoutineBulletin;
 import com.ebay.magellan.tascreed.core.infra.taskworker.help.TaskOccupyHelper;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerExceptionBuilder;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcExceptionBuilder;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import com.ebay.magellan.tascreed.depend.ext.etcd.lock.EtcdLock;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -54,7 +54,7 @@ public class RoutineOccupyHelper {
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
-    private TumblerLogger logger;
+    private TcLogger logger;
 
     // -----
 
@@ -66,9 +66,9 @@ public class RoutineOccupyHelper {
      * Try to occupy one routine from routine repo in memory
      * @param adoptionValue the value of routine adoption, it is the thread name by default
      * @return routine if occupied success, null if no routine occupied
-     * @throws TumblerException if any exception
+     * @throws TcException if any exception
      */
-    public Routine tryOccupyOneRoutine(String adoptionValue) throws TumblerException {
+    public Routine tryOccupyOneRoutine(String adoptionValue) throws TcException {
         Routine routine = null;
 
         String routineAdoptionLock = getRoutineAdoptionLockKey();
@@ -78,12 +78,12 @@ public class RoutineOccupyHelper {
 
             routine = tryOccupyOneRoutineImpl(adoptionValue);
         } catch (Exception e) {
-            TumblerExceptionBuilder.throwEtcdRetryableException(e);
+            TcExceptionBuilder.throwEtcdRetryableException(e);
         } finally {
             try {
                 routineBulletin.unlock(lock);
             } catch (Exception e) {
-                TumblerExceptionBuilder.throwEtcdRetryableException(e);
+                TcExceptionBuilder.throwEtcdRetryableException(e);
             }
         }
         return routine;
@@ -91,7 +91,7 @@ public class RoutineOccupyHelper {
 
     // -----
 
-    Routine tryOccupyOneRoutineImpl(String adoptionValue) throws TumblerException {
+    Routine tryOccupyOneRoutineImpl(String adoptionValue) throws TcException {
         Routine occupiedRoutine = null;
         try {
             String adoptionKey = null;
@@ -125,7 +125,7 @@ public class RoutineOccupyHelper {
                 occupiedRoutine.occupy(occupyInfo, checkpointValue);
             }
         } catch (Exception e) {
-            TumblerExceptionBuilder.throwEtcdRetryableException(e);
+            TcExceptionBuilder.throwEtcdRetryableException(e);
         }
         return occupiedRoutine;
     }
@@ -139,7 +139,7 @@ public class RoutineOccupyHelper {
     }
 
     List<RoutineCandidate> filterRoutineCandidates(Map<String, String> adoptions,
-                                                   Map<String, Routine> todoRoutines) throws TumblerException {
+                                                   Map<String, Routine> todoRoutines) throws TcException {
         // 1. build ban context
         BanContext banContext = banHelper.buildBanContext(BanLevelEnum.ROUTINE_OCCUPY, false);
 

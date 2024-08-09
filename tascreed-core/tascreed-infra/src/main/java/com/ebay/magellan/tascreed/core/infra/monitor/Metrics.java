@@ -2,7 +2,7 @@ package com.ebay.magellan.tascreed.core.infra.monitor;
 
 import com.ebay.magellan.tascreed.core.infra.monitor.metric.RetryTimesGauge;
 import com.ebay.magellan.tascreed.core.infra.monitor.metric.TimeExceedGauge;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerErrorEnum;
+import com.ebay.magellan.tascreed.depend.common.exception.TcErrorEnum;
 import io.prometheus.client.Counter;
 import io.prometheus.client.Gauge;
 import io.prometheus.client.Summary;
@@ -149,7 +149,7 @@ public class Metrics {
             .labelNames("type")
             .register();
 
-    public static void reportExecutionExceptionCounter(TumblerErrorEnum errorEnum) {
+    public static void reportExecutionExceptionCounter(TcErrorEnum errorEnum) {
         if (errorEnum == null) return;
         executionExceptionCounter.labels(errorEnum.name()).inc();
     }

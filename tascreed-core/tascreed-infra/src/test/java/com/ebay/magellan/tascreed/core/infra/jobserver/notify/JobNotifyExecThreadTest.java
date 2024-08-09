@@ -13,7 +13,7 @@ import com.ebay.magellan.tascreed.core.infra.repo.JobDefineRepo;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.JobBulletin;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.TaskBulletin;
 import com.ebay.magellan.tascreed.depend.common.collection.GeneralDataListMap;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,7 +45,7 @@ public class JobNotifyExecThreadTest {
     @Mock
     private TaskBulletin taskBulletin;
     @Mock
-    private TumblerLogger logger;
+    private TcLogger logger;
 
     private JobBuilder jobBuilder = new JobBuilder();
     private TaskBuilder taskBuilder = new TaskBuilder();

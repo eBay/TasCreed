@@ -24,10 +24,10 @@ import com.ebay.magellan.tascreed.core.infra.monitor.Metrics;
 import com.ebay.magellan.tascreed.core.infra.opr.OprEnum;
 import com.ebay.magellan.tascreed.core.infra.repo.JobDefineRepo;
 import com.ebay.magellan.tascreed.depend.common.collection.KeyValuePair;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerErrorEnum;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerExceptionBuilder;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.exception.TcErrorEnum;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcExceptionBuilder;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import com.ebay.magellan.tascreed.depend.common.util.DefaultValueUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +41,7 @@ public class StateServer {
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
-    private TumblerLogger logger;
+    private TcLogger logger;
 
     @Autowired
     private TumblerKeys tumblerKeys;
@@ -254,10 +254,10 @@ public class StateServer {
         return BanLevelEnum.buildByName(banLevelStr);
     }
 
-    void validateBanTarget(BanLevelEnum banLevel, BanTargetEnum banTarget) throws TumblerException {
+    void validateBanTarget(BanLevelEnum banLevel, BanTargetEnum banTarget) throws TcException {
         if (!banLevel.getTarget().compatible(banTarget)) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_FATAL_VALIDATION_EXCEPTION,
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_FATAL_VALIDATION_EXCEPTION,
                     String.format("ban level %s is not compatible with ban target %s",
                             banLevel.getName(), banTarget.name()));
         }
@@ -286,8 +286,8 @@ public class StateServer {
 
         JobDefine jd = jobDefineRepo.getDefine(jobDefineName);
         if (jd == null) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_FATAL_VALIDATION_EXCEPTION,
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_FATAL_VALIDATION_EXCEPTION,
                     String.format("job define %s doesn't exist", jobDefineName));
         }
         return banHelper.submitBanJobDefine(jobDefineName, banLevel);
@@ -307,8 +307,8 @@ public class StateServer {
 
         String aliveJobStr = jobBulletin.readJob(jobName, trigger);
         if (aliveJobStr == null) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_FATAL_VALIDATION_EXCEPTION,
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_FATAL_VALIDATION_EXCEPTION,
                     String.format("alive job (%s, %s) doesn't exist", jobName, trigger));
         }
         return banHelper.submitBanJob(jobName, trigger, banLevel);
@@ -330,8 +330,8 @@ public class StateServer {
 
         RoutineDefine rd = routineDefineRepo.getRoutineDefine(routineName);
         if (rd == null) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_FATAL_VALIDATION_EXCEPTION,
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_FATAL_VALIDATION_EXCEPTION,
                     String.format("routine define %s doesn't exist", routineName));
         }
         return banHelper.submitBanRoutineDefine(routineName, banLevel);
@@ -351,8 +351,8 @@ public class StateServer {
 
         Routine routine = routineRepo.getRoutine(routineFullName);
         if (routine == null) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_FATAL_VALIDATION_EXCEPTION,
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_FATAL_VALIDATION_EXCEPTION,
                     String.format("routine %s doesn't exist", routineFullName));
         }
         return banHelper.submitBanRoutine(routineFullName, banLevel);

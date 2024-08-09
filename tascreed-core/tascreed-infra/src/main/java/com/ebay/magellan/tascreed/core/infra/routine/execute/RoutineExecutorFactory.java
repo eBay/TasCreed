@@ -3,7 +3,7 @@ package com.ebay.magellan.tascreed.core.infra.routine.execute;
 import com.ebay.magellan.tascreed.core.domain.routine.Routine;
 import com.ebay.magellan.tascreed.core.infra.routine.alive.RoutineOccupation;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.RoutineBulletin;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -21,7 +21,7 @@ public class RoutineExecutorFactory {
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
-    private TumblerLogger logger;
+    private TcLogger logger;
 
     public RoutineExecutor buildRoutineExecutor(Routine routine) {
         if (routine == null) return null;

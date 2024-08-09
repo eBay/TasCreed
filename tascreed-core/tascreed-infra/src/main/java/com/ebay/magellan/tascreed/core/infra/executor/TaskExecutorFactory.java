@@ -2,7 +2,7 @@ package com.ebay.magellan.tascreed.core.infra.executor;
 
 import com.ebay.magellan.tascreed.core.infra.executor.alive.TaskOccupation;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.TaskBulletin;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import com.ebay.magellan.tascreed.core.domain.task.Task;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class TaskExecutorFactory {
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
-    private TumblerLogger logger;
+    private TcLogger logger;
 
     public TaskExecutor buildTaskExecutor(Task task) {
         if (task == null) return null;

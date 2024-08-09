@@ -8,10 +8,10 @@ import com.ebay.magellan.tascreed.core.infra.duty.DutyHelper;
 import com.ebay.magellan.tascreed.core.infra.repo.JobDefineRepo;
 import com.ebay.magellan.tascreed.core.infra.scheduleserver.help.ScheduleHelper;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.ScheduleBulletin;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerErrorEnum;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerExceptionBuilder;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.exception.TcErrorEnum;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcExceptionBuilder;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,7 +22,7 @@ public class ScheduleServer {
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
-    private TumblerLogger logger;
+    private TcLogger logger;
 
     @Autowired
     private JobDefineRepo jobDefineRepo;
@@ -44,24 +44,24 @@ public class ScheduleServer {
 
     // -----
 
-    void validateSchedule(Schedule sch) throws TumblerException {
+    void validateSchedule(Schedule sch) throws TcException {
         String err = sch.validate();
         if (StringUtils.isNotBlank(err)) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
                     String.format("validate schedule fails: %s", err));
         }
 
         String jobName = sch.getJobRequest().getJobName();
         JobDefine jd = jobDefineRepo.getDefine(jobName);
         if (jd == null) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
                     String.format("validate schedule fails: job define %s not found", jobName));
         }
     }
 
-    public Schedule submitSchedule(Schedule sch) throws TumblerException {
+    public Schedule submitSchedule(Schedule sch) throws TcException {
         dutyHelper.dutyEnableCheck(NodeDutyEnum.SCHEDULE_SERVER);
 
         if (sch == null) return null;
@@ -78,7 +78,7 @@ public class ScheduleServer {
 
             try {
                 success = scheduleHelper.submitScheduleWithJobs(schedule, null);
-            } catch (TumblerException e) {
+            } catch (TcException e) {
                 logger.error(THIS_CLASS_NAME, String.format("submit schedule fails: %s", e.getMessage()));
                 throw e;
             }
@@ -95,7 +95,7 @@ public class ScheduleServer {
         return schedule;
     }
 
-    public Schedule updateSchedule(Schedule sch) throws TumblerException {
+    public Schedule updateSchedule(Schedule sch) throws TcException {
         dutyHelper.dutyEnableCheck(NodeDutyEnum.SCHEDULE_SERVER);
 
         if (sch == null) return null;
@@ -105,8 +105,8 @@ public class ScheduleServer {
         // 1. find schedule
         Schedule schedule = findScheduleByName(name);
         if (schedule == null) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
                     String.format("schedule %s does not exist", name));
         }
 
@@ -120,9 +120,9 @@ public class ScheduleServer {
         logger.info(THIS_CLASS_NAME, String.format("update schedule %s", name));
         try {
             success = scheduleHelper.submitScheduleWithJobs(schedule, null);
-        } catch (TumblerException e) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
+        } catch (TcException e) {
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
                     String.format("update schedule fails: %s", e.getMessage()), e);
         }
 

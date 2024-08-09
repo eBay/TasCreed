@@ -1,6 +1,6 @@
 package com.ebay.magellan.tascreed.depend.common.util;
 
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 
@@ -43,7 +43,7 @@ public class GroupUtilTest {
     }
 
     @Test
-    public void splitDateRangeByCount() throws TumblerException {
+    public void splitDateRangeByCount() throws TcException {
         Date start = DateUtil.parseWithoutTime("20190101");
         Date end = DateUtil.parseWithoutTime("20190102");
         List<Pair<Date, Date>> list = GroupUtil.splitDateRangeByCount(start, end, 24);
@@ -52,7 +52,7 @@ public class GroupUtilTest {
     }
 
     @Test
-    public void splitDateRangeByTimeInterval1() throws TumblerException {
+    public void splitDateRangeByTimeInterval1() throws TcException {
         Date start = DateUtil.parseWithoutTime("20190101");
         Date end = DateUtil.parseWithoutTime("20190102");
         List<Pair<Date, Date>> list = GroupUtil.splitDateRangeByTimeInterval(start, end, 59 * GroupUtil.MINUTE);

@@ -7,9 +7,9 @@ import com.ebay.magellan.tascreed.core.infra.app.AppInfoCollector;
 import com.ebay.magellan.tascreed.core.infra.conf.TumblerGlobalConfig;
 import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.ConfigBulletin;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerErrorEnum;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerExceptionBuilder;
+import com.ebay.magellan.tascreed.depend.common.exception.TcErrorEnum;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcExceptionBuilder;
 import com.ebay.magellan.tascreed.depend.common.util.VersionUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +49,7 @@ public class DutyHelper {
 
     // -----
 
-    synchronized void refreshDuties() throws TumblerException {
+    synchronized void refreshDuties() throws TcException {
         String curStr = tumblerGlobalConfig.getNodeDutyRulesStr(false);
         boolean changed = false;
         if (!StringUtils.equals(nodeDutyRulesStr, curStr)) {
@@ -146,17 +146,17 @@ public class DutyHelper {
 
     // -----
 
-    public boolean isDutyEnabled(NodeDutyEnum duty) throws TumblerException {
+    public boolean isDutyEnabled(NodeDutyEnum duty) throws TcException {
         if (!dutyFeatureEnabled()) return true;
         if (duty == null || !duty.isRealDuty()) return true;
         refreshDuties();
         return !disabledDuties.contains(duty);
     }
 
-    public void dutyEnableCheck(NodeDutyEnum duty) throws TumblerException {
+    public void dutyEnableCheck(NodeDutyEnum duty) throws TcException {
         if (!isDutyEnabled(duty)) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_FATAL_DUTY_EXCEPTION,
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_FATAL_DUTY_EXCEPTION,
                     String.format("duty [%s] disabled on this node", duty.getName()));
         }
     }

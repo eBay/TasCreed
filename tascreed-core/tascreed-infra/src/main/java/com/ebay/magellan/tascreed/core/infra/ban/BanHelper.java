@@ -5,9 +5,9 @@ import com.ebay.magellan.tascreed.core.domain.ban.BanLevelEnum;
 import com.ebay.magellan.tascreed.core.infra.conf.TumblerGlobalConfig;
 import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.ConfigBulletin;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerErrorEnum;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerExceptionBuilder;
+import com.ebay.magellan.tascreed.depend.common.exception.TcErrorEnum;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcExceptionBuilder;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -38,7 +38,7 @@ public class BanHelper {
     }
 
     // build ban context at one time
-    public BanContext buildBanContext(BanLevelEnum banLevel, boolean forceRefresh) throws TumblerException {
+    public BanContext buildBanContext(BanLevelEnum banLevel, boolean forceRefresh) throws TcException {
         if (!enableBan() || banLevel == null) return null;
 
         BanContext banContext = null;
@@ -57,8 +57,8 @@ public class BanHelper {
                 banContext.setBanRoutines(tumblerGlobalConfig.getBanRoutines(forceRefresh));
             }
         } catch (Exception e) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_NON_RETRY_EXCEPTION,
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_NON_RETRY_EXCEPTION,
                     String.format("buildBanContext error: %s", e.getMessage()), e);
         }
         return banContext;

@@ -2,7 +2,7 @@ package com.ebay.magellan.tascreed.core.infra.executor;
 
 import com.ebay.magellan.tascreed.core.infra.executor.annotation.TaskExec;
 import com.ebay.magellan.tascreed.core.infra.executor.annotation.TaskExecs;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang.StringUtils;
@@ -27,7 +27,7 @@ public class TaskExecutorRegistry {
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
-    private TumblerLogger logger;
+    private TcLogger logger;
 
     private Map<JobStepKey, Class> map = new HashMap<>();
 

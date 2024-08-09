@@ -9,7 +9,7 @@ import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.*;
 import com.ebay.magellan.tascreed.core.infra.help.TestRepo;
 import com.ebay.magellan.tascreed.depend.common.collection.KeyValuePair;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +33,7 @@ public class StateServerTest {
     private StateServer stateServer = new StateServer();
 
     @Mock
-    private TumblerLogger logger;
+    private TcLogger logger;
 
     @Mock
     private TumblerKeys tumblerKeys;

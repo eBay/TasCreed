@@ -12,7 +12,7 @@ import com.ebay.magellan.tascreed.core.domain.task.Task;
 import com.ebay.magellan.tascreed.core.domain.task.TaskViews;
 import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.JobBulletin;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import com.ebay.magellan.tascreed.depend.ext.etcd.constant.EtcdConstants;
 import com.ebay.magellan.tascreed.depend.ext.etcd.util.EtcdUtil;
 import org.apache.commons.collections4.CollectionUtils;
@@ -32,7 +32,7 @@ public class JobEtcdBulletin extends BaseEtcdBulletin implements JobBulletin {
     public JobEtcdBulletin(TumblerKeys tumblerKeys,
                            EtcdConstants etcdConstants,
                            EtcdUtil etcdUtil,
-                           TumblerLogger logger) {
+                           TcLogger logger) {
         super(tumblerKeys, etcdConstants, etcdUtil, logger);
     }
 

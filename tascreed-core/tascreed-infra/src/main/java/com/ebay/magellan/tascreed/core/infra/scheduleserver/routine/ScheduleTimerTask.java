@@ -9,8 +9,8 @@ import com.ebay.magellan.tascreed.core.domain.schedule.mid.TriggerState;
 import com.ebay.magellan.tascreed.core.infra.jobserver.JobServer;
 import com.ebay.magellan.tascreed.core.infra.scheduleserver.help.ScheduleHelper;
 import com.ebay.magellan.tascreed.core.schedule.time.task.AbstractTimerTask;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import io.netty.util.Timeout;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,7 @@ public class ScheduleTimerTask extends AbstractTimerTask {
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
-    private TumblerLogger logger;
+    private TcLogger logger;
 
     private String scheduleName;
 
@@ -82,7 +82,7 @@ public class ScheduleTimerTask extends AbstractTimerTask {
         try {
             job = jobServer.createNewJob(jr);
             newJobs.add(job);
-        } catch (TumblerException e) {
+        } catch (TcException e) {
             String err = String.format("schedule trigger %s fails: %s", scheduleName, e.getMessage());
             curTriggerState.fail(err);
             logger.error(THIS_CLASS_NAME, err);
@@ -94,7 +94,7 @@ public class ScheduleTimerTask extends AbstractTimerTask {
         try {
             scheduleHelper.submitScheduleWithJobs(schedule, newJobs);
             logger.info(THIS_CLASS_NAME, String.format("schedule trigger %s submit success", scheduleName));
-        } catch (TumblerException e) {
+        } catch (TcException e) {
             logger.warn(THIS_CLASS_NAME, String.format(
                     "schedule trigger %s submit fails: %s", scheduleName, e.getMessage()));
         }

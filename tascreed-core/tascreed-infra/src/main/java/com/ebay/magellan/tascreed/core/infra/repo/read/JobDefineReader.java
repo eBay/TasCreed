@@ -6,7 +6,7 @@ import com.ebay.magellan.tascreed.core.domain.validate.StepGraphValidator;
 import com.ebay.magellan.tascreed.core.domain.validate.StepPhaseListValidator;
 import com.ebay.magellan.tascreed.core.domain.validate.ValidateResult;
 import com.ebay.magellan.tascreed.core.infra.constant.TumblerConstants;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +24,7 @@ public class JobDefineReader extends DefineReader<JobDefine> {
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
-    private TumblerLogger logger;
+    private TcLogger logger;
 
     @Autowired
     private TumblerConstants tumblerConstants;

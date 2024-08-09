@@ -1,6 +1,6 @@
 package com.ebay.magellan.tascreed.depend.common.logger;
 
-public interface TumblerLogger {
+public interface TcLogger {
 
     String TUMBLER_INFO = "TUMBLER_INFO";
     String TUMBLER_WARN = "TUMBLER_WARN";

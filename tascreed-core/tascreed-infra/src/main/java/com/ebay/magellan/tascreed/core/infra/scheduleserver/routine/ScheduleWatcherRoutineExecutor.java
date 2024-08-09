@@ -5,10 +5,10 @@ import com.ebay.magellan.tascreed.core.infra.routine.annotation.RoutineExec;
 import com.ebay.magellan.tascreed.core.infra.routine.execute.NormalRoutineExecutor;
 import com.ebay.magellan.tascreed.core.infra.scheduleserver.help.ScheduleHelper;
 import com.ebay.magellan.tascreed.core.schedule.time.TimeWheel;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerErrorEnum;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerExceptionBuilder;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.exception.TcErrorEnum;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcExceptionBuilder;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
@@ -28,7 +28,7 @@ public class ScheduleWatcherRoutineExecutor extends NormalRoutineExecutor {
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
-    private TumblerLogger logger;
+    private TcLogger logger;
 
     @Autowired
     private ScheduleHelper scheduleHelper;
@@ -42,24 +42,24 @@ public class ScheduleWatcherRoutineExecutor extends NormalRoutineExecutor {
     // -----
 
     @Override
-    protected void initImpl() throws TumblerException {
+    protected void initImpl() throws TcException {
         timeWheel.init();
         logger.info(THIS_CLASS_NAME, String.format(
                 "schedule watcher routine [%s] init done", routine.getFullName()));
     }
 
     @Override
-    protected void executeRoundImpl() throws TumblerException {
+    protected void executeRoundImpl() throws TcException {
         try {
             triggerScheduleJobs();
         } catch (Exception e) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_NON_RETRY_EXCEPTION, e.getMessage());
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_NON_RETRY_EXCEPTION, e.getMessage());
         }
     }
 
     @Override
-    protected void closeImpl() throws TumblerException {
+    protected void closeImpl() throws TcException {
         timeWheel.stop();
         logger.info(THIS_CLASS_NAME, String.format(
                 "schedule watcher routine [%s] close done", routine.getFullName()));
@@ -78,7 +78,7 @@ public class ScheduleWatcherRoutineExecutor extends NormalRoutineExecutor {
         return ret > 0L ? ret : lastExecTime;
     }
 
-    void triggerScheduleJobs() throws TumblerException {
+    void triggerScheduleJobs() throws TcException {
         // 1. update last exec time, prepare calculate time range
         long now = System.currentTimeMillis();
         long startTime = getCalcStartTime(now);

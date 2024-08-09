@@ -1,7 +1,7 @@
 package com.ebay.magellan.tascreed.depend.common.cache;
 
 import com.ebay.magellan.tascreed.depend.common.cache.func.CheckedSupplier;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
 
 public class CacheItem<T> {
     private CacheValue<T> cv = CacheValue.empty();
@@ -35,7 +35,7 @@ public class CacheItem<T> {
         return true;
     }
 
-    synchronized boolean trySetValue(boolean forceRefresh) throws TumblerException {
+    synchronized boolean trySetValue(boolean forceRefresh) throws TcException {
         if (needSetValue(forceRefresh)) {
             return setValue(valueSupplier.get());
         }
@@ -46,7 +46,7 @@ public class CacheItem<T> {
         return forceRefresh || cv.needRefresh();
     }
 
-    public CacheValueResp<T> getCacheValue(boolean forceRefresh) throws TumblerException {
+    public CacheValueResp<T> getCacheValue(boolean forceRefresh) throws TcException {
         boolean refreshed = false;
         if (needSetValue(forceRefresh)) {
             refreshed = trySetValue(forceRefresh);
@@ -54,7 +54,7 @@ public class CacheItem<T> {
         return CacheValueResp.of(cv.getValue(), refreshed);
     }
 
-    public CacheValueResp<T> getCacheValue() throws TumblerException {
+    public CacheValueResp<T> getCacheValue() throws TcException {
         return getCacheValue(false);
     }
 

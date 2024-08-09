@@ -8,7 +8,7 @@ import com.ebay.magellan.tascreed.core.infra.storage.archive.ArchiveStorageFacto
 import com.ebay.magellan.tascreed.core.infra.help.TestRepo;
 import com.ebay.magellan.tascreed.core.infra.repo.JobDefineRepo;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.JobBulletin;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +27,7 @@ public class JobServerTest {
     private JobServer jobServer = new JobServer();
 
     @Mock
-    private TumblerLogger logger;
+    private TcLogger logger;
 
     @Mock
     private JobDefineRepo jobDefineRepo;

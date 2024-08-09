@@ -1,7 +1,7 @@
 package com.ebay.magellan.tascreed.core.infra.routine.repo;
 
 import com.ebay.magellan.tascreed.core.domain.routine.RoutineDefine;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -23,7 +23,7 @@ public class RoutineDefineRepo {
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
-    private TumblerLogger logger;
+    private TcLogger logger;
 
     private Map<String, RoutineDefine> defines = new LinkedHashMap<>();
 

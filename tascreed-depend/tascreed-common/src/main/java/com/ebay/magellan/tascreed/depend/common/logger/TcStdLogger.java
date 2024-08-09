@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @ConditionalOnProperty(prefix = "tumbler", name = "logger", havingValue = "std", matchIfMissing = true)
-public class TumblerStdLogger implements TumblerLogger {
+public class TcStdLogger implements TcLogger {
 
     public void log(String type, String name, String data, String status) {
         if (type == null || name == null || data == null || status == null) return;

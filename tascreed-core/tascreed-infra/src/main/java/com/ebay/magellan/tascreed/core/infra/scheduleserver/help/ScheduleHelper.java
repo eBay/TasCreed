@@ -5,9 +5,9 @@ import com.ebay.magellan.tascreed.core.domain.schedule.Schedule;
 import com.ebay.magellan.tascreed.core.domain.util.JsonUtil;
 import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.ScheduleBulletin;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerErrorEnum;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerExceptionBuilder;
+import com.ebay.magellan.tascreed.depend.common.exception.TcErrorEnum;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcExceptionBuilder;
 import com.ebay.magellan.tascreed.depend.ext.etcd.lock.EtcdLock;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.commons.lang.StringUtils;
@@ -28,7 +28,7 @@ public class ScheduleHelper {
     @Autowired
     private ScheduleBulletin scheduleBulletin;
 
-    public boolean submitScheduleWithJobs(Schedule schedule, List<Job> newJobs) throws TumblerException {
+    public boolean submitScheduleWithJobs(Schedule schedule, List<Job> newJobs) throws TcException {
         boolean ret = false;
         if (schedule == null) return ret;
 
@@ -42,17 +42,17 @@ public class ScheduleHelper {
             ret = scheduleBulletin.submitScheduleAndJobs(schedule, newJobs);
 
         } catch (JsonProcessingException e) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_FATAL_VALIDATION_EXCEPTION, e.getMessage());
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_FATAL_VALIDATION_EXCEPTION, e.getMessage());
         } catch (Exception e) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_RETRY_EXCEPTION, e.getMessage());
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_RETRY_EXCEPTION, e.getMessage());
         } finally {
             try {
                 scheduleBulletin.unlock(lock);
             } catch (Exception e) {
-                TumblerExceptionBuilder.throwTumblerException(
-                        TumblerErrorEnum.TUMBLER_RETRY_EXCEPTION, e.getMessage());
+                TcExceptionBuilder.throwTumblerException(
+                        TcErrorEnum.TUMBLER_RETRY_EXCEPTION, e.getMessage());
             }
         }
         return ret;
@@ -60,13 +60,13 @@ public class ScheduleHelper {
 
     // -----
 
-    public List<Schedule> readAllSchedules() throws TumblerException {
+    public List<Schedule> readAllSchedules() throws TcException {
         List<Schedule> ret = new ArrayList<>();
         try {
             Map<String, String> pairs = scheduleBulletin.readAllSchedules();
             ret = JsonUtil.parseSchedules(pairs.values());
         } catch (Exception e) {
-            TumblerExceptionBuilder.throwEtcdRetryableException(e);
+            TcExceptionBuilder.throwEtcdRetryableException(e);
         }
         return ret;
     }

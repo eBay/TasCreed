@@ -3,7 +3,7 @@ package com.ebay.magellan.tascreed.core.infra.controller;
 import com.ebay.magellan.tascreed.core.domain.job.Job;
 import com.ebay.magellan.tascreed.core.domain.request.JobRequest;
 import com.ebay.magellan.tascreed.core.infra.jobserver.JobServer;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class JobController  {
     // -----
 
     @PostMapping("")
-    public Job submitJob(@Valid @RequestBody JobRequest jr) throws TumblerException {
+    public Job submitJob(@Valid @RequestBody JobRequest jr) throws TcException {
         Job job = jobServer.submitJobRequest(jr);
         return job;
     }
@@ -35,7 +35,7 @@ public class JobController  {
     // -----
 
     @PostMapping("/update")
-    public Job updateAliveJob(@Valid @RequestBody JobRequest jr) throws TumblerException {
+    public Job updateAliveJob(@Valid @RequestBody JobRequest jr) throws TcException {
         Job job = jobServer.updateAliveJob(jr);
         return job;
     }
@@ -43,7 +43,7 @@ public class JobController  {
     // -----
 
     @PostMapping("/retry")
-    public Job retryAliveErrorJob(@Valid @RequestBody JobRequest jr) throws TumblerException {
+    public Job retryAliveErrorJob(@Valid @RequestBody JobRequest jr) throws TcException {
         Job job = jobServer.retryAliveErrorJob(jr);
         return job;
     }

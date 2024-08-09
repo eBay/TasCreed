@@ -1,6 +1,6 @@
 package com.ebay.magellan.tascreed.depend.common.util;
 
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public class ThreadUtilTest {
     }
 
     @Test
-    public void invokeAllThreadsTest() throws TumblerException {
+    public void invokeAllThreadsTest() throws TcException {
         ExecutorService executorService = Executors.newFixedThreadPool(2);
         List<Callable<Boolean>> threads = new ArrayList<>();
         Callable<Boolean> callable1 = () -> true;

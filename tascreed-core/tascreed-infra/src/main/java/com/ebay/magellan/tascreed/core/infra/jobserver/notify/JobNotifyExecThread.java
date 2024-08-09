@@ -27,10 +27,10 @@ import com.ebay.magellan.tascreed.core.infra.repo.JobDefineRepo;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.JobBulletin;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.TaskBulletin;
 import com.ebay.magellan.tascreed.depend.common.collection.GeneralDataListMap;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerErrorEnum;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerExceptionBuilder;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.exception.TcErrorEnum;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcExceptionBuilder;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import com.ebay.magellan.tascreed.depend.common.msg.MsgState;
 import com.ebay.magellan.tascreed.depend.common.retry.RetryBackoffStrategy;
 import com.ebay.magellan.tascreed.depend.common.retry.RetryCounter;
@@ -85,7 +85,7 @@ public class JobNotifyExecThread implements Runnable {
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
-    private TumblerLogger logger;
+    private TcLogger logger;
 
     @Override
     public void run() {
@@ -160,7 +160,7 @@ public class JobNotifyExecThread implements Runnable {
 
     // -----
 
-    JobsContext buildJobsContext(JobMsgState jms) throws TumblerException {
+    JobsContext buildJobsContext(JobMsgState jms) throws TcException {
         Map<String, Job> jobMap = new HashMap<>();
         try {
             if (jms.isAll()) {
@@ -182,8 +182,8 @@ public class JobNotifyExecThread implements Runnable {
                 }
             }
         } catch (Exception e) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_RETRY_EXCEPTION, e.getMessage());
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_RETRY_EXCEPTION, e.getMessage());
         }
         return JobsContext.init(jobMap);
     }
@@ -233,7 +233,7 @@ public class JobNotifyExecThread implements Runnable {
                             } else {
                                 logger.warn(THIS_CLASS_NAME, String.format("update job %s failed", id));
                             }
-                        } catch (TumblerException e) {
+                        } catch (TcException e) {
                             logger.warn(THIS_CLASS_NAME, String.format(
                                     "Exception encountered when update job %s: %s", id, e.getMessage()));
                         }
@@ -253,7 +253,7 @@ public class JobNotifyExecThread implements Runnable {
                 }
 
                 success = true;
-            } catch (TumblerException e) {
+            } catch (TcException e) {
                 success = false;
                 if (e.isRetry()) {
                     retryCounter.grow();
@@ -273,14 +273,14 @@ public class JobNotifyExecThread implements Runnable {
         }
     }
 
-    List<Task> fetchAllDoneTasks() throws TumblerException {
+    List<Task> fetchAllDoneTasks() throws TcException {
         List<Task> tasks = new ArrayList<>();
         try {
             Map<String, String> map = taskBulletin.readAllDoneTasks();
             tasks = JsonUtil.parseTasks(map.values());
         } catch (Exception e) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_RETRY_EXCEPTION, e.getMessage());
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_RETRY_EXCEPTION, e.getMessage());
         }
         return tasks;
     }
@@ -331,7 +331,7 @@ public class JobNotifyExecThread implements Runnable {
                                 logger.warn(THIS_CLASS_NAME, String.format(
                                         "create tasks for job %s failed", id));
                             }
-                        } catch (TumblerException e) {
+                        } catch (TcException e) {
                             logger.warn(THIS_CLASS_NAME, String.format(
                                     "Exception encountered when create tasks for job %s: %s", id, e.getMessage()));
                         }
@@ -341,7 +341,7 @@ public class JobNotifyExecThread implements Runnable {
                 }
 
                 success = true;
-            } catch (TumblerException e) {
+            } catch (TcException e) {
                 success = false;
                 if (e.isRetry()) {
                     retryCounter.grow();

@@ -11,10 +11,10 @@ import com.ebay.magellan.tascreed.core.domain.task.Task;
 import com.ebay.magellan.tascreed.core.domain.task.TaskViews;
 import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.TaskBulletin;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerErrorEnum;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerExceptionBuilder;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.exception.TcErrorEnum;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcExceptionBuilder;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import com.ebay.magellan.tascreed.depend.ext.etcd.constant.EtcdConstants;
 import com.ebay.magellan.tascreed.depend.ext.etcd.lock.EtcdLock;
 import com.ebay.magellan.tascreed.depend.ext.etcd.util.EtcdUtil;
@@ -35,7 +35,7 @@ public class TaskEtcdBulletin extends BaseOccupyEtcdBulletin implements TaskBull
     public TaskEtcdBulletin(TumblerKeys tumblerKeys,
                             EtcdConstants etcdConstants,
                             EtcdUtil etcdUtil,
-                            TumblerLogger logger) {
+                            TcLogger logger) {
         super(tumblerKeys, etcdConstants, etcdUtil, logger);
     }
 
@@ -58,12 +58,12 @@ public class TaskEtcdBulletin extends BaseOccupyEtcdBulletin implements TaskBull
         return tumblerKeys.getTaskAdoptionKey(task.getJobName(), task.getTrigger(), task.getTaskName());
     }
 
-    public String checkTaskAdoption(Task task) throws TumblerException {
+    public String checkTaskAdoption(Task task) throws TcException {
         try {
             String key = getTaskAdoptionKey(task);
             return etcdUtil.getSingleValue(key);
         } catch (Exception e) {
-            TumblerExceptionBuilder.throwEtcdRetryableException(e);
+            TcExceptionBuilder.throwEtcdRetryableException(e);
         }
         return null;
     }
@@ -75,15 +75,15 @@ public class TaskEtcdBulletin extends BaseOccupyEtcdBulletin implements TaskBull
     // -----
 
     public boolean moveTodoTask2DoneTask(Task task, String adoptionValue,
-                                         boolean withError) throws TumblerException {
+                                         boolean withError) throws TcException {
         if (task == null) return false;
 
         String value = null;
         try {
             value = task.toJson(TaskViews.TASK_DONE.class);
         } catch (JsonProcessingException e) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_FATAL_VALIDATION_EXCEPTION, e.getMessage());
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_FATAL_VALIDATION_EXCEPTION, e.getMessage());
         }
         if (StringUtils.isBlank(value)) return false;
 
@@ -95,15 +95,15 @@ public class TaskEtcdBulletin extends BaseOccupyEtcdBulletin implements TaskBull
         try {
             lock = etcdUtil.lock(taskUpdateLock);
             success = moveTodoTask2DoneTaskImpl(task, value, adoptionValue, withError);
-        } catch (TumblerException e) {
+        } catch (TcException e) {
             throw e;
         } catch (Exception e) {
-            TumblerExceptionBuilder.throwEtcdRetryableException(e);
+            TcExceptionBuilder.throwEtcdRetryableException(e);
         } finally {
             try {
                 etcdUtil.unlock(lock);
             } catch (Exception e) {
-                TumblerExceptionBuilder.throwEtcdRetryableException(e);
+                TcExceptionBuilder.throwEtcdRetryableException(e);
             }
         }
 
@@ -163,15 +163,15 @@ public class TaskEtcdBulletin extends BaseOccupyEtcdBulletin implements TaskBull
 
     // -----
 
-    public boolean updateTodoTask(Task task, String adoptionValue) throws TumblerException {
+    public boolean updateTodoTask(Task task, String adoptionValue) throws TcException {
         if (task == null) return false;
 
         String value = null;
         try {
             value = task.toJson(TaskViews.TASK_TODO.class);
         } catch (JsonProcessingException e) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_FATAL_VALIDATION_EXCEPTION, e.getMessage());
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_FATAL_VALIDATION_EXCEPTION, e.getMessage());
         }
         if (StringUtils.isBlank(value)) return false;
 
@@ -183,15 +183,15 @@ public class TaskEtcdBulletin extends BaseOccupyEtcdBulletin implements TaskBull
         try {
             lock = etcdUtil.lock(taskUpdateLock);
             success = updateTodoTaskImpl(task, value, adoptionValue);
-        } catch (TumblerException e) {
+        } catch (TcException e) {
             throw e;
         } catch (Exception e) {
-            TumblerExceptionBuilder.throwEtcdRetryableException(e);
+            TcExceptionBuilder.throwEtcdRetryableException(e);
         } finally {
             try {
                 etcdUtil.unlock(lock);
             } catch (Exception e) {
-                TumblerExceptionBuilder.throwEtcdRetryableException(e);
+                TcExceptionBuilder.throwEtcdRetryableException(e);
             }
         }
 

@@ -1,7 +1,7 @@
 package com.ebay.magellan.tascreed.depend.common.cache;
 
 import com.ebay.magellan.tascreed.depend.common.cache.func.CheckedFunction;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +45,7 @@ public class CacheMap<K, V> {
         return true;
     }
 
-    synchronized boolean trySetKeyValue(K key, boolean forceRefresh) throws TumblerException {
+    synchronized boolean trySetKeyValue(K key, boolean forceRefresh) throws TcException {
         if (needSetKeyValue(key, forceRefresh)) {
             return setKeyValue(key, valueFunction.apply(key));
         }
@@ -57,7 +57,7 @@ public class CacheMap<K, V> {
         return forceRefresh || cv == null || (cv != null && cv.needRefresh());
     }
 
-    public CacheValueResp<V> getCacheValue(K key, boolean forceRefresh) throws TumblerException {
+    public CacheValueResp<V> getCacheValue(K key, boolean forceRefresh) throws TcException {
         if (key == null) return CacheValueResp.empty();
         boolean refreshed = false;
         if (needSetKeyValue(key, forceRefresh)) {
@@ -68,7 +68,7 @@ public class CacheMap<K, V> {
         return CacheValueResp.of(cv.getValue(), refreshed);
     }
 
-    public CacheValueResp<V> getCacheValue(K key) throws TumblerException {
+    public CacheValueResp<V> getCacheValue(K key) throws TcException {
         return getCacheValue(key, false);
     }
 

@@ -1,12 +1,12 @@
 package com.ebay.magellan.tascreed.depend.common.cache.func;
 
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
 
 import java.util.Objects;
 
 @FunctionalInterface
 public interface CheckedFunction<T, R> {
-    R apply(T t) throws TumblerException;
+    R apply(T t) throws TcException;
 
     default <V> CheckedFunction<V, R> compose(CheckedFunction<? super V, ? extends T> before) {
         Objects.requireNonNull(before);

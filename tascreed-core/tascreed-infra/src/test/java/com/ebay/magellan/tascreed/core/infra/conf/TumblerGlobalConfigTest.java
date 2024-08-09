@@ -4,7 +4,7 @@ import com.ebay.magellan.tascreed.core.domain.ban.BanLevelEnum;
 import com.ebay.magellan.tascreed.core.infra.constant.TumblerConstants;
 import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.ConfigBulletin;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +28,7 @@ public class TumblerGlobalConfigTest {
     @Mock
     private ConfigBulletin configBulletin;
     @Mock
-    private TumblerLogger logger;
+    private TcLogger logger;
     @Mock
     private TumblerKeys tumblerKeys;
     @Mock

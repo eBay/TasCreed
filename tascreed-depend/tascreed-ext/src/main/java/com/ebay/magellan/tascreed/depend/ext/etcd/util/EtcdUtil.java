@@ -6,9 +6,9 @@ import io.etcd.jetcd.kv.PutResponse;
 import io.etcd.jetcd.lease.LeaseKeepAliveResponse;
 import io.etcd.jetcd.lease.LeaseRevokeResponse;
 import io.etcd.jetcd.options.PutOption;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerErrorEnum;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerExceptionBuilder;
+import com.ebay.magellan.tascreed.depend.common.exception.TcErrorEnum;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcExceptionBuilder;
 import com.ebay.magellan.tascreed.depend.ext.etcd.lock.EtcdLock;
 
 import java.nio.charset.Charset;
@@ -76,17 +76,17 @@ public interface EtcdUtil {
     // -----
 
     // put key value with default option
-    default void putKeyValue(String key, String value) throws TumblerException {
+    default void putKeyValue(String key, String value) throws TcException {
         putKeyValue(key, value, PutOption.DEFAULT);
     }
 
     // put key value with option
-    default void putKeyValue(String key, String value, PutOption option) throws TumblerException {
+    default void putKeyValue(String key, String value, PutOption option) throws TcException {
         try {
             put(key, value, option).get();
         } catch (InterruptedException | ExecutionException e) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_NON_RETRY_EXCEPTION,
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_NON_RETRY_EXCEPTION,
                     String.format("EtcdUtil putKeyValue error: %s", e.getMessage()));
         }
     }

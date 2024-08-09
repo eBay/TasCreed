@@ -1,6 +1,6 @@
 package com.ebay.magellan.tascreed.depend.ext.es.util;
 
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
 import com.ebay.magellan.tascreed.depend.ext.es.doc.DocKey;
 import com.ebay.magellan.tascreed.depend.ext.es.doc.DocValue;
 
@@ -12,12 +12,12 @@ public interface EsUtil {
     /**
      * get doc value from es
      */
-    DocValue getDocValue(DocKey docKey) throws TumblerException, UnsupportedEncodingException;
+    DocValue getDocValue(DocKey docKey) throws TcException, UnsupportedEncodingException;
 
     /**
      * put a doc into es
      */
-    void syncPutDoc(DocKey docKey, DocValue docValue) throws TumblerException, UnsupportedEncodingException;
+    void syncPutDoc(DocKey docKey, DocValue docValue) throws TcException, UnsupportedEncodingException;
 
     /**
      * put docs in other threads, async with main thread

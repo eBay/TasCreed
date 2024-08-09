@@ -14,7 +14,7 @@ import com.ebay.magellan.tascreed.core.domain.task.Task;
 import com.ebay.magellan.tascreed.core.domain.task.TaskResult;
 import com.ebay.magellan.tascreed.core.infra.help.TestRepo;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.JobBulletin;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -37,7 +37,7 @@ public class JobHelperTest {
     private JobBulletin jobBulletin;
 
     @Mock
-    private TumblerLogger logger;
+    private TcLogger logger;
 
     private JobBuilder jobBuilder = new JobBuilder();
     private TaskBuilder taskBuilder = new TaskBuilder();

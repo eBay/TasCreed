@@ -8,10 +8,10 @@ import com.ebay.magellan.tascreed.core.domain.state.StepStateEnum;
 import com.ebay.magellan.tascreed.core.domain.task.Task;
 import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.JobBulletin;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerErrorEnum;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerExceptionBuilder;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.exception.TcErrorEnum;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcExceptionBuilder;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import com.ebay.magellan.tascreed.depend.common.util.DateUtil;
 import com.ebay.magellan.tascreed.depend.ext.etcd.lock.EtcdLock;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -37,12 +37,12 @@ public class JobHelper {
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
-    private TumblerLogger logger;
+    private TcLogger logger;
 
     public boolean submitJobWithTasks(Job job,
                                       List<Task> newTasks,
                                       List<Task> oldDoneTasks,
-                                      List<Task> oldErrorTasks) throws TumblerException {
+                                      List<Task> oldErrorTasks) throws TcException {
         boolean ret = false;
         if (job == null) return ret;
 
@@ -56,17 +56,17 @@ public class JobHelper {
             ret = jobBulletin.submitJobAndTasks(job, newTasks, oldDoneTasks, oldErrorTasks);
 
         } catch (JsonProcessingException e) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_FATAL_VALIDATION_EXCEPTION, e.getMessage());
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_FATAL_VALIDATION_EXCEPTION, e.getMessage());
         } catch (Exception e) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_RETRY_EXCEPTION, e.getMessage());
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_RETRY_EXCEPTION, e.getMessage());
         } finally {
             try {
                 jobBulletin.unlock(lock);
             } catch (Exception e) {
-                TumblerExceptionBuilder.throwTumblerException(
-                        TumblerErrorEnum.TUMBLER_RETRY_EXCEPTION, e.getMessage());
+                TcExceptionBuilder.throwTumblerException(
+                        TcErrorEnum.TUMBLER_RETRY_EXCEPTION, e.getMessage());
             }
         }
         return ret;

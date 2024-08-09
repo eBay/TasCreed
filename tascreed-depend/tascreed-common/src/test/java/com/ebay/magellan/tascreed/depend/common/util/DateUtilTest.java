@@ -1,6 +1,6 @@
 package com.ebay.magellan.tascreed.depend.common.util;
 
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
 import org.junit.Test;
 
 import java.util.Date;
@@ -8,7 +8,7 @@ import java.util.Date;
 public class DateUtilTest {
 
     @Test
-    public void parseWithoutTimeZoneTest() throws TumblerException {
+    public void parseWithoutTimeZoneTest() throws TcException {
         Date date = DateUtil.parseWithoutTimeZone("2019-12-10T16:59:09.506Z");
         assert (date != null);
     }
@@ -22,7 +22,7 @@ public class DateUtilTest {
     }
 
     @Test
-    public void parseWithoutTimeTest() throws TumblerException {
+    public void parseWithoutTimeTest() throws TcException {
         Date date = DateUtil.parseWithoutTime("20191210");
         assert (date != null);
     }
@@ -35,7 +35,7 @@ public class DateUtilTest {
         assert (!dateStr.contains("-"));
     }
     @Test
-    public void parseWithUTCTest() throws TumblerException {
+    public void parseWithUTCTest() throws TcException {
         Date date = DateUtil.parseWithUTC("2019-12-10T16:59:09.506Z");
         assert (date != null);
     }
@@ -48,7 +48,7 @@ public class DateUtilTest {
     }
 
     @Test
-    public void parseCetDateTime() throws TumblerException {
+    public void parseCetDateTime() throws TcException {
         Date date = DateUtil.parseCetDateTime("2019-10-01");
         System.out.println(date);
         System.out.println(DateUtil.oneDayBefore(date));
@@ -56,7 +56,7 @@ public class DateUtilTest {
     }
 
     @Test
-    public void testReportFileDate() throws TumblerException {
+    public void testReportFileDate() throws TcException {
         Date date = DateUtil.parseCetDateTime("2019-10-01");
         System.out.println(date);
         System.out.println(DateUtil.formatReportFileNameDate(date));
@@ -64,13 +64,13 @@ public class DateUtilTest {
     }
 
     @Test
-    public void testString2Date() throws TumblerException {
+    public void testString2Date() throws TcException {
         Date date = DateUtil.string2Date("2020-01-02 22:30:00");
         System.out.println(date);
     }
 
     @Test
-    public void testToUTCDateString() throws TumblerException {
+    public void testToUTCDateString() throws TcException {
         String utcTime = DateUtil.toUTCDateString("2020-01-02 22:30:00");
         System.out.println(utcTime);
         assert(utcTime.equals("2020-01-03T05:30:00.000Z"));

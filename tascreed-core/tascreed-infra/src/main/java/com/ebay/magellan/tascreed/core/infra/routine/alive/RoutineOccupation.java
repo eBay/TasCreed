@@ -2,7 +2,7 @@ package com.ebay.magellan.tascreed.core.infra.routine.alive;
 
 import com.ebay.magellan.tascreed.core.domain.routine.Routine;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.RoutineBulletin;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang.StringUtils;
 
@@ -29,7 +29,7 @@ public class RoutineOccupation {
     }
 
     // check if the routine still occupied by current thread
-    private boolean routineStillOccupiedImpl() throws TumblerException {
+    private boolean routineStillOccupiedImpl() throws TcException {
         if (routineBulletin == null || occupiedRoutine == null) return false;
         String val = routineBulletin.checkRoutineAdoption(occupiedRoutine);
         return StringUtils.equals(val, workerThreadName);

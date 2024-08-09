@@ -4,7 +4,7 @@ import com.ebay.magellan.tascreed.core.domain.duty.NodeDutyEnum;
 import com.ebay.magellan.tascreed.core.infra.conf.TumblerGlobalConfig;
 import com.ebay.magellan.tascreed.core.infra.duty.DutyHelper;
 import com.ebay.magellan.tascreed.core.infra.taskworker.heartbeat.TaskHeartBeatThreadPoolExecutor;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import com.ebay.magellan.tascreed.core.infra.constant.TumblerConstants;
 import com.ebay.magellan.tascreed.core.infra.taskworker.TaskWorkerThreadFactory;
 import com.ebay.magellan.tascreed.core.infra.taskworker.TaskWorkerThreadPoolExecutor;
@@ -38,7 +38,7 @@ public class TaskWatcherThread implements Runnable {
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
-    TumblerLogger logger;
+    TcLogger logger;
 
     @Override
     public void run() {

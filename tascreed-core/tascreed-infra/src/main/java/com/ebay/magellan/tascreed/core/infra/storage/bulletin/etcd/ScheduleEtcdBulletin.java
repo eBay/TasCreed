@@ -10,7 +10,7 @@ import com.ebay.magellan.tascreed.core.domain.job.Job;
 import com.ebay.magellan.tascreed.core.domain.schedule.Schedule;
 import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.ScheduleBulletin;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import com.ebay.magellan.tascreed.depend.ext.etcd.constant.EtcdConstants;
 import com.ebay.magellan.tascreed.depend.ext.etcd.util.EtcdUtil;
 import org.apache.commons.collections4.CollectionUtils;
@@ -33,7 +33,7 @@ public class ScheduleEtcdBulletin extends BaseEtcdBulletin implements ScheduleBu
     public ScheduleEtcdBulletin(TumblerKeys tumblerKeys,
                                 EtcdConstants etcdConstants,
                                 EtcdUtil etcdUtil,
-                                TumblerLogger logger) {
+                                TcLogger logger) {
         super(tumblerKeys, etcdConstants, etcdUtil, logger);
     }
 

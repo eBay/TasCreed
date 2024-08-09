@@ -7,7 +7,7 @@ import com.ebay.magellan.tascreed.core.infra.duty.DutyHelper;
 import com.ebay.magellan.tascreed.core.infra.routine.RoutineThreadFactory;
 import com.ebay.magellan.tascreed.core.infra.routine.RoutineThreadPoolExecutor;
 import com.ebay.magellan.tascreed.core.infra.routine.heartbeat.RoutineHeartBeatThreadPoolExecutor;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -38,7 +38,7 @@ public class RoutineWatcherThread implements Runnable {
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
-    TumblerLogger logger;
+    TcLogger logger;
 
     @Override
     public void run() {

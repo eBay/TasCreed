@@ -3,7 +3,7 @@ package com.ebay.magellan.tascreed.core.infra.executor.help;
 import com.ebay.magellan.tascreed.core.domain.state.TaskStateEnum;
 import com.ebay.magellan.tascreed.core.domain.task.TaskResult;
 import com.ebay.magellan.tascreed.core.infra.executor.CheckpointTaskExecutor;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
 
 public class TestCpExecutor extends CheckpointTaskExecutor<TestCheckpoint> {
     int target = 10;
@@ -29,13 +29,13 @@ public class TestCpExecutor extends CheckpointTaskExecutor<TestCheckpoint> {
     }
 
     @Override
-    protected void initImpl() throws TumblerException {
+    protected void initImpl() throws TcException {
         initCheckpoint();
         initProgression();
     }
 
     @Override
-    protected TaskResult executeRoundImpl() throws TumblerException {
+    protected TaskResult executeRoundImpl() throws TcException {
         TaskResult result = new TaskResult();
 
         updateCheckpoint(1);
@@ -51,7 +51,7 @@ public class TestCpExecutor extends CheckpointTaskExecutor<TestCheckpoint> {
     }
 
     @Override
-    protected void closeImpl() throws TumblerException {
+    protected void closeImpl() throws TcException {
         ;
     }
 }

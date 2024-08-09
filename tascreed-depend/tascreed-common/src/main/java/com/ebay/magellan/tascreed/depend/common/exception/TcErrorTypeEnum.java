@@ -1,6 +1,6 @@
 package com.ebay.magellan.tascreed.depend.common.exception;
 
-public enum TumblerErrorTypeEnum {
+public enum TcErrorTypeEnum {
     IGNORE,
     RETRY,
     NON_RETRY,

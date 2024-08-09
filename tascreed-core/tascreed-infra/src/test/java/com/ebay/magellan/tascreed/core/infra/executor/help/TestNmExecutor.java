@@ -3,7 +3,7 @@ package com.ebay.magellan.tascreed.core.infra.executor.help;
 import com.ebay.magellan.tascreed.core.domain.state.TaskStateEnum;
 import com.ebay.magellan.tascreed.core.domain.task.TaskResult;
 import com.ebay.magellan.tascreed.core.infra.executor.NormalTaskExecutor;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
 
 public class TestNmExecutor extends NormalTaskExecutor {
     int count = 0;
@@ -13,19 +13,19 @@ public class TestNmExecutor extends NormalTaskExecutor {
     }
 
     @Override
-    protected void initImpl() throws TumblerException {
+    protected void initImpl() throws TcException {
         ;
     }
 
     @Override
-    protected TaskResult executeImpl() throws TumblerException {
+    protected TaskResult executeImpl() throws TcException {
         count++;
         TaskResult result = new TaskResult(TaskStateEnum.SUCCESS, "");
         return result;
     }
 
     @Override
-    protected void closeImpl() throws TumblerException {
+    protected void closeImpl() throws TcException {
         ;
     }
 }

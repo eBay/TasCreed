@@ -1,6 +1,6 @@
 package com.ebay.magellan.tascreed.depend.common.util;
 
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
 import org.joda.time.DateTime;
 
 import java.util.Date;
@@ -19,7 +19,7 @@ public class DateUtil {
 
     // -----
 
-    public static Date parseWithoutTimeZone(String date) throws TumblerException {
+    public static Date parseWithoutTimeZone(String date) throws TcException {
         return Date2Util.parseDate(date);
     }
 
@@ -27,21 +27,21 @@ public class DateUtil {
         return Date2Util.formatDate(date);
     }
 
-    public static Date parseWithoutTime(String date) throws TumblerException {
+    public static Date parseWithoutTime(String date) throws TcException {
         return Date2Util.parseDate(date, DatePattern.TIGHT_DATE_UTC);
     }
     public static String formatWithoutTime(Date date) {
         return Date2Util.formatDate(date, DatePattern.TIGHT_DATE_UTC);
     }
 
-    public static Date parseTightTimeUTC(String date) throws TumblerException {
+    public static Date parseTightTimeUTC(String date) throws TcException {
         return Date2Util.parseDate(date, DatePattern.TIGHT_TIME_UTC);
     }
     public static String formatTightTimeUTC(Date date) {
         return Date2Util.formatDate(date, DatePattern.TIGHT_TIME_UTC);
     }
 
-    public static Date parseWithUTC(String date) throws TumblerException {
+    public static Date parseWithUTC(String date) throws TcException {
         return Date2Util.parseDate(date, DatePattern.UTC);
     }
 
@@ -51,7 +51,7 @@ public class DateUtil {
 
     // -----
 
-    public static Date parseCetDateTime(String str) throws TumblerException {
+    public static Date parseCetDateTime(String str) throws TcException {
         return Date2Util.parseDate(str, DatePattern.REPORT_DATE_CET);
     }
 
@@ -90,12 +90,12 @@ public class DateUtil {
         return longLongAgo.toDate();
     }
 
-    public static String toUTCDateString(String date) throws TumblerException {
+    public static String toUTCDateString(String date) throws TcException {
         Date d = Date2Util.parseDate(date, DatePattern.TIME_MST);
         return Date2Util.formatDate(d, DatePattern.UTC);
     }
 
-    public static Date string2Date(String date) throws TumblerException {
+    public static Date string2Date(String date) throws TcException {
         return Date2Util.parseDate(date, DatePattern.TIME_MST);
     }
 

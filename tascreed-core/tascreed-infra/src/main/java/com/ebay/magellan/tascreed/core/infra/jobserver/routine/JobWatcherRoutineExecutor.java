@@ -4,10 +4,10 @@ import com.ebay.magellan.tascreed.core.infra.jobserver.msg.JobMsgItem;
 import com.ebay.magellan.tascreed.core.infra.jobserver.msg.JobMsgStatePool;
 import com.ebay.magellan.tascreed.core.infra.routine.annotation.RoutineExec;
 import com.ebay.magellan.tascreed.core.infra.routine.execute.NormalRoutineExecutor;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerErrorEnum;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerExceptionBuilder;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.exception.TcErrorEnum;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcExceptionBuilder;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -21,29 +21,29 @@ public class JobWatcherRoutineExecutor extends NormalRoutineExecutor {
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
-    private TumblerLogger logger;
+    private TcLogger logger;
 
     // -----
 
     @Override
-    protected void initImpl() throws TumblerException {
+    protected void initImpl() throws TcException {
         logger.info(THIS_CLASS_NAME, String.format(
                 "job watcher routine [%s] init done", routine.getFullName()));
     }
 
     @Override
-    protected void executeRoundImpl() throws TumblerException {
+    protected void executeRoundImpl() throws TcException {
         try {
             // update notify
             JobMsgStatePool.getInstance().addItem(JobMsgItem.refreshAll());
         } catch (Exception e) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_NON_RETRY_EXCEPTION, e.getMessage());
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_NON_RETRY_EXCEPTION, e.getMessage());
         }
     }
 
     @Override
-    protected void closeImpl() throws TumblerException {
+    protected void closeImpl() throws TcException {
         logger.info(THIS_CLASS_NAME, String.format(
                 "job watcher routine [%s] close done", routine.getFullName()));
     }

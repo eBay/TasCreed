@@ -4,9 +4,9 @@ import com.ebay.magellan.tascreed.core.domain.routine.Routine;
 import com.ebay.magellan.tascreed.core.infra.monitor.Metrics;
 import com.ebay.magellan.tascreed.core.infra.routine.alive.RoutineOccupation;
 import com.ebay.magellan.tascreed.core.infra.routine.context.RoutineTriggerContext;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerErrorEnum;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerExceptionBuilder;
+import com.ebay.magellan.tascreed.depend.common.exception.TcErrorEnum;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcExceptionBuilder;
 import lombok.Getter;
 
 @Getter
@@ -26,18 +26,18 @@ public abstract class RoutineExecutor {
 
     // -----
 
-    protected abstract void initImpl() throws TumblerException;
+    protected abstract void initImpl() throws TcException;
 
-    protected abstract void executeRoundImpl() throws TumblerException;
+    protected abstract void executeRoundImpl() throws TcException;
 
-    protected abstract void closeImpl() throws TumblerException;
+    protected abstract void closeImpl() throws TcException;
 
     // -----
 
-    protected void tryExecuteRoundImpl() throws TumblerException {
+    protected void tryExecuteRoundImpl() throws TcException {
         try {
             executeRoundImpl();
-        } catch (TumblerException e) {
+        } catch (TcException e) {
             Metrics.reportExecutionExceptionCounter(e.getError());
             throw e;
         }
@@ -53,14 +53,14 @@ public abstract class RoutineExecutor {
 
     // -----
 
-    public final void init(Routine routine, RoutineOccupation routineOccupation) throws TumblerException {
+    public final void init(Routine routine, RoutineOccupation routineOccupation) throws TcException {
         this.routine = routine;
         this.routineOccupation = routineOccupation;
         this.routineTriggerContext.init();
         initImpl();
     }
 
-    public final void executeRound() throws TumblerException {
+    public final void executeRound() throws TcException {
         long st = System.currentTimeMillis();
 
         routineTriggerContext.trigger();
@@ -70,7 +70,7 @@ public abstract class RoutineExecutor {
         Metrics.routineRoundExecSummary.labels(routine.getFullName()).observe(et - st);
     }
 
-    public final void close() throws TumblerException {
+    public final void close() throws TcException {
         closeImpl();
     }
 
@@ -89,13 +89,13 @@ public abstract class RoutineExecutor {
     /**
      * users can do mandatory check of routine occupation at any critical point,
      * and throw non-retryable exception if check fails
-     * @throws TumblerException if occupation check fails
+     * @throws TcException if occupation check fails
      */
-    protected void routineOccupationCheck() throws TumblerException {
+    protected void routineOccupationCheck() throws TcException {
         boolean occupied = routineStillOccupied();
         if (!occupied) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_NON_RETRY_HEARTBEAT_EXCEPTION,
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_NON_RETRY_HEARTBEAT_EXCEPTION,
                     "routine occupation check fails, will end task execution");
         }
     }

@@ -5,7 +5,7 @@ import com.ebay.magellan.tascreed.core.infra.executor.TaskExecutorRegistry;
 import com.ebay.magellan.tascreed.core.infra.routine.annotation.RoutineExec;
 import com.ebay.magellan.tascreed.core.infra.routine.annotation.RoutineExecs;
 import com.ebay.magellan.tascreed.core.infra.routine.repo.RoutineDefineRepo;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class RoutineExecutorRegistry {
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
-    private TumblerLogger logger;
+    private TcLogger logger;
 
     @Autowired
     private RoutineDefineRepo routineDefineRepo;

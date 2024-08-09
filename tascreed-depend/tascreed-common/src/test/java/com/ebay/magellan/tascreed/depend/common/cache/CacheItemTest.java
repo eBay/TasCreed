@@ -1,6 +1,6 @@
 package com.ebay.magellan.tascreed.depend.common.cache;
 
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -180,7 +180,7 @@ public class CacheItemTest {
     public void testCacheItem7() throws Exception {
         CacheItem<String> cacheItem = spy(
                 CacheItem.build(() -> {
-                    throw new TumblerException();
+                    throw new TcException();
                     }, -1L, true));
 
         verify(cacheItem, never()).setValue(any());

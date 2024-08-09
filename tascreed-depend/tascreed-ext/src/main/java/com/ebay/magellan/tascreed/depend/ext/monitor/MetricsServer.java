@@ -1,6 +1,6 @@
 package com.ebay.magellan.tascreed.depend.ext.monitor;
 
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import io.prometheus.client.exporter.HTTPServer;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ public class MetricsServer implements InitializingBean {
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
-    private TumblerLogger logger;
+    private TcLogger logger;
 
     @Override
     public void afterPropertiesSet() throws Exception {

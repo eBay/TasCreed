@@ -4,12 +4,12 @@ import com.ebay.magellan.tascreed.core.domain.state.partial.Progression;
 import com.ebay.magellan.tascreed.core.infra.executor.alive.TaskOccupation;
 import com.ebay.magellan.tascreed.core.infra.executor.progression.TaskExecProgression;
 import com.ebay.magellan.tascreed.core.infra.monitor.Metrics;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerErrorEnum;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcErrorEnum;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
 import com.ebay.magellan.tascreed.core.domain.state.TaskStateEnum;
 import com.ebay.magellan.tascreed.core.domain.task.Task;
 import com.ebay.magellan.tascreed.core.domain.task.TaskResult;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerExceptionBuilder;
+import com.ebay.magellan.tascreed.depend.common.exception.TcExceptionBuilder;
 import lombok.Getter;
 
 @Getter
@@ -27,27 +27,27 @@ public abstract class TaskExecutor {
 
     // -----
 
-    protected abstract void initImpl() throws TumblerException;
+    protected abstract void initImpl() throws TcException;
 
-    protected abstract TaskResult executeImpl() throws TumblerException;
-    protected abstract TaskResult executeRoundImpl() throws TumblerException;
+    protected abstract TaskResult executeImpl() throws TcException;
+    protected abstract TaskResult executeRoundImpl() throws TcException;
 
-    protected abstract void closeImpl() throws TumblerException;
+    protected abstract void closeImpl() throws TcException;
 
     // -----
 
-    protected TaskResult tryExecuteImpl() throws TumblerException {
+    protected TaskResult tryExecuteImpl() throws TcException {
         try {
             return executeImpl();
-        } catch (TumblerException e) {
+        } catch (TcException e) {
             Metrics.reportExecutionExceptionCounter(e.getError());
             throw e;
         }
     }
-    protected TaskResult tryExecuteRoundImpl() throws TumblerException {
+    protected TaskResult tryExecuteRoundImpl() throws TcException {
         try {
             return executeRoundImpl();
-        } catch (TumblerException e) {
+        } catch (TcException e) {
             Metrics.reportExecutionExceptionCounter(e.getError());
             throw e;
         }
@@ -55,14 +55,14 @@ public abstract class TaskExecutor {
 
     // -----
 
-    public final void init(Task task, TaskOccupation taskOccupation) throws TumblerException {
+    public final void init(Task task, TaskOccupation taskOccupation) throws TcException {
         this.task = task;
         this.taskOccupation = taskOccupation;
         this.progression = new TaskExecProgression();
         initImpl();
     }
 
-    public final void execute() throws TumblerException {
+    public final void execute() throws TcException {
         TaskStateEnum curState = task.getTaskState();
         if (curState.isUndone()) {
             TaskResult result = tryExecuteImpl();
@@ -70,7 +70,7 @@ public abstract class TaskExecutor {
         }
     }
 
-    public final void executeRound() throws TumblerException {
+    public final void executeRound() throws TcException {
         TaskStateEnum curState = task.getTaskState();
         if (curState.isUndone()) {
             TaskResult result = tryExecuteRoundImpl();
@@ -78,7 +78,7 @@ public abstract class TaskExecutor {
         }
     }
 
-    public final void close() throws TumblerException {
+    public final void close() throws TcException {
         closeImpl();
     }
 
@@ -104,13 +104,13 @@ public abstract class TaskExecutor {
     /**
      * users can do mandatory check of task occupation at any critical point,
      * and throw non-retryable exception if check fails
-     * @throws TumblerException if occupation check fails
+     * @throws TcException if occupation check fails
      */
-    protected void taskOccupationCheck() throws TumblerException {
+    protected void taskOccupationCheck() throws TcException {
         boolean occupied = taskStillOccupied();
         if (!occupied) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_NON_RETRY_HEARTBEAT_EXCEPTION,
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_NON_RETRY_HEARTBEAT_EXCEPTION,
                     "task occupation check fails, will end task execution");
         }
     }

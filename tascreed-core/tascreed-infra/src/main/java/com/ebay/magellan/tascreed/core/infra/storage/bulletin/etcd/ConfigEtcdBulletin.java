@@ -2,7 +2,7 @@ package com.ebay.magellan.tascreed.core.infra.storage.bulletin.etcd;
 
 import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.ConfigBulletin;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import com.ebay.magellan.tascreed.depend.ext.etcd.constant.EtcdConstants;
 import com.ebay.magellan.tascreed.depend.ext.etcd.util.EtcdUtil;
 import org.springframework.stereotype.Component;
@@ -18,7 +18,7 @@ public class ConfigEtcdBulletin extends BaseEtcdBulletin implements ConfigBullet
     public ConfigEtcdBulletin(TumblerKeys tumblerKeys,
                               EtcdConstants etcdConstants,
                               EtcdUtil etcdUtil,
-                              TumblerLogger logger) {
+                              TcLogger logger) {
         super(tumblerKeys, etcdConstants, etcdUtil, logger);
     }
 

@@ -1,6 +1,6 @@
 package com.ebay.magellan.tascreed.core.infra.routine.execute;
 
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
 
 public abstract class NormalRoutineExecutor extends RoutineExecutor {
 
@@ -9,7 +9,7 @@ public abstract class NormalRoutineExecutor extends RoutineExecutor {
         return false;
     }
 
-    protected abstract void executeRoundImpl() throws TumblerException;
+    protected abstract void executeRoundImpl() throws TcException;
 
-    protected abstract void closeImpl() throws TumblerException;
+    protected abstract void closeImpl() throws TcException;
 }

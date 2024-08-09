@@ -3,7 +3,7 @@ package com.ebay.magellan.tascreed.core.infra.storage.archive;
 import com.ebay.magellan.tascreed.core.domain.task.Task;
 import com.ebay.magellan.tascreed.core.infra.constant.TumblerConstants;
 import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import com.ebay.magellan.tascreed.depend.ext.es.util.EsUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +33,7 @@ public class EsArchiveStorageTest {
     private EsUtil esUtil;
 
     @Mock
-    private TumblerLogger logger;
+    private TcLogger logger;
 
     @Before
     public void init() throws Exception {

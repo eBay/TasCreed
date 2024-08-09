@@ -2,7 +2,7 @@ package com.ebay.magellan.tascreed.core.infra.executor;
 
 import com.ebay.magellan.tascreed.core.infra.executor.help.TestCpExecutor;
 import com.ebay.magellan.tascreed.core.infra.executor.help.TestNmExecutor;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -19,7 +19,7 @@ public class TaskTaskExecRegistryTest {
     private TaskExecutorRegistry registry = new TaskExecutorRegistry();
 
     @Mock
-    private TumblerLogger logger;
+    private TcLogger logger;
 
     @Test
     public void testRegisterTaskExecutor() {

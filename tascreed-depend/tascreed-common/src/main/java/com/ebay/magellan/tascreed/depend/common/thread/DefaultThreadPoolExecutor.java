@@ -1,6 +1,6 @@
 package com.ebay.magellan.tascreed.depend.common.thread;
 
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import com.ebay.magellan.tascreed.depend.common.util.ExceptionUtil;
 import com.ebay.magellan.tascreed.depend.common.util.HostUtil;
 import lombok.Getter;
@@ -12,10 +12,10 @@ public class DefaultThreadPoolExecutor<T extends Runnable> {
     private final String THIS_CLASS_NAME = this.getClass().getSimpleName();
     ThreadPoolExecutor delegate;
     int maxWorkerCount;
-    TumblerLogger logger;
+    TcLogger logger;
     volatile boolean closed = false;
 
-    public DefaultThreadPoolExecutor(int maxWorkerCount, ThreadFactory threadFactory, TumblerLogger logger) {
+    public DefaultThreadPoolExecutor(int maxWorkerCount, ThreadFactory threadFactory, TcLogger logger) {
         this.maxWorkerCount = maxWorkerCount;
         this.logger = logger;
         init(threadFactory);

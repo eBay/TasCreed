@@ -3,7 +3,7 @@ package com.ebay.magellan.tascreed.core.infra.repo;
 import com.ebay.magellan.tascreed.core.domain.define.JobDefine;
 import com.ebay.magellan.tascreed.core.infra.constant.TumblerConstants;
 import com.ebay.magellan.tascreed.core.infra.repo.read.JobDefineReader;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +27,7 @@ public class JobDefineReaderTest {
     private TumblerConstants tumblerConstants;
 
     @Mock
-    private TumblerLogger logger;
+    private TcLogger logger;
 
     @Before
     public void init() throws Exception {

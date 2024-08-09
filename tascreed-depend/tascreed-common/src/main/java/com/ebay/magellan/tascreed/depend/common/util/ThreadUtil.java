@@ -1,8 +1,8 @@
 package com.ebay.magellan.tascreed.depend.common.util;
 
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerErrorEnum;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerExceptionBuilder;
+import com.ebay.magellan.tascreed.depend.common.exception.TcErrorEnum;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
+import com.ebay.magellan.tascreed.depend.common.exception.TcExceptionBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,7 @@ public class ThreadUtil {
     }
 
     public static <T> List<T> invokeAllThreads(ExecutorService executorService, List<? extends Callable<T>> threads)
-            throws TumblerException {
+            throws TcException {
         List<T> results = new ArrayList<>();
         try {
             List<Future<T>> futures = executorService.invokeAll(threads);
@@ -28,8 +28,8 @@ public class ThreadUtil {
                 }
             }
         } catch (InterruptedException | ExecutionException e) {
-            TumblerExceptionBuilder.throwTumblerException(
-                    TumblerErrorEnum.TUMBLER_FATAL_EXCEPTION, e.getMessage());
+            TcExceptionBuilder.throwTumblerException(
+                    TcErrorEnum.TUMBLER_FATAL_EXCEPTION, e.getMessage());
         }
         return results;
     }

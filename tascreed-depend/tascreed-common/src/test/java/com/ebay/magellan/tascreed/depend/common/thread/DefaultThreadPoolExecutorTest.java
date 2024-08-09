@@ -1,6 +1,6 @@
 package com.ebay.magellan.tascreed.depend.common.thread;
 
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -13,7 +13,7 @@ import static org.junit.Assert.assertTrue;
 public class DefaultThreadPoolExecutorTest {
 
     @Mock
-    private TumblerLogger logger;
+    private TcLogger logger;
 
     private int counter = 0;
 

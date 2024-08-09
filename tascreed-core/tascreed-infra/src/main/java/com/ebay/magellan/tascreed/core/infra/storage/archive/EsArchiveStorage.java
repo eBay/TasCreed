@@ -7,8 +7,8 @@ import com.ebay.magellan.tascreed.core.domain.task.Task;
 import com.ebay.magellan.tascreed.core.domain.task.TaskInstKey;
 import com.ebay.magellan.tascreed.core.domain.util.JsonUtil;
 import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
-import com.ebay.magellan.tascreed.depend.common.exception.TumblerException;
-import com.ebay.magellan.tascreed.depend.common.logger.TumblerLogger;
+import com.ebay.magellan.tascreed.depend.common.exception.TcException;
+import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import com.ebay.magellan.tascreed.depend.ext.es.doc.*;
 import com.ebay.magellan.tascreed.depend.ext.es.util.EsUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -33,7 +33,7 @@ public class EsArchiveStorage implements ArchiveStorage {
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
-    private TumblerLogger logger;
+    private TcLogger logger;
 
     // -----
 
@@ -44,7 +44,7 @@ public class EsArchiveStorage implements ArchiveStorage {
     // -----
 
     private DocValue findJobFromEs(String name, String trigger)
-            throws TumblerException, UnsupportedEncodingException {
+            throws TcException, UnsupportedEncodingException {
         String jobKey = tumblerKeys.getJobKey(name, trigger);
         DocKey docKey = new DocKey(DocType.JOB, tumblerKeys.getTumblerConstants().getTumblerNamespace(), jobKey);
         return esUtil.getDocValue(docKey);
@@ -54,7 +54,7 @@ public class EsArchiveStorage implements ArchiveStorage {
 
     private void updateJobToEs(String key, String value,
                                String jobName, String trigger, String state)
-            throws TumblerException, UnsupportedEncodingException {
+            throws TcException, UnsupportedEncodingException {
         DocKey docKey = new DocKey(DocType.JOB, tumblerKeys.getTumblerConstants().getTumblerNamespace(), key);
         DocValue docValue = new DocValue(value, null);
         docValue.addAttr("jobName", jobName);
@@ -102,7 +102,7 @@ public class EsArchiveStorage implements ArchiveStorage {
     }
 
     private DocValue findTaskFromEs(String jobName, String trigger, String taskName)
-            throws TumblerException, UnsupportedEncodingException {
+            throws TcException, UnsupportedEncodingException {
         String taskKey = buildTaskEsKey(jobName, trigger, taskName);
         DocKey docKey = new DocKey(DocType.TASK, tumblerKeys.getTumblerConstants().getTumblerNamespace(), taskKey);
         return esUtil.getDocValue(docKey);
