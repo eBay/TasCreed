@@ -2,8 +2,8 @@ package com.ebay.magellan.tascreed.core.infra.ban;
 
 import com.ebay.magellan.tascreed.core.domain.ban.BanContext;
 import com.ebay.magellan.tascreed.core.domain.ban.BanLevelEnum;
-import com.ebay.magellan.tascreed.core.infra.conf.TumblerGlobalConfig;
-import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
+import com.ebay.magellan.tascreed.core.infra.conf.TcGlobalConfig;
+import com.ebay.magellan.tascreed.core.infra.constant.TcKeys;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.ConfigBulletin;
 import com.ebay.magellan.tascreed.depend.common.exception.TcErrorEnum;
 import com.ebay.magellan.tascreed.depend.common.exception.TcException;
@@ -16,10 +16,10 @@ import org.springframework.stereotype.Component;
 public class BanHelper {
 
     @Autowired
-    private TumblerKeys tumblerKeys;
+    private TcKeys tcKeys;
 
     @Autowired
-    private TumblerGlobalConfig tumblerGlobalConfig;
+    private TcGlobalConfig tcGlobalConfig;
 
     @Autowired
     private ConfigBulletin configBulletin;
@@ -27,7 +27,7 @@ public class BanHelper {
     // -----
 
     boolean enableBan() {
-        return tumblerKeys.getTumblerConstants().isBanEnable();
+        return tcKeys.getTcConstants().isBanEnable();
     }
 
     boolean banJobTarget(BanLevelEnum banLevel) {
@@ -45,20 +45,20 @@ public class BanHelper {
         try {
             banContext = new BanContext();
             if (banJobTarget(banLevel)) {
-                banContext.setBanGlobal(tumblerGlobalConfig.getBanGlobal(forceRefresh));
-                banContext.setBanJobDefines(tumblerGlobalConfig.getBanJobDefines(forceRefresh));
+                banContext.setBanGlobal(tcGlobalConfig.getBanGlobal(forceRefresh));
+                banContext.setBanJobDefines(tcGlobalConfig.getBanJobDefines(forceRefresh));
                 // if ban job submit, no need to read ban info on jobs
                 if (banLevel.covers(BanLevelEnum.JOB_SUBMIT)) {
-                    banContext.setBanJobs(tumblerGlobalConfig.getBanJobs(forceRefresh));
+                    banContext.setBanJobs(tcGlobalConfig.getBanJobs(forceRefresh));
                 }
             }
             if (banRoutineTarget(banLevel)) {
-                banContext.setBanRoutineDefines(tumblerGlobalConfig.getBanRoutineDefines(forceRefresh));
-                banContext.setBanRoutines(tumblerGlobalConfig.getBanRoutines(forceRefresh));
+                banContext.setBanRoutineDefines(tcGlobalConfig.getBanRoutineDefines(forceRefresh));
+                banContext.setBanRoutines(tcGlobalConfig.getBanRoutines(forceRefresh));
             }
         } catch (Exception e) {
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_NON_RETRY_EXCEPTION,
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_NON_RETRY_EXCEPTION,
                     String.format("buildBanContext error: %s", e.getMessage()), e);
         }
         return banContext;
@@ -71,7 +71,7 @@ public class BanHelper {
         if (banContext.isGlobalBanned(needToBanLevel)) return true;
         if (StringUtils.isNotBlank(jobName)) {
             // job define
-            String jobDefineBannedKey = tumblerKeys.getBanJobDefineKey(jobName);
+            String jobDefineBannedKey = tcKeys.getBanJobDefineKey(jobName);
             return banContext.isJobDefineBanned(jobDefineBannedKey, needToBanLevel);
         }
         return false;
@@ -84,12 +84,12 @@ public class BanHelper {
         if (banContext.isGlobalBanned(needToBanLevel)) return true;
         if (StringUtils.isNotBlank(jobName)) {
             // job define
-            String jobDefineBannedKey = tumblerKeys.getBanJobDefineKey(jobName);
+            String jobDefineBannedKey = tcKeys.getBanJobDefineKey(jobName);
             if (banContext.isJobDefineBanned(jobDefineBannedKey, needToBanLevel)) return true;
 
             if (StringUtils.isNotBlank(trigger)) {
                 // job
-                String jobBannedKey = tumblerKeys.getBanJobKey(jobName, trigger);
+                String jobBannedKey = tcKeys.getBanJobKey(jobName, trigger);
                 if (banContext.isJobBanned(jobBannedKey, needToBanLevel)) return true;
             }
         }
@@ -103,12 +103,12 @@ public class BanHelper {
         if (banContext.isGlobalBanned(needToBanLevel)) return true;
         if (StringUtils.isNotBlank(jobName)) {
             // job define
-            String jobDefineBannedKey = tumblerKeys.getBanJobDefineKey(jobName);
+            String jobDefineBannedKey = tcKeys.getBanJobDefineKey(jobName);
             if (banContext.isJobDefineBanned(jobDefineBannedKey, needToBanLevel)) return true;
 
             if (StringUtils.isNotBlank(trigger)) {
                 // job
-                String jobBannedKey = tumblerKeys.getBanJobKey(jobName, trigger);
+                String jobBannedKey = tcKeys.getBanJobKey(jobName, trigger);
                 if (banContext.isJobBanned(jobBannedKey, needToBanLevel)) return true;
             }
         }
@@ -122,12 +122,12 @@ public class BanHelper {
         BanLevelEnum needToBanLevel = BanLevelEnum.ROUTINE_OCCUPY;
         // routine define
         if (StringUtils.isNotBlank(routineName)) {
-            String routineDefineBannedKey = tumblerKeys.getBanRoutineDefineKey(routineName);
+            String routineDefineBannedKey = tcKeys.getBanRoutineDefineKey(routineName);
             if (banContext.isRoutineDefineBanned(routineDefineBannedKey, needToBanLevel)) return true;
         }
         // routine
         if (StringUtils.isNotBlank(routineFullName)) {
-            String routineBannedKey = tumblerKeys.getBanRoutineKey(routineFullName);
+            String routineBannedKey = tcKeys.getBanRoutineKey(routineFullName);
             if (banContext.isRoutineBanned(routineBannedKey, needToBanLevel)) return true;
         }
         return false;
@@ -140,12 +140,12 @@ public class BanHelper {
         BanLevelEnum needToBanLevel = BanLevelEnum.ROUTINE_EXEC;
         // routine define
         if (StringUtils.isNotBlank(routineName)) {
-            String routineDefineBannedKey = tumblerKeys.getBanRoutineDefineKey(routineName);
+            String routineDefineBannedKey = tcKeys.getBanRoutineDefineKey(routineName);
             if (banContext.isRoutineDefineBanned(routineDefineBannedKey, needToBanLevel)) return true;
         }
         // routine
         if (StringUtils.isNotBlank(routineFullName)) {
-            String routineBannedKey = tumblerKeys.getBanRoutineKey(routineFullName);
+            String routineBannedKey = tcKeys.getBanRoutineKey(routineFullName);
             if (banContext.isRoutineBanned(routineBannedKey, needToBanLevel)) return true;
         }
         return false;
@@ -154,30 +154,30 @@ public class BanHelper {
     // -----
 
     boolean bannable(BanLevelEnum banLevel) {
-        if (!tumblerKeys.getTumblerConstants().isBanEnable()) return false;
+        if (!tcKeys.getTcConstants().isBanEnable()) return false;
         if (!BanLevelEnum.bannable(banLevel)) return false;
         return true;
     }
 
     public boolean submitBanGlobal(BanLevelEnum banLevel) throws Exception {
         if (!bannable(banLevel)) return false;
-        configBulletin.updateConfig(tumblerKeys.buildBanGlobalKey(), banLevel.getName());
+        configBulletin.updateConfig(tcKeys.buildBanGlobalKey(), banLevel.getName());
         return true;
     }
     public boolean resumeBanGlobal() throws Exception {
-        configBulletin.deleteKeyAnyway(tumblerKeys.buildBanGlobalKey());
+        configBulletin.deleteKeyAnyway(tcKeys.buildBanGlobalKey());
         return true;
     }
 
     public boolean submitBanJobDefine(String jobDefineName, BanLevelEnum banLevel) throws Exception {
         if (!bannable(banLevel)) return false;
         if (StringUtils.isBlank(jobDefineName)) return false;
-        configBulletin.updateConfig(tumblerKeys.getBanJobDefineKey(jobDefineName), banLevel.getName());
+        configBulletin.updateConfig(tcKeys.getBanJobDefineKey(jobDefineName), banLevel.getName());
         return true;
     }
     public boolean deleteBanJobDefine(String jobDefineName) throws Exception {
         if (StringUtils.isBlank(jobDefineName)) return false;
-        String key = tumblerKeys.getBanJobDefineKey(jobDefineName);
+        String key = tcKeys.getBanJobDefineKey(jobDefineName);
         configBulletin.deleteKeyAnyway(key);
         return true;
     }
@@ -185,12 +185,12 @@ public class BanHelper {
     public boolean submitBanJob(String jobName, String trigger, BanLevelEnum banLevel) throws Exception {
         if (!bannable(banLevel)) return false;
         if (StringUtils.isBlank(jobName) || StringUtils.isBlank(trigger)) return false;
-        configBulletin.updateConfig(tumblerKeys.getBanJobKey(jobName, trigger), banLevel.getName());
+        configBulletin.updateConfig(tcKeys.getBanJobKey(jobName, trigger), banLevel.getName());
         return true;
     }
     public boolean deleteBanJob(String jobName, String trigger) throws Exception {
         if (StringUtils.isBlank(jobName) || StringUtils.isBlank(trigger)) return false;
-        String key = tumblerKeys.getBanJobKey(jobName, trigger);
+        String key = tcKeys.getBanJobKey(jobName, trigger);
         configBulletin.deleteKeyAnyway(key);
         return true;
     }
@@ -200,12 +200,12 @@ public class BanHelper {
     public boolean submitBanRoutineDefine(String routineName, BanLevelEnum banLevel) throws Exception {
         if (!bannable(banLevel)) return false;
         if (StringUtils.isBlank(routineName)) return false;
-        configBulletin.updateConfig(tumblerKeys.getBanRoutineDefineKey(routineName), banLevel.getName());
+        configBulletin.updateConfig(tcKeys.getBanRoutineDefineKey(routineName), banLevel.getName());
         return true;
     }
     public boolean deleteBanRoutineDefine(String routineName) throws Exception {
         if (StringUtils.isBlank(routineName)) return false;
-        String key = tumblerKeys.getBanRoutineDefineKey(routineName);
+        String key = tcKeys.getBanRoutineDefineKey(routineName);
         configBulletin.deleteKeyAnyway(key);
         return true;
     }
@@ -213,12 +213,12 @@ public class BanHelper {
     public boolean submitBanRoutine(String routineFullName, BanLevelEnum banLevel) throws Exception {
         if (!bannable(banLevel)) return false;
         if (StringUtils.isBlank(routineFullName)) return false;
-        configBulletin.updateConfig(tumblerKeys.getBanRoutineKey(routineFullName), banLevel.getName());
+        configBulletin.updateConfig(tcKeys.getBanRoutineKey(routineFullName), banLevel.getName());
         return true;
     }
     public boolean deleteBanRoutine(String routineFullName) throws Exception {
         if (StringUtils.isBlank(routineFullName)) return false;
-        String key = tumblerKeys.getBanRoutineKey(routineFullName);
+        String key = tcKeys.getBanRoutineKey(routineFullName);
         configBulletin.deleteKeyAnyway(key);
         return true;
     }

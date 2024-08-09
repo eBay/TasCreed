@@ -53,8 +53,8 @@ public class ScheduleWatcherRoutineExecutor extends NormalRoutineExecutor {
         try {
             triggerScheduleJobs();
         } catch (Exception e) {
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_NON_RETRY_EXCEPTION, e.getMessage());
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_NON_RETRY_EXCEPTION, e.getMessage());
         }
     }
 

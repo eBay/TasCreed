@@ -8,8 +8,8 @@ import java.util.Base64;
 
 public class UriBuilder {
 
-    private static String ES_JOB_INDEX_PREFIX = "tumbler_job_";
-    private static String ES_TASK_INDEX_PREFIX = "tumbler_task_";
+    private static String ES_JOB_INDEX_PREFIX = "tascreed_job_";
+    private static String ES_TASK_INDEX_PREFIX = "tascreed_task_";
 
     public static String base64Encode(String val) throws UnsupportedEncodingException {
         return Base64.getEncoder().encodeToString(val.getBytes("utf-8"));

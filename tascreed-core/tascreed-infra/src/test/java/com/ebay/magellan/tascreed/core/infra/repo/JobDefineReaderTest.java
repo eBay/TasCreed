@@ -1,7 +1,7 @@
 package com.ebay.magellan.tascreed.core.infra.repo;
 
 import com.ebay.magellan.tascreed.core.domain.define.JobDefine;
-import com.ebay.magellan.tascreed.core.infra.constant.TumblerConstants;
+import com.ebay.magellan.tascreed.core.infra.constant.TcConstants;
 import com.ebay.magellan.tascreed.core.infra.repo.read.JobDefineReader;
 import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import org.junit.Before;
@@ -24,7 +24,7 @@ public class JobDefineReaderTest {
     JobDefineReader reader = new JobDefineReader();
 
     @Mock
-    private TumblerConstants tumblerConstants;
+    private TcConstants tcConstants;
 
     @Mock
     private TcLogger logger;
@@ -33,8 +33,8 @@ public class JobDefineReaderTest {
     public void init() throws Exception {
         List<String> dirs = new ArrayList<>();
         dirs.add("jobDefine");
-        doReturn(dirs).when(tumblerConstants).getTumblerDefineDirs();
-        doReturn(true).when(tumblerConstants).isDefineGraphValidateEnable();
+        doReturn(dirs).when(tcConstants).getTcDefineDirs();
+        doReturn(true).when(tcConstants).isDefineGraphValidateEnable();
     }
 
     @Test

@@ -20,7 +20,7 @@ import java.util.Map;
  * mock EsUtil, using local RocksDB as storage, for testing purpose at local
  */
 @Component
-@ConditionalOnProperty(prefix = "tumbler", name = "es", havingValue = "disk", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "tascreed", name = "es", havingValue = "disk", matchIfMissing = true)
 public class DiskEsUtil implements EsUtil {
 
     private static final String THIS_CLASS_NAME = DiskEsUtil.class.getSimpleName();
@@ -60,8 +60,8 @@ public class DiskEsUtil implements EsUtil {
         } catch (Exception e) {
             String errMsg = String.format("getDocValue failed, key: %s, error: %s", key, e.getMessage());
             logger.error(THIS_CLASS_NAME, errMsg);
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_NON_RETRY_EXCEPTION, errMsg);
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_NON_RETRY_EXCEPTION, errMsg);
         }
         return ret;
     }
@@ -76,8 +76,8 @@ public class DiskEsUtil implements EsUtil {
         } catch (Exception e) {
             String errMsg = String.format("syncPutDoc failed, key: %s, value: %s, error: %s", key, docValue, e.getMessage());
             logger.error(THIS_CLASS_NAME, errMsg);
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_NON_RETRY_EXCEPTION, errMsg);
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_NON_RETRY_EXCEPTION, errMsg);
         }
     }
 

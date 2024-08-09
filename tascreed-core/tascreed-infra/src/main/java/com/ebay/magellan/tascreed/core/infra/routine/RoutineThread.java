@@ -6,7 +6,7 @@ import com.ebay.magellan.tascreed.core.domain.ban.BanLevelEnum;
 import com.ebay.magellan.tascreed.core.domain.duty.NodeDutyEnum;
 import com.ebay.magellan.tascreed.core.domain.routine.Routine;
 import com.ebay.magellan.tascreed.core.infra.ban.BanHelper;
-import com.ebay.magellan.tascreed.core.infra.conf.TumblerGlobalConfig;
+import com.ebay.magellan.tascreed.core.infra.conf.TcGlobalConfig;
 import com.ebay.magellan.tascreed.core.infra.duty.DutyHelper;
 import com.ebay.magellan.tascreed.core.infra.routine.execute.RoutineExecutor;
 import com.ebay.magellan.tascreed.core.infra.routine.execute.RoutineExecutorFactory;
@@ -43,7 +43,7 @@ public class RoutineThread implements Runnable {
     private RetryStrategy retryStrategyForProcess = RetryBackoffStrategy.newDefaultInstance();
 
     @Autowired
-    private TumblerGlobalConfig tumblerGlobalConfig;
+    private TcGlobalConfig tcGlobalConfig;
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
@@ -146,7 +146,7 @@ public class RoutineThread implements Runnable {
             }
         } catch (TcException e) {
             logger.error(THIS_CLASS_NAME,
-                    String.format("%s failed with Tumbler exception:\n%s", getThreadName(), ExceptionUtil.getStackTrace(e)));
+                    String.format("%s failed with TasCreed exception:\n%s", getThreadName(), ExceptionUtil.getStackTrace(e)));
         } catch (Exception e) {
             logger.error(THIS_CLASS_NAME,
                     String.format("%s failed with exception:\n%s", getThreadName(), ExceptionUtil.getStackTrace(e)));
@@ -170,7 +170,7 @@ public class RoutineThread implements Runnable {
         logger.info(THIS_CLASS_NAME,
                 String.format("%s trying to occupy a routine...", getThreadName()));
         RetryCounter retryCounter = RetryCounterFactory.buildRetryCounter(retryStrategyForOccupy);
-        while (tumblerGlobalConfig.isRoutineWatcherSwitchOn(true)) {
+        while (tcGlobalConfig.isRoutineWatcherSwitchOn(true)) {
             try {
                 occupiedRoutine = routineOccupyHelper.tryOccupyOneRoutine(getThreadName());
                 if (occupiedRoutine == null) {
@@ -206,8 +206,8 @@ public class RoutineThread implements Runnable {
     void buildRoutineExecutor() throws TcException {
         routineExecutor = routineExecutorFactory.buildRoutineExecutor(occupiedRoutine);
         if (routineExecutor == null) {
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_NON_RETRY_EXCEPTION,
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_NON_RETRY_EXCEPTION,
                     String.format("build routineExecutor for routine [%s] fails", occupiedRoutine.getRoutineName()));
         }
     }
@@ -226,8 +226,8 @@ public class RoutineThread implements Runnable {
             if (heartBeatThreadPoolExecutor.hasVacancy()) {
                 heartBeatThreadPoolExecutor.submit(heartBeatThread);
             } else {
-                TcExceptionBuilder.throwTumblerException(
-                        TcErrorEnum.TUMBLER_NON_RETRY_EXCEPTION,
+                TcExceptionBuilder.throwTcException(
+                        TcErrorEnum.TC_NON_RETRY_EXCEPTION,
                         String.format("routine [%s] fails to submit heart beat thread", occupyInfo.getOccupyKey()));
             }
         }
@@ -262,7 +262,7 @@ public class RoutineThread implements Runnable {
         routineStartUp();
 
         RetryCounter retryCounter = RetryCounterFactory.buildRetryCounter(retryStrategyForProcess);
-        while (isRoutineAlive() && tumblerGlobalConfig.isRoutineWatcherSwitchOn(false)) {
+        while (isRoutineAlive() && tcGlobalConfig.isRoutineWatcherSwitchOn(false)) {
             boolean success = false;
             try {
                 // execute
@@ -292,8 +292,8 @@ public class RoutineThread implements Runnable {
                 if (retryCounter.isAlive()) {
                     retryCounter.waitForNextRetry();
                 } else {
-                    TcExceptionBuilder.throwTumblerException(
-                            TcErrorEnum.TUMBLER_NON_RETRY_EXCEPTION,
+                    TcExceptionBuilder.throwTcException(
+                            TcErrorEnum.TC_NON_RETRY_EXCEPTION,
                             String.format("execute routine [%s] fails", occupiedRoutine.getFullName()));
                 }
             }
@@ -363,8 +363,8 @@ public class RoutineThread implements Runnable {
                     getThreadName(), occupiedRoutine.getFullName());
             logger.info(THIS_CLASS_NAME, msg);
         } else {
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_NON_RETRY_EXCEPTION,
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_NON_RETRY_EXCEPTION,
                     String.format("thread [%s] update routine [%s] checkpoint failed",
                             getThreadName(), occupiedRoutine.getFullName()));
         }

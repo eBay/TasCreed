@@ -6,10 +6,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Getter
-public class TumblerKeys {
+public class TcKeys {
 
     @Autowired
-    private TumblerConstants tumblerConstants;
+    private TcConstants tcConstants;
 
     // -----
 
@@ -24,33 +24,33 @@ public class TumblerKeys {
     // -----
 
     public String withNamespace(String key) {
-        return String.format(key, tumblerConstants.getTumblerNamespace());
+        return String.format(key, tcConstants.getTcNamespace());
     }
 
     // -----
 
     public String buildRoutineWatcherSwitchOnKey() {
-        return withNamespace(tumblerConstants.getRoutineWatcherSwitchOnKey());
+        return withNamespace(tcConstants.getRoutineWatcherSwitchOnKey());
     }
 
     public String buildTaskWatcherSwitchOnKey() {
-        return withNamespace(tumblerConstants.getTaskWatcherSwitchOnKey());
+        return withNamespace(tcConstants.getTaskWatcherSwitchOnKey());
     }
 
     public String buildMaxWorkerCountOverallKey() {
-        return withNamespace(tumblerConstants.getMaxWorkerCountOverallKey());
+        return withNamespace(tcConstants.getMaxWorkerCountOverallKey());
     }
 
     public String buildMaxWorkerCountPerHostKey() {
-        return withNamespace(tumblerConstants.getMaxWorkerCountPerHostKey());
+        return withNamespace(tcConstants.getMaxWorkerCountPerHostKey());
     }
 
     public String buildMaxRoutineCountOverallKey() {
-        return withNamespace(tumblerConstants.getMaxRoutineCountOverallKey());
+        return withNamespace(tcConstants.getMaxRoutineCountOverallKey());
     }
 
     public String buildMaxRoutineCountPerHostKey() {
-        return withNamespace(tumblerConstants.getMaxRoutineCountPerHostKey());
+        return withNamespace(tcConstants.getMaxRoutineCountPerHostKey());
     }
 
     // -----
@@ -81,71 +81,71 @@ public class TumblerKeys {
     // -----
 
     public String buildJobInfoPrefix() {
-        return withNamespace(tumblerConstants.getBulletinJobInfoPrefix());
+        return withNamespace(tcConstants.getBulletinJobInfoPrefix());
     }
     public String buildTaskInfoTodoPrefix() {
-        return withNamespace(tumblerConstants.getBulletinTaskInfoTodoPrefix());
+        return withNamespace(tcConstants.getBulletinTaskInfoTodoPrefix());
     }
     public String buildTaskInfoDonePrefix() {
-        return withNamespace(tumblerConstants.getBulletinTaskInfoDonePrefix());
+        return withNamespace(tcConstants.getBulletinTaskInfoDonePrefix());
     }
     public String buildTaskInfoErrorPrefix() {
-        return withNamespace(tumblerConstants.getBulletinTaskInfoErrorPrefix());
+        return withNamespace(tcConstants.getBulletinTaskInfoErrorPrefix());
     }
     public String buildTaskAdoptionPrefix() {
-        return withNamespace(tumblerConstants.getBulletinTaskAdoptionPrefix());
+        return withNamespace(tcConstants.getBulletinTaskAdoptionPrefix());
     }
     public String buildRoutineAdoptionPrefix() {
-        return withNamespace(tumblerConstants.getBulletinRoutineAdoptionPrefix());
+        return withNamespace(tcConstants.getBulletinRoutineAdoptionPrefix());
     }
     public String buildRoutineCheckpointPrefix() {
-        return withNamespace(tumblerConstants.getBulletinRoutineCheckpointPrefix());
+        return withNamespace(tcConstants.getBulletinRoutineCheckpointPrefix());
     }
     public String buildScheduleInfoPrefix() {
-        return withNamespace(tumblerConstants.getBulletinScheduleInfoPrefix());
+        return withNamespace(tcConstants.getBulletinScheduleInfoPrefix());
     }
 
     public String buildTaskAdoptionLock() {
-        return withNamespace(tumblerConstants.getBulletinTaskAdoptionLock());
+        return withNamespace(tcConstants.getBulletinTaskAdoptionLock());
     }
     public String buildJobUpdateLockPrefix() {
-        return withNamespace(tumblerConstants.getBulletinJobUpdateLockPrefix());
+        return withNamespace(tcConstants.getBulletinJobUpdateLockPrefix());
     }
     public String buildTaskUpdateLockPrefix() {
-        return withNamespace(tumblerConstants.getBulletinTaskUpdateLockPrefix());
+        return withNamespace(tcConstants.getBulletinTaskUpdateLockPrefix());
     }
     public String buildRoutineAdoptionLock() {
-        return withNamespace(tumblerConstants.getBulletinRoutineAdoptionLock());
+        return withNamespace(tcConstants.getBulletinRoutineAdoptionLock());
     }
     public String buildRoutineUpdateLockPrefix() {
-        return withNamespace(tumblerConstants.getBulletinRoutineUpdateLockPrefix());
+        return withNamespace(tcConstants.getBulletinRoutineUpdateLockPrefix());
     }
     public String buildScheduleUpdateLockPrefix() {
-        return withNamespace(tumblerConstants.getBulletinScheduleUpdateLockPrefix());
+        return withNamespace(tcConstants.getBulletinScheduleUpdateLockPrefix());
     }
 
     // -----
 
     public String buildBanGlobalKey() {
-        return withNamespace(tumblerConstants.getBanGlobalKey());
+        return withNamespace(tcConstants.getBanGlobalKey());
     }
     public String buildBanJobDefinePrefix() {
-        return withNamespace(tumblerConstants.getBanJobDefinePrefix());
+        return withNamespace(tcConstants.getBanJobDefinePrefix());
     }
     public String buildBanJobPrefix() {
-        return withNamespace(tumblerConstants.getBanJobPrefix());
+        return withNamespace(tcConstants.getBanJobPrefix());
     }
     public String buildBanRoutineDefinePrefix() {
-        return withNamespace(tumblerConstants.getBanRoutineDefinePrefix());
+        return withNamespace(tcConstants.getBanRoutineDefinePrefix());
     }
     public String buildBanRoutinePrefix() {
-        return withNamespace(tumblerConstants.getBanRoutinePrefix());
+        return withNamespace(tcConstants.getBanRoutinePrefix());
     }
 
     // -----
 
     public String buildDutyRulesGlobalKey() {
-        return withNamespace(tumblerConstants.getDutyRulesGlobalKey());
+        return withNamespace(tcConstants.getDutyRulesGlobalKey());
     }
 
     // -----

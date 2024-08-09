@@ -47,16 +47,16 @@ public class ScheduleServer {
     void validateSchedule(Schedule sch) throws TcException {
         String err = sch.validate();
         if (StringUtils.isNotBlank(err)) {
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_FATAL_JOB_EXCEPTION,
                     String.format("validate schedule fails: %s", err));
         }
 
         String jobName = sch.getJobRequest().getJobName();
         JobDefine jd = jobDefineRepo.getDefine(jobName);
         if (jd == null) {
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_FATAL_JOB_EXCEPTION,
                     String.format("validate schedule fails: job define %s not found", jobName));
         }
     }
@@ -105,8 +105,8 @@ public class ScheduleServer {
         // 1. find schedule
         Schedule schedule = findScheduleByName(name);
         if (schedule == null) {
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_FATAL_JOB_EXCEPTION,
                     String.format("schedule %s does not exist", name));
         }
 
@@ -121,8 +121,8 @@ public class ScheduleServer {
         try {
             success = scheduleHelper.submitScheduleWithJobs(schedule, null);
         } catch (TcException e) {
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_FATAL_JOB_EXCEPTION,
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_FATAL_JOB_EXCEPTION,
                     String.format("update schedule fails: %s", e.getMessage()), e);
         }
 

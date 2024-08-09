@@ -22,8 +22,8 @@ public class Date2Util {
         try {
             return datePattern.getFormatter().parseDateTime(s).toDate();
         } catch (IllegalArgumentException e) {
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_FATAL_VALIDATION_EXCEPTION, e.getMessage());
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_FATAL_VALIDATION_EXCEPTION, e.getMessage());
             return null;
         }
     }

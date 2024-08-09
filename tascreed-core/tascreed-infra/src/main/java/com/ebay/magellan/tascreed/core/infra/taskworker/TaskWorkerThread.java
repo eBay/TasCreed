@@ -4,7 +4,7 @@ import com.ebay.magellan.tascreed.core.domain.duty.NodeDutyEnum;
 import com.ebay.magellan.tascreed.core.domain.job.JobInstKey;
 import com.ebay.magellan.tascreed.core.domain.state.partial.TaskCheckpoint;
 import com.ebay.magellan.tascreed.core.domain.task.TaskResult;
-import com.ebay.magellan.tascreed.core.infra.conf.TumblerGlobalConfig;
+import com.ebay.magellan.tascreed.core.infra.conf.TcGlobalConfig;
 import com.ebay.magellan.tascreed.core.infra.duty.DutyHelper;
 import com.ebay.magellan.tascreed.core.infra.executor.alive.TaskOccupation;
 import com.ebay.magellan.tascreed.core.infra.jobserver.msg.JobMsgItem;
@@ -21,7 +21,7 @@ import com.ebay.magellan.tascreed.depend.common.retry.*;
 import com.ebay.magellan.tascreed.depend.common.util.DefaultValueUtil;
 import com.ebay.magellan.tascreed.depend.common.util.ExceptionUtil;
 import com.ebay.magellan.tascreed.depend.common.util.ThreadUtil;
-import com.ebay.magellan.tascreed.core.infra.constant.TumblerConstants;
+import com.ebay.magellan.tascreed.core.infra.constant.TcConstants;
 import com.ebay.magellan.tascreed.core.domain.occupy.OccupyInfo;
 import com.ebay.magellan.tascreed.core.domain.state.TaskStateEnum;
 import com.ebay.magellan.tascreed.core.domain.task.Task;
@@ -50,10 +50,10 @@ public class TaskWorkerThread implements Runnable {
     private RetryStrategy retryStrategyForWorker = RetryBackoffStrategy.newDefaultInstance();
 
     @Autowired
-    private TumblerConstants tumblerConstants;
+    private TcConstants tcConstants;
 
     @Autowired
-    private TumblerGlobalConfig tumblerGlobalConfig;
+    private TcGlobalConfig tcGlobalConfig;
 
     @Autowired
     private TaskExecutorFactory taskExecutorFactory;
@@ -151,7 +151,7 @@ public class TaskWorkerThread implements Runnable {
             }
         } catch (TcException e) {
             logger.error(THIS_CLASS_NAME,
-                    String.format("%s failed with Tumbler exception:\n%s", getThreadName(), ExceptionUtil.getStackTrace(e)));
+                    String.format("%s failed with TasCreed exception:\n%s", getThreadName(), ExceptionUtil.getStackTrace(e)));
         } catch (Exception e) {
             logger.error(THIS_CLASS_NAME,
                     String.format("%s failed with exception:\n%s", getThreadName(), ExceptionUtil.getStackTrace(e)));
@@ -175,7 +175,7 @@ public class TaskWorkerThread implements Runnable {
         logger.info(THIS_CLASS_NAME,
                 String.format("%s trying to occupy a task...", getThreadName()));
         RetryCounter retryCounter = RetryCounterFactory.buildRetryCounter(retryStrategyForOccupyPack);
-        while (tumblerGlobalConfig.isTaskWatcherSwitchOn(true)) {
+        while (tcGlobalConfig.isTaskWatcherSwitchOn(true)) {
             try {
                 occupiedTask = taskOccupyHelper.tryPickOneTask(getThreadName());
                 if (occupiedTask == null) {
@@ -211,8 +211,8 @@ public class TaskWorkerThread implements Runnable {
     void buildTaskExecutor() throws TcException {
         taskExecutor = taskExecutorFactory.buildTaskExecutor(occupiedTask);
         if (taskExecutor == null) {
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_NON_RETRY_EXCEPTION,
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_NON_RETRY_EXCEPTION,
                     String.format("build taskExecutor for step [%s] fails", occupiedTask.getStepName()));
         }
     }
@@ -231,8 +231,8 @@ public class TaskWorkerThread implements Runnable {
             if (heartBeatThreadPoolExecutor.hasVacancy()) {
                 heartBeatThreadPoolExecutor.submit(heartBeatThread);
             } else {
-                TcExceptionBuilder.throwTumblerException(
-                        TcErrorEnum.TUMBLER_NON_RETRY_EXCEPTION,
+                TcExceptionBuilder.throwTcException(
+                        TcErrorEnum.TC_NON_RETRY_EXCEPTION,
                         String.format("task [%s] fails to submit heart beat thread", occupyInfo.getOccupyKey()));
             }
         }
@@ -278,7 +278,7 @@ public class TaskWorkerThread implements Runnable {
         taskWorkerStartUp();
 
         RetryCounter retryCounter = RetryCounterFactory.buildRetryCounter(retryStrategyForWorker);
-        while (isTaskAlive() && tumblerGlobalConfig.isTaskWatcherSwitchOn(false)) {
+        while (isTaskAlive() && tcGlobalConfig.isTaskWatcherSwitchOn(false)) {
             boolean success = false;
             try {
                 // execute
@@ -313,8 +313,8 @@ public class TaskWorkerThread implements Runnable {
                 if (canRetry && retryCounter.isAlive()) {
                     retryCounter.waitForNextRetry();
                 } else {
-                    TcExceptionBuilder.throwTumblerException(
-                            TcErrorEnum.TUMBLER_NON_RETRY_EXCEPTION,
+                    TcExceptionBuilder.throwTcException(
+                            TcErrorEnum.TC_NON_RETRY_EXCEPTION,
                             String.format("execute task [%s] fails", occupiedTask.getTaskFullName()));
                 }
             }
@@ -374,8 +374,8 @@ public class TaskWorkerThread implements Runnable {
             logger.info(THIS_CLASS_NAME, String.format("task [%s] with state [%s] has cost %d ms",
                     occupiedTask.getTaskFullName(), occupiedTask.getTaskState().name(), timeInMs));
         } else {
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_NON_RETRY_EXCEPTION,
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_NON_RETRY_EXCEPTION,
                     String.format("thread [%s] update task [%s] state failed",
                             getThreadName(), occupiedTask.getTaskFullName()));
         }
@@ -422,7 +422,7 @@ public class TaskWorkerThread implements Runnable {
         // if exceeds max pick times, generate error result
         int maxPickTimes = DefaultValueUtil.intValue(
                 occupiedTask.getTaskAllConf().getMaxPickTimes(),
-                tumblerConstants.getTaskDefaultMaxPickTimes());
+                tcConstants.getTaskDefaultMaxPickTimes());
         if (maxPickTimes >= 0 && pickedTimes > maxPickTimes) {
             // end task with error result
             endTaskWithErrorResult(String.format("picked times %d exceeds max pick times %d", pickedTimes, maxPickTimes));
@@ -548,8 +548,8 @@ public class TaskWorkerThread implements Runnable {
                     getThreadName(), occupiedTask.getTaskFullName());
             logger.info(THIS_CLASS_NAME, msg);
         } else {
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_NON_RETRY_EXCEPTION,
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_NON_RETRY_EXCEPTION,
                     String.format("thread [%s] update task [%s] checkpoint failed",
                             getThreadName(), occupiedTask.getTaskFullName()));
         }

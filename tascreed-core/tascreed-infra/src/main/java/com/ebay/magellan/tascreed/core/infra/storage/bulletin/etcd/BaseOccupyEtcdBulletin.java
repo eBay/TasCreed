@@ -3,7 +3,7 @@ package com.ebay.magellan.tascreed.core.infra.storage.bulletin.etcd;
 import io.etcd.jetcd.lease.LeaseKeepAliveResponse;
 import io.etcd.jetcd.options.PutOption;
 import com.ebay.magellan.tascreed.core.domain.occupy.OccupyInfo;
-import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
+import com.ebay.magellan.tascreed.core.infra.constant.TcKeys;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.BaseOccupyBulletin;
 import com.ebay.magellan.tascreed.depend.common.exception.TcErrorEnum;
 import com.ebay.magellan.tascreed.depend.common.exception.TcException;
@@ -20,11 +20,11 @@ public abstract class BaseOccupyEtcdBulletin extends BaseEtcdBulletin implements
 
     private static final String THIS_CLASS_NAME = BaseOccupyEtcdBulletin.class.getSimpleName();
 
-    public BaseOccupyEtcdBulletin(TumblerKeys tumblerKeys,
+    public BaseOccupyEtcdBulletin(TcKeys tcKeys,
                                   EtcdConstants etcdConstants,
                                   EtcdUtil etcdUtil,
                                   TcLogger logger) {
-        super(tumblerKeys, etcdConstants, etcdUtil, logger);
+        super(tcKeys, etcdConstants, etcdUtil, logger);
     }
 
     // -----
@@ -83,8 +83,8 @@ public abstract class BaseOccupyEtcdBulletin extends BaseEtcdBulletin implements
 
             return leaseResp.get().getID();
         } catch (Exception e) {
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_RETRY_EXCEPTION, "heart beat exception", e);
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_RETRY_EXCEPTION, "heart beat exception", e);
         }
         return -1L;
     }

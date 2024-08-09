@@ -6,7 +6,7 @@ import com.ebay.magellan.tascreed.core.domain.task.TaskViews;
 import com.ebay.magellan.tascreed.core.domain.job.Job;
 import com.ebay.magellan.tascreed.core.domain.job.JobInstKey;
 import com.ebay.magellan.tascreed.core.domain.task.Task;
-import com.ebay.magellan.tascreed.core.infra.constant.TumblerConstants;
+import com.ebay.magellan.tascreed.core.infra.constant.TcConstants;
 import com.ebay.magellan.tascreed.core.infra.help.TestRepo;
 import com.ebay.magellan.tascreed.core.infra.jobserver.JobServer;
 import com.ebay.magellan.tascreed.core.infra.repo.JobDefineRepo;
@@ -35,7 +35,7 @@ public class JobNotifyExecThreadTest {
     private JobNotifyExecThread jobNotifyExecThread = new JobNotifyExecThread();
 
     @Mock
-    private TumblerConstants tumblerConstants;
+    private TcConstants tcConstants;
     @Mock
     private JobDefineRepo jobDefineRepo;
     @Mock

@@ -8,7 +8,7 @@ public class TaskWorkerThreadFactory extends DefaultThreadFactory {
 
     TaskWorkerThreadFactory() {
         super();
-        namePrefix = "tumbler-task-worker-thread-";
+        namePrefix = "tascreed-task-worker-thread-";
     }
 
     public TaskWorkerThread buildTaskWorkerThread() {

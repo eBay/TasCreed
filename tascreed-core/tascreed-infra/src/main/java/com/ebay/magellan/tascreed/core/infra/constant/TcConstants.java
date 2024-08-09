@@ -10,154 +10,154 @@ import java.util.List;
 
 @Component
 @Getter
-public class TumblerConstants {
+public class TcConstants {
 
     // version
-    @Value("${tumbler.version}")
-    private String tumblerVersion;
+    @Value("${tascreed.version}")
+    private String tcVersion;
 
     // namespace
-    @Value("${tumbler.namespace}")
-    private String tumblerNamespace;
+    @Value("${tascreed.namespace}")
+    private String tcNamespace;
 
     // job define
-    @Value("${tumbler.define.dirs}")
-    private String tumblerDefineDirsStr;
-    @Value("${tumbler.define.graph.validate.enable}")
+    @Value("${tascreed.define.dirs}")
+    private String tcDefineDirsStr;
+    @Value("${tascreed.define.graph.validate.enable}")
     private boolean defineGraphValidateEnable;
 
     // watcher
-    @Value("${tumbler.watcher.routine.interval.seconds:30}")
+    @Value("${tascreed.watcher.routine.interval.seconds:30}")
     private int routineWatcherIntervalInSeconds;
-    @Value("${tumbler.watcher.task.interval.seconds:30}")
+    @Value("${tascreed.watcher.task.interval.seconds:30}")
     private int taskWatcherIntervalInSeconds;
 
-    @Value("${tumbler.watcher.routine.switch.on.key}")
+    @Value("${tascreed.watcher.routine.switch.on.key}")
     private String routineWatcherSwitchOnKey;
-    @Value("${tumbler.watcher.routine.switch.on.default}")
+    @Value("${tascreed.watcher.routine.switch.on.default}")
     private String routineWatcherSwitchOnDefault;
     private volatile boolean routineWatcherSwitchOn;
 
-    @Value("${tumbler.watcher.task.switch.on.key}")
+    @Value("${tascreed.watcher.task.switch.on.key}")
     private String taskWatcherSwitchOnKey;
-    @Value("${tumbler.watcher.task.switch.on.default}")
+    @Value("${tascreed.watcher.task.switch.on.default}")
     private String taskWatcherSwitchOnDefault;
     private volatile boolean taskWatcherSwitchOn;
 
     // worker count
-    @Value("${tumbler.worker.max.count.overall.key}")
+    @Value("${tascreed.worker.max.count.overall.key}")
     private String maxWorkerCountOverallKey;
-    @Value("${tumbler.worker.max.count.overall.default}")
+    @Value("${tascreed.worker.max.count.overall.default}")
     private String maxWorkerCountOverallDefault;
     private int maxWorkerCountOverall = -1;
 
-    @Value("${tumbler.worker.max.count.per.host.key}")
+    @Value("${tascreed.worker.max.count.per.host.key}")
     private String maxWorkerCountPerHostKey;
-    @Value("${tumbler.worker.max.count.per.host.default}")
+    @Value("${tascreed.worker.max.count.per.host.default}")
     private String maxWorkerCountPerHostDefault;
     private int maxWorkerCountPerHost = -1;
 
-    @Value("${tumbler.worker.affinity.enable}")
+    @Value("${tascreed.worker.affinity.enable}")
     private boolean workerAffinityEnable;
 
     // routine count
-    @Value("${tumbler.routine.max.count.overall.key}")
+    @Value("${tascreed.routine.max.count.overall.key}")
     private String maxRoutineCountOverallKey;
-    @Value("${tumbler.routine.max.count.overall.default}")
+    @Value("${tascreed.routine.max.count.overall.default}")
     private String maxRoutineCountOverallDefault;
     private int maxRoutineCountOverall = -1;
 
-    @Value("${tumbler.routine.max.count.per.host.key}")
+    @Value("${tascreed.routine.max.count.per.host.key}")
     private String maxRoutineCountPerHostKey;
-    @Value("${tumbler.routine.max.count.per.host.default}")
+    @Value("${tascreed.routine.max.count.per.host.default}")
     private String maxRoutineCountPerHostDefault;
     private int maxRoutineCountPerHost = -1;
 
     // bulletin
-    @Value("${tumbler.bulletin.routine.adoption.lock}")
+    @Value("${tascreed.bulletin.routine.adoption.lock}")
     private String bulletinRoutineAdoptionLock;
-    @Value("${tumbler.bulletin.routine.adoption.prefix}")
+    @Value("${tascreed.bulletin.routine.adoption.prefix}")
     private String bulletinRoutineAdoptionPrefix;
 
-    @Value("${tumbler.bulletin.routine.update.lock.prefix}")
+    @Value("${tascreed.bulletin.routine.update.lock.prefix}")
     private String bulletinRoutineUpdateLockPrefix;
-    @Value("${tumbler.bulletin.routine.checkpoint.prefix}")
+    @Value("${tascreed.bulletin.routine.checkpoint.prefix}")
     private String bulletinRoutineCheckpointPrefix;
 
-    @Value("${tumbler.bulletin.job.update.lock.prefix}")
+    @Value("${tascreed.bulletin.job.update.lock.prefix}")
     private String bulletinJobUpdateLockPrefix;
-    @Value("${tumbler.bulletin.job.info.prefix}")
+    @Value("${tascreed.bulletin.job.info.prefix}")
     private String bulletinJobInfoPrefix;
 
-    @Value("${tumbler.bulletin.task.update.lock.prefix}")
+    @Value("${tascreed.bulletin.task.update.lock.prefix}")
     private String bulletinTaskUpdateLockPrefix;
-    @Value("${tumbler.bulletin.task.info.todo.prefix}")
+    @Value("${tascreed.bulletin.task.info.todo.prefix}")
     private String bulletinTaskInfoTodoPrefix;
-    @Value("${tumbler.bulletin.task.info.done.prefix}")
+    @Value("${tascreed.bulletin.task.info.done.prefix}")
     private String bulletinTaskInfoDonePrefix;
-    @Value("${tumbler.bulletin.task.info.error.prefix}")
+    @Value("${tascreed.bulletin.task.info.error.prefix}")
     private String bulletinTaskInfoErrorPrefix;
 
-    @Value("${tumbler.bulletin.task.adoption.lock}")
+    @Value("${tascreed.bulletin.task.adoption.lock}")
     private String bulletinTaskAdoptionLock;
-    @Value("${tumbler.bulletin.task.adoption.prefix}")
+    @Value("${tascreed.bulletin.task.adoption.prefix}")
     private String bulletinTaskAdoptionPrefix;
 
-    @Value("${tumbler.bulletin.schedule.update.lock.prefix}")
+    @Value("${tascreed.bulletin.schedule.update.lock.prefix}")
     private String bulletinScheduleUpdateLockPrefix;
-    @Value("${tumbler.bulletin.schedule.info.prefix}")
+    @Value("${tascreed.bulletin.schedule.info.prefix}")
     private String bulletinScheduleInfoPrefix;
 
     // ban
-    @Value("${tumbler.ban.enable}")
+    @Value("${tascreed.ban.enable}")
     private boolean banEnable;
-    @Value("${tumbler.ban.global.key}")
+    @Value("${tascreed.ban.global.key}")
     private String banGlobalKey;
-    @Value("${tumbler.ban.job.define.prefix}")
+    @Value("${tascreed.ban.job.define.prefix}")
     private String banJobDefinePrefix;
-    @Value("${tumbler.ban.job.prefix}")
+    @Value("${tascreed.ban.job.prefix}")
     private String banJobPrefix;
-    @Value("${tumbler.ban.routine.define.prefix}")
+    @Value("${tascreed.ban.routine.define.prefix}")
     private String banRoutineDefinePrefix;
-    @Value("${tumbler.ban.routine.prefix}")
+    @Value("${tascreed.ban.routine.prefix}")
     private String banRoutinePrefix;
 
     // duty
-    @Value("${tumbler.duty.enable}")
+    @Value("${tascreed.duty.enable}")
     private boolean dutyEnable;
-    @Value("${tumbler.duty.rules.global.key}")
+    @Value("${tascreed.duty.rules.global.key}")
     private String dutyRulesGlobalKey;
 
     // archive
-    @Value("${tumbler.archive.task.enable}")
+    @Value("${tascreed.archive.task.enable}")
     private boolean archiveTaskEnable;
 
     // storage
-    @Value("${tumbler.storage.archive}")
+    @Value("${tascreed.storage.archive}")
     private String storageArchiveStr;
-    @Value("${tumbler.storage.bulletin}")
+    @Value("${tascreed.storage.bulletin}")
     private String storageBulletin;
 
     // be able to overwrite etcd constants
     // occupy lease seconds and heartbeat period seconds can overwrite the default etcd constants, not set by default
-    @Value("${tumbler.occupy.worker.lease.seconds:0}")
+    @Value("${tascreed.occupy.worker.lease.seconds:0}")
     private int occupyWorkerLeaseInSeconds;
-    @Value("${tumbler.occupy.worker.heartbeat.period.seconds:0}")
+    @Value("${tascreed.occupy.worker.heartbeat.period.seconds:0}")
     private int occupyWorkerHeartbeatPeriodInSeconds;
-    @Value("${tumbler.occupy.routine.lease.seconds:0}")
+    @Value("${tascreed.occupy.routine.lease.seconds:0}")
     private int occupyRoutineLeaseInSeconds;
-    @Value("${tumbler.occupy.routine.heartbeat.period.seconds:0}")
+    @Value("${tascreed.occupy.routine.heartbeat.period.seconds:0}")
     private int occupyRoutineHeartbeatPeriodInSeconds;
 
     // task default max pick times, negative denotes infinity
-    @Value("${tumbler.task.default.max.pick.times:-1}")
+    @Value("${tascreed.task.default.max.pick.times:-1}")
     private int taskDefaultMaxPickTimes;
 
     // -----
 
-    public List<String> getTumblerDefineDirs() {
+    public List<String> getTcDefineDirs() {
         List<String> list = new ArrayList<>();
-        String[] strs = StringUtils.split(tumblerDefineDirsStr, ",");
+        String[] strs = StringUtils.split(tcDefineDirsStr, ",");
         for (String str : strs) {
             String s = StringUtils.trim(str);
             if (StringUtils.isNotBlank(s)) {

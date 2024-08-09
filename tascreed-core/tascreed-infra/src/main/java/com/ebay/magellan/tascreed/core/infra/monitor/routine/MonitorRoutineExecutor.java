@@ -81,8 +81,8 @@ public class MonitorRoutineExecutor extends NormalRoutineExecutor {
             reportJobs();
             reportTasks();
         } catch (Exception e) {
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_RETRY_EXCEPTION, e.getMessage());
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_RETRY_EXCEPTION, e.getMessage());
         } finally {
             long et = System.currentTimeMillis();
             logger.info(THIS_CLASS_NAME, String.format("report metrics ends, using time %d ms", et - st));

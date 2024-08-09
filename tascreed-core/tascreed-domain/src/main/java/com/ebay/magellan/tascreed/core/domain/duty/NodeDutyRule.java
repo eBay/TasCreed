@@ -13,10 +13,10 @@ public class NodeDutyRule {
     /**
      * valid node condition
      */
-    // condition of tumbler version
-    @JsonProperty("minValidTumblerVersion")
+    // condition of tc version
+    @JsonProperty("minValidTcVersion")
     @JsonAlias("minValidVersion")
-    private String minValidTumblerVersion;
+    private String minValidTcVersion;
     // condition of user app version
     @JsonProperty("minValidAppVersion")
     private String minValidAppVersion;

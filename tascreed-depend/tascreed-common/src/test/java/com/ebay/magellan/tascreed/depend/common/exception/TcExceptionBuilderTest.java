@@ -6,12 +6,12 @@ public class TcExceptionBuilderTest {
 
     @Test(expected = TcException.class)
     public void testThrowException1() throws TcException {
-        TcExceptionBuilder.throwTumblerException(TcErrorEnum.TUMBLER_IGNORE_EXCEPTION, "");
+        TcExceptionBuilder.throwTcException(TcErrorEnum.TC_IGNORE_EXCEPTION, "");
     }
 
     @Test(expected = TcException.class)
     public void testThrowException2() throws TcException {
-        TcExceptionBuilder.throwTumblerException(TcErrorEnum.TUMBLER_IGNORE_EXCEPTION, "", new Exception());
+        TcExceptionBuilder.throwTcException(TcErrorEnum.TC_IGNORE_EXCEPTION, "", new Exception());
     }
 
     @Test(expected = TcException.class)

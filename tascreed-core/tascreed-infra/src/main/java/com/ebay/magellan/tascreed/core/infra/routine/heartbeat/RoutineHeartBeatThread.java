@@ -1,7 +1,7 @@
 package com.ebay.magellan.tascreed.core.infra.routine.heartbeat;
 
 import com.ebay.magellan.tascreed.core.domain.occupy.OccupyInfo;
-import com.ebay.magellan.tascreed.core.infra.constant.TumblerConstants;
+import com.ebay.magellan.tascreed.core.infra.constant.TcConstants;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.RoutineBulletin;
 import com.ebay.magellan.tascreed.depend.common.exception.TcErrorEnum;
 import com.ebay.magellan.tascreed.depend.common.exception.TcException;
@@ -31,7 +31,7 @@ public class RoutineHeartBeatThread implements Runnable {
     @Autowired
     private EtcdConstants etcdConstants;
     @Autowired
-    private TumblerConstants tumblerConstants;
+    private TcConstants tcConstants;
 
     @Autowired
     private RoutineBulletin routineBulletin;
@@ -86,10 +86,10 @@ public class RoutineHeartBeatThread implements Runnable {
         return occupyInfo != null && !occupyInfo.isFinished();
     }
 
-    long getHeartbeatMillisecondsFromTumblerConstants() {
-        return tumblerConstants.getOccupyRoutineHeartbeatPeriodInSeconds() > 0 ?
-                1000L * tumblerConstants.getOccupyRoutineHeartbeatPeriodInSeconds() :
-                1000L * tumblerConstants.getOccupyRoutineLeaseInSeconds() / 3;
+    long getHeartbeatMillisecondsFromTcConstants() {
+        return tcConstants.getOccupyRoutineHeartbeatPeriodInSeconds() > 0 ?
+                1000L * tcConstants.getOccupyRoutineHeartbeatPeriodInSeconds() :
+                1000L * tcConstants.getOccupyRoutineLeaseInSeconds() / 3;
     }
     long getHeartbeatMillisecondsFromEtcdConstants() {
         return etcdConstants.getHeartbeatPeriodSeconds() > 0 ?
@@ -97,7 +97,7 @@ public class RoutineHeartBeatThread implements Runnable {
                 1000L * etcdConstants.getOccupyLeaseSeconds() / 3;
     }
     long getSleepMilliseconds() {
-        long ms = getHeartbeatMillisecondsFromTumblerConstants();
+        long ms = getHeartbeatMillisecondsFromTcConstants();
         if (ms <= 0) {
             ms = getHeartbeatMillisecondsFromEtcdConstants();
         }
@@ -124,8 +124,8 @@ public class RoutineHeartBeatThread implements Runnable {
         } else {
             String msg = String.format("heart beat fails: %s heart beat leaseId < 0, leaseId is %d", key, leaseId);
             logger.error(THIS_CLASS_NAME, msg);
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_NON_RETRY_HEARTBEAT_EXCEPTION, msg);
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_NON_RETRY_HEARTBEAT_EXCEPTION, msg);
         }
     }
 

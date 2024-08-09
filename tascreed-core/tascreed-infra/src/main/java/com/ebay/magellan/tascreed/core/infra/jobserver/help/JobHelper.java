@@ -6,7 +6,7 @@ import com.ebay.magellan.tascreed.core.domain.job.JobStep;
 import com.ebay.magellan.tascreed.core.domain.state.StateChange;
 import com.ebay.magellan.tascreed.core.domain.state.StepStateEnum;
 import com.ebay.magellan.tascreed.core.domain.task.Task;
-import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
+import com.ebay.magellan.tascreed.core.infra.constant.TcKeys;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.JobBulletin;
 import com.ebay.magellan.tascreed.depend.common.exception.TcErrorEnum;
 import com.ebay.magellan.tascreed.depend.common.exception.TcException;
@@ -30,7 +30,7 @@ public class JobHelper {
     private static final String THIS_CLASS_NAME = JobHelper.class.getSimpleName();
 
     @Autowired
-    private TumblerKeys tumblerKeys;
+    private TcKeys tcKeys;
 
     @Autowired
     private JobBulletin jobBulletin;
@@ -48,7 +48,7 @@ public class JobHelper {
 
         job.getMidState().setModifyTime(new Date());
 
-        String jobUpdateLock = tumblerKeys.getJobUpdateLockKey(job.getJobName(), job.getTrigger());
+        String jobUpdateLock = tcKeys.getJobUpdateLockKey(job.getJobName(), job.getTrigger());
         EtcdLock lock = null;
         try {
             lock = jobBulletin.lock(jobUpdateLock);
@@ -56,17 +56,17 @@ public class JobHelper {
             ret = jobBulletin.submitJobAndTasks(job, newTasks, oldDoneTasks, oldErrorTasks);
 
         } catch (JsonProcessingException e) {
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_FATAL_VALIDATION_EXCEPTION, e.getMessage());
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_FATAL_VALIDATION_EXCEPTION, e.getMessage());
         } catch (Exception e) {
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_RETRY_EXCEPTION, e.getMessage());
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_RETRY_EXCEPTION, e.getMessage());
         } finally {
             try {
                 jobBulletin.unlock(lock);
             } catch (Exception e) {
-                TcExceptionBuilder.throwTumblerException(
-                        TcErrorEnum.TUMBLER_RETRY_EXCEPTION, e.getMessage());
+                TcExceptionBuilder.throwTcException(
+                        TcErrorEnum.TC_RETRY_EXCEPTION, e.getMessage());
             }
         }
         return ret;

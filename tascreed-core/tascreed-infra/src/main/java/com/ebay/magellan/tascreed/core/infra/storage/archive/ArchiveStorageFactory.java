@@ -1,6 +1,6 @@
 package com.ebay.magellan.tascreed.core.infra.storage.archive;
 
-import com.ebay.magellan.tascreed.core.infra.constant.TumblerConstants;
+import com.ebay.magellan.tascreed.core.infra.constant.TcConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -12,7 +12,7 @@ public class ArchiveStorageFactory {
     private ApplicationContext context;
 
     @Autowired
-    private TumblerConstants tumblerConstants;
+    private TcConstants tcConstants;
 
     private final ArchiveStorageList archiveStorage = new ArchiveStorageList();
 
@@ -21,7 +21,7 @@ public class ArchiveStorageFactory {
     }
 
     public void init() {
-        for (String str : tumblerConstants.getStorageArchives()) {
+        for (String str : tcConstants.getStorageArchives()) {
             ArchiveStorageType st = ArchiveStorageType.getArchiveStorageType(str);
             archiveStorage.addArchiveStorage(findArchiveStorageByType(st));
         }

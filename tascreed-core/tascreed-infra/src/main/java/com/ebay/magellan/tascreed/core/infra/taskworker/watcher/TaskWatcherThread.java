@@ -1,11 +1,11 @@
 package com.ebay.magellan.tascreed.core.infra.taskworker.watcher;
 
 import com.ebay.magellan.tascreed.core.domain.duty.NodeDutyEnum;
-import com.ebay.magellan.tascreed.core.infra.conf.TumblerGlobalConfig;
+import com.ebay.magellan.tascreed.core.infra.conf.TcGlobalConfig;
 import com.ebay.magellan.tascreed.core.infra.duty.DutyHelper;
 import com.ebay.magellan.tascreed.core.infra.taskworker.heartbeat.TaskHeartBeatThreadPoolExecutor;
 import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
-import com.ebay.magellan.tascreed.core.infra.constant.TumblerConstants;
+import com.ebay.magellan.tascreed.core.infra.constant.TcConstants;
 import com.ebay.magellan.tascreed.core.infra.taskworker.TaskWorkerThreadFactory;
 import com.ebay.magellan.tascreed.core.infra.taskworker.TaskWorkerThreadPoolExecutor;
 import lombok.Setter;
@@ -21,10 +21,10 @@ public class TaskWatcherThread implements Runnable {
     private static final String THIS_CLASS_NAME = TaskWatcherThread.class.getSimpleName();
 
     @Autowired
-    private TumblerConstants tumblerConstants;
+    private TcConstants tcConstants;
 
     @Autowired
-    private TumblerGlobalConfig tumblerGlobalConfig;
+    private TcGlobalConfig tcGlobalConfig;
 
     @Autowired
     private TaskWorkerThreadFactory taskWorkerThreadFactory;
@@ -42,12 +42,12 @@ public class TaskWatcherThread implements Runnable {
 
     @Override
     public void run() {
-        long intervalMs = tumblerConstants.getTaskWatcherIntervalInSeconds() * 1000L;
+        long intervalMs = tcConstants.getTaskWatcherIntervalInSeconds() * 1000L;
         while (true) {
             try {
                 dutyHelper.dutyEnableCheck(NodeDutyEnum.TASK_EXECUTOR);
 
-                if (tumblerGlobalConfig.isTaskWatcherSwitchOn(false)) {
+                if (tcGlobalConfig.isTaskWatcherSwitchOn(false)) {
                     // try to reset max worker count of task worker thread pool
                     tryResetMaxWorkerCount();
 
@@ -82,7 +82,7 @@ public class TaskWatcherThread implements Runnable {
     }
 
     void tryResetMaxWorkerCount() {
-        int newMaxWorkerCount = tumblerGlobalConfig.getMaxWorkerCountPerHost();
+        int newMaxWorkerCount = tcGlobalConfig.getMaxWorkerCountPerHost();
         taskWorkerThreadPoolExecutor.resetMaxWorkerCount(newMaxWorkerCount);
         int newMaxHeartBeatThreadCount = Math.min(newMaxWorkerCount * 2, Integer.MAX_VALUE);
         taskHeartBeatThreadPoolExecutor.resetMaxWorkerCount(newMaxHeartBeatThreadCount);

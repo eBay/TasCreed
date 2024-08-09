@@ -10,7 +10,7 @@ import io.etcd.jetcd.options.PutOption;
 import com.ebay.magellan.tascreed.core.domain.job.Job;
 import com.ebay.magellan.tascreed.core.domain.task.Task;
 import com.ebay.magellan.tascreed.core.domain.task.TaskViews;
-import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
+import com.ebay.magellan.tascreed.core.infra.constant.TcKeys;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.JobBulletin;
 import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import com.ebay.magellan.tascreed.depend.ext.etcd.constant.EtcdConstants;
@@ -29,11 +29,11 @@ public class JobEtcdBulletin extends BaseEtcdBulletin implements JobBulletin {
     private static final String THIS_CLASS_NAME = JobEtcdBulletin.class.getSimpleName();
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-    public JobEtcdBulletin(TumblerKeys tumblerKeys,
+    public JobEtcdBulletin(TcKeys tcKeys,
                            EtcdConstants etcdConstants,
                            EtcdUtil etcdUtil,
                            TcLogger logger) {
-        super(tumblerKeys, etcdConstants, etcdUtil, logger);
+        super(tcKeys, etcdConstants, etcdUtil, logger);
     }
 
     // -----
@@ -52,7 +52,7 @@ public class JobEtcdBulletin extends BaseEtcdBulletin implements JobBulletin {
                                      List<Task> oldErrorTasks) throws Exception {
         if (job == null) return false;
 
-        String jobKey = tumblerKeys.getJobKey(job.getJobName(), job.getTrigger());
+        String jobKey = tcKeys.getJobKey(job.getJobName(), job.getTrigger());
 
         Txn txn = etcdUtil.txn();
         Cmp cmp;
@@ -73,7 +73,7 @@ public class JobEtcdBulletin extends BaseEtcdBulletin implements JobBulletin {
         // new tasks
         if (CollectionUtils.isNotEmpty(newTasks)) {
             for (Task task : newTasks) {
-                String taskKey = tumblerKeys.getTodoTaskKey(task.getJobName(), task.getTrigger(), task.getTaskName());
+                String taskKey = tcKeys.getTodoTaskKey(task.getJobName(), task.getTrigger(), task.getTaskName());
                 String taskValue = task.toJson(TaskViews.TASK_TODO.class);
                 Op taskPutOp = Op.put(bs(taskKey), bs(taskValue), PutOption.DEFAULT);
                 txn.Then(taskPutOp);
@@ -83,7 +83,7 @@ public class JobEtcdBulletin extends BaseEtcdBulletin implements JobBulletin {
         // old done tasks
         if (CollectionUtils.isNotEmpty(oldDoneTasks)) {
             for (Task task : oldDoneTasks) {
-                String taskKey = tumblerKeys.getDoneTaskKey(task.getJobName(), task.getTrigger(), task.getTaskName());
+                String taskKey = tcKeys.getDoneTaskKey(task.getJobName(), task.getTrigger(), task.getTaskName());
                 Op taskDelOp = Op.delete(bs(taskKey), DeleteOption.DEFAULT);
                 txn.Then(taskDelOp);
             }
@@ -92,7 +92,7 @@ public class JobEtcdBulletin extends BaseEtcdBulletin implements JobBulletin {
         // old error tasks
         if (CollectionUtils.isNotEmpty(oldErrorTasks)) {
             for (Task task : oldErrorTasks) {
-                String taskKey = tumblerKeys.getErrorTaskKey(task.getJobName(), task.getTrigger(), task.getTaskName());
+                String taskKey = tcKeys.getErrorTaskKey(task.getJobName(), task.getTrigger(), task.getTaskName());
                 Op taskDelOp = Op.delete(bs(taskKey), DeleteOption.DEFAULT);
                 txn.Then(taskDelOp);
             }
@@ -114,21 +114,21 @@ public class JobEtcdBulletin extends BaseEtcdBulletin implements JobBulletin {
     // -----
 
     public String readJob(String name, String trigger) {
-        return etcdUtil.getSingleValue(tumblerKeys.getJobKey(name, trigger));
+        return etcdUtil.getSingleValue(tcKeys.getJobKey(name, trigger));
     }
     public Map<String, String> readJobsByName(String jobName) throws Exception {
-        return etcdUtil.getKVMapWithPrefix(tumblerKeys.getJobPrefixKey(jobName));
+        return etcdUtil.getKVMapWithPrefix(tcKeys.getJobPrefixKey(jobName));
     }
 
     public Map<String, String> readAllJobs() throws Exception {
-        return etcdUtil.getKVMapWithPrefix(tumblerKeys.buildJobInfoPrefix());
+        return etcdUtil.getKVMapWithPrefix(tcKeys.buildJobInfoPrefix());
     }
 
     public Map<String, String> readDoneTasksOfJob(String jobName, String trigger) throws Exception {
-        return etcdUtil.getKVMapWithPrefix(tumblerKeys.getDoneTaskOfJobPrefixKey(jobName, trigger));
+        return etcdUtil.getKVMapWithPrefix(tcKeys.getDoneTaskOfJobPrefixKey(jobName, trigger));
     }
     public Map<String, String> readErrorTasksOfJob(String jobName, String trigger) throws Exception {
-        return etcdUtil.getKVMapWithPrefix(tumblerKeys.getErrorTaskOfJobPrefixKey(jobName, trigger));
+        return etcdUtil.getKVMapWithPrefix(tcKeys.getErrorTaskOfJobPrefixKey(jobName, trigger));
     }
 
     // -----

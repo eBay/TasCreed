@@ -4,8 +4,8 @@ import com.ebay.magellan.tascreed.core.domain.duty.NodeDutyEnum;
 import com.ebay.magellan.tascreed.core.domain.duty.NodeDutyRule;
 import com.ebay.magellan.tascreed.core.domain.duty.NodeDutyRules;
 import com.ebay.magellan.tascreed.core.infra.app.AppInfoCollector;
-import com.ebay.magellan.tascreed.core.infra.conf.TumblerGlobalConfig;
-import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
+import com.ebay.magellan.tascreed.core.infra.conf.TcGlobalConfig;
+import com.ebay.magellan.tascreed.core.infra.constant.TcKeys;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.ConfigBulletin;
 import com.ebay.magellan.tascreed.depend.common.exception.TcErrorEnum;
 import com.ebay.magellan.tascreed.depend.common.exception.TcException;
@@ -24,10 +24,10 @@ import java.util.regex.Pattern;
 public class DutyHelper {
 
     @Autowired
-    private TumblerKeys tumblerKeys;
+    private TcKeys tcKeys;
 
     @Autowired
-    private TumblerGlobalConfig tumblerGlobalConfig;
+    private TcGlobalConfig tcGlobalConfig;
 
     @Autowired
     private ConfigBulletin configBulletin;
@@ -43,14 +43,14 @@ public class DutyHelper {
     // -----
 
     boolean dutyFeatureEnabled() {
-        if (!tumblerKeys.getTumblerConstants().isDutyEnable()) return false;
+        if (!tcKeys.getTcConstants().isDutyEnable()) return false;
         return true;
     }
 
     // -----
 
     synchronized void refreshDuties() throws TcException {
-        String curStr = tumblerGlobalConfig.getNodeDutyRulesStr(false);
+        String curStr = tcGlobalConfig.getNodeDutyRulesStr(false);
         boolean changed = false;
         if (!StringUtils.equals(nodeDutyRulesStr, curStr)) {
             changed = true;
@@ -90,10 +90,10 @@ public class DutyHelper {
 
     // true: valid; false: invalid
     boolean checkByValidCondition(NodeDutyRule rule) {
-        // if min valid tumbler version blank, ignore check
-        // if current tumbler version smaller than min valid tumbler version, fail
-        if (StringUtils.isNotBlank(rule.getMinValidTumblerVersion())) {
-            if (!tumblerVersionNotSmallerThan(rule.getMinValidTumblerVersion())) {
+        // if min valid tc version blank, ignore check
+        // if current tc version smaller than min valid tc version, fail
+        if (StringUtils.isNotBlank(rule.getMinValidTcVersion())) {
+            if (!tcVersionNotSmallerThan(rule.getMinValidTcVersion())) {
                 return false;
             }
         }
@@ -126,9 +126,9 @@ public class DutyHelper {
         return true;
     }
 
-    private boolean tumblerVersionNotSmallerThan(String minValidTumblerVersion) {
-        String curTumblerVersion = appInfoCollector.curTumblerVersion();
-        return VersionUtil.versionNotSmallerThan(curTumblerVersion, minValidTumblerVersion);
+    private boolean tcVersionNotSmallerThan(String minValidTcVersion) {
+        String curTcVersion = appInfoCollector.curTcVersion();
+        return VersionUtil.versionNotSmallerThan(curTcVersion, minValidTcVersion);
     }
 
     private boolean appVersionNotSmallerThan(String minValidAppVersion) {
@@ -155,8 +155,8 @@ public class DutyHelper {
 
     public void dutyEnableCheck(NodeDutyEnum duty) throws TcException {
         if (!isDutyEnabled(duty)) {
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_FATAL_DUTY_EXCEPTION,
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_FATAL_DUTY_EXCEPTION,
                     String.format("duty [%s] disabled on this node", duty.getName()));
         }
     }
@@ -164,7 +164,7 @@ public class DutyHelper {
     // -----
 
     public NodeDutyRules readDutyRules(boolean forceRefresh) throws Exception {
-        String str = tumblerGlobalConfig.getNodeDutyRulesStr(forceRefresh);
+        String str = tcGlobalConfig.getNodeDutyRulesStr(forceRefresh);
         if (StringUtils.isBlank(str)) return null;
         return NodeDutyRules.fromJson(str);
     }
@@ -172,13 +172,13 @@ public class DutyHelper {
         if (nodeDutyRules == null) return null;
         if (!dutyFeatureEnabled()) return null;
 
-        String key = tumblerKeys.buildDutyRulesGlobalKey();
+        String key = tcKeys.buildDutyRulesGlobalKey();
         String str = nodeDutyRules.toJson();
         configBulletin.updateConfig(key, str);
         return nodeDutyRules;
     }
     public boolean deleteDutyRules() throws Exception {
-        String key = tumblerKeys.buildDutyRulesGlobalKey();
+        String key = tcKeys.buildDutyRulesGlobalKey();
         configBulletin.deleteKeyAnyway(key);
         return true;
     }

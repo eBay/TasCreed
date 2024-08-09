@@ -1,7 +1,7 @@
 package com.ebay.magellan.tascreed.core.infra.conf;
 
 import com.ebay.magellan.tascreed.core.domain.ban.BanLevelEnum;
-import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
+import com.ebay.magellan.tascreed.core.infra.constant.TcKeys;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.ConfigBulletin;
 import com.ebay.magellan.tascreed.depend.common.cache.CacheItem;
 import com.ebay.magellan.tascreed.depend.common.exception.TcErrorEnum;
@@ -34,12 +34,12 @@ import java.util.concurrent.Callable;
  * - node duty rules: cache, lazy init and expire after 1 minute
  */
 @Component
-public class TumblerGlobalConfig {
+public class TcGlobalConfig {
 
-    private static final String THIS_CLASS_NAME = TumblerGlobalConfig.class.getSimpleName();
+    private static final String THIS_CLASS_NAME = TcGlobalConfig.class.getSimpleName();
 
     @Autowired
-    private TumblerKeys tumblerKeys;
+    private TcKeys tcKeys;
 
     @Autowired
     private ConfigBulletin configBulletin;
@@ -101,8 +101,8 @@ public class TumblerGlobalConfig {
             if (retryCounter.isAlive()) {
                 retryCounter.waitForNextRetry();
             } else {
-                TcExceptionBuilder.throwTumblerException(
-                        TcErrorEnum.TUMBLER_NON_RETRY_EXCEPTION, lastErrMsg);
+                TcExceptionBuilder.throwTcException(
+                        TcErrorEnum.TC_NON_RETRY_EXCEPTION, lastErrMsg);
             }
         }
     }
@@ -116,55 +116,55 @@ public class TumblerGlobalConfig {
     // -----
 
     Boolean readRoutineWatcherSwitchOn() throws TcException {
-        String key = tumblerKeys.buildRoutineWatcherSwitchOnKey();
+        String key = tcKeys.buildRoutineWatcherSwitchOnKey();
         return loop(() -> {
             String value = configBulletin.readConfig(key,
-                    tumblerKeys.getTumblerConstants().getRoutineWatcherSwitchOnDefault());
+                    tcKeys.getTcConstants().getRoutineWatcherSwitchOnDefault());
             return StringParseUtil.parseBoolean(value);
         }, "read routine watcher switch on failed");
     }
 
     Boolean readTaskWatcherSwitchOn() throws TcException {
-        String key = tumblerKeys.buildTaskWatcherSwitchOnKey();
+        String key = tcKeys.buildTaskWatcherSwitchOnKey();
         return loop(() -> {
             String value = configBulletin.readConfig(key,
-                    tumblerKeys.getTumblerConstants().getTaskWatcherSwitchOnDefault());
+                    tcKeys.getTcConstants().getTaskWatcherSwitchOnDefault());
             return StringParseUtil.parseBoolean(value);
         }, "read task watcher switch on failed");
     }
 
     Integer readWorkerCountOverall() throws TcException {
-        String key = tumblerKeys.buildMaxWorkerCountOverallKey();
+        String key = tcKeys.buildMaxWorkerCountOverallKey();
         return loop(() -> {
             String value = configBulletin.readConfig(key,
-                    tumblerKeys.getTumblerConstants().getMaxWorkerCountOverallDefault());
+                    tcKeys.getTcConstants().getMaxWorkerCountOverallDefault());
             return StringParseUtil.parseInteger(value);
         }, "read max worker count overall failed");
     }
 
     Integer readMaxWorkerCountPerHost() throws TcException {
-        String key = tumblerKeys.buildMaxWorkerCountPerHostKey();
+        String key = tcKeys.buildMaxWorkerCountPerHostKey();
         return loop(() -> {
             String value = configBulletin.readConfig(key,
-                    tumblerKeys.getTumblerConstants().getMaxWorkerCountPerHostDefault());
+                    tcKeys.getTcConstants().getMaxWorkerCountPerHostDefault());
             return StringParseUtil.parseInteger(value);
         }, "read max worker count per host failed");
     }
 
     Integer readRoutineCountOverall() throws TcException {
-        String key = tumblerKeys.buildMaxRoutineCountOverallKey();
+        String key = tcKeys.buildMaxRoutineCountOverallKey();
         return loop(() -> {
             String value = configBulletin.readConfig(key,
-                    tumblerKeys.getTumblerConstants().getMaxRoutineCountOverallDefault());
+                    tcKeys.getTcConstants().getMaxRoutineCountOverallDefault());
             return StringParseUtil.parseInteger(value);
         }, "read max routine count overall failed");
     }
 
     Integer readMaxRoutineCountPerHost() throws TcException {
-        String key = tumblerKeys.buildMaxRoutineCountPerHostKey();
+        String key = tcKeys.buildMaxRoutineCountPerHostKey();
         return loop(() -> {
             String value = configBulletin.readConfig(key,
-                    tumblerKeys.getTumblerConstants().getMaxRoutineCountPerHostDefault());
+                    tcKeys.getTcConstants().getMaxRoutineCountPerHostDefault());
             return StringParseUtil.parseInteger(value);
         }, "read max routine count per host failed");
     }
@@ -172,14 +172,14 @@ public class TumblerGlobalConfig {
     // -----
 
     BanLevelEnum readBanGlobal() throws TcException {
-        String key = tumblerKeys.buildBanGlobalKey();
+        String key = tcKeys.buildBanGlobalKey();
         return loop(() -> BanLevelEnum.buildByName(configBulletin.readConfig(key)),
                 "read ban global failed");
     }
 
     Map<String, BanLevelEnum> readBanJobDefines() throws TcException {
         Map<String, BanLevelEnum> banJobDefines = new HashMap<>();
-        String keyPrefix = tumblerKeys.buildBanJobDefinePrefix();
+        String keyPrefix = tcKeys.buildBanJobDefinePrefix();
         Map<String, String> kvs = loop(() -> configBulletin.readConfigs(keyPrefix),
                 "read ban job defines failed");
         if (MapUtils.isNotEmpty(kvs)) {
@@ -195,7 +195,7 @@ public class TumblerGlobalConfig {
 
     Map<String, BanLevelEnum> readBanJobs() throws TcException {
         Map<String, BanLevelEnum> banJobs = new HashMap<>();
-        String keyPrefix = tumblerKeys.buildBanJobPrefix();
+        String keyPrefix = tcKeys.buildBanJobPrefix();
         Map<String, String> kvs = loop(() -> configBulletin.readConfigs(keyPrefix),
                 "read ban jobs failed");
         if (MapUtils.isNotEmpty(kvs)) {
@@ -211,7 +211,7 @@ public class TumblerGlobalConfig {
 
     Map<String, BanLevelEnum> readBanRoutineDefines() throws TcException {
         Map<String, BanLevelEnum> banRoutineDefines = new HashMap<>();
-        String keyPrefix = tumblerKeys.buildBanRoutineDefinePrefix();
+        String keyPrefix = tcKeys.buildBanRoutineDefinePrefix();
         Map<String, String> kvs = loop(() -> configBulletin.readConfigs(keyPrefix),
                 "read ban routine defines failed");
         if (MapUtils.isNotEmpty(kvs)) {
@@ -227,7 +227,7 @@ public class TumblerGlobalConfig {
 
     Map<String, BanLevelEnum> readBanRoutines() throws TcException {
         Map<String, BanLevelEnum> banRoutines = new HashMap<>();
-        String keyPrefix = tumblerKeys.buildBanRoutinePrefix();
+        String keyPrefix = tcKeys.buildBanRoutinePrefix();
         Map<String, String> kvs = loop(() -> configBulletin.readConfigs(keyPrefix),
                 "read ban routines failed");
         if (MapUtils.isNotEmpty(kvs)) {
@@ -242,7 +242,7 @@ public class TumblerGlobalConfig {
     }
 
     String readNodeDutyRulesStr() throws TcException {
-        String key = tumblerKeys.buildDutyRulesGlobalKey();
+        String key = tcKeys.buildDutyRulesGlobalKey();
         return loop(() -> configBulletin.readConfig(key),
                 "read node duty rules failed");
     }

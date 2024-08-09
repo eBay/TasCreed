@@ -10,8 +10,8 @@ import com.ebay.magellan.tascreed.core.domain.task.WeightLabel;
 import com.ebay.magellan.tascreed.core.domain.util.JsonUtil;
 import com.ebay.magellan.tascreed.core.domain.util.SortUtil;
 import com.ebay.magellan.tascreed.core.infra.ban.BanHelper;
-import com.ebay.magellan.tascreed.core.infra.conf.TumblerGlobalConfig;
-import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
+import com.ebay.magellan.tascreed.core.infra.conf.TcGlobalConfig;
+import com.ebay.magellan.tascreed.core.infra.constant.TcKeys;
 import com.ebay.magellan.tascreed.core.infra.executor.TaskExecutorFactory;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.TaskBulletin;
 import com.ebay.magellan.tascreed.depend.common.exception.TcException;
@@ -36,10 +36,10 @@ public class TaskOccupyHelper {
     private static final String THIS_CLASS_NAME = TaskOccupyHelper.class.getSimpleName();
 
     @Autowired
-    private TumblerKeys tumblerKeys;
+    private TcKeys tcKeys;
 
     @Autowired
-    private TumblerGlobalConfig tumblerGlobalConfig;
+    private TcGlobalConfig tcGlobalConfig;
 
     @Autowired
     private TaskBulletin taskBulletin;
@@ -57,7 +57,7 @@ public class TaskOccupyHelper {
     // -----
 
     private String getTaskAdoptionLockKey() {
-        return tumblerKeys.buildTaskAdoptionLock();
+        return tcKeys.buildTaskAdoptionLock();
     }
 
     /**
@@ -131,7 +131,7 @@ public class TaskOccupyHelper {
 
     // there's available worker to occupy any task
     boolean workerAvailable(int adoptedWorkerCount) {
-        int maxWorkerCountOverall = tumblerGlobalConfig.getMaxWorkerCountOverall();
+        int maxWorkerCountOverall = tcGlobalConfig.getMaxWorkerCountOverall();
         return adoptedWorkerCount < maxWorkerCountOverall;
     }
 
@@ -161,7 +161,7 @@ public class TaskOccupyHelper {
                     // ignore if task can not be picked
                     if (!canPickTask(task, curTime)) continue;
 
-                    if (tumblerKeys.getTumblerConstants().isWorkerAffinityEnable()) {
+                    if (tcKeys.getTcConstants().isWorkerAffinityEnable()) {
                         // filter by affinity
                         int affinityWeight = AffinityRuleRegistry.affinityWeight(task);
                         if (affinityWeight > 0) {    // check affinity

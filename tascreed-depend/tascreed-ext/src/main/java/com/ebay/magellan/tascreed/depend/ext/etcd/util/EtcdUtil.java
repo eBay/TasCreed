@@ -85,8 +85,8 @@ public interface EtcdUtil {
         try {
             put(key, value, option).get();
         } catch (InterruptedException | ExecutionException e) {
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_NON_RETRY_EXCEPTION,
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_NON_RETRY_EXCEPTION,
                     String.format("EtcdUtil putKeyValue error: %s", e.getMessage()));
         }
     }

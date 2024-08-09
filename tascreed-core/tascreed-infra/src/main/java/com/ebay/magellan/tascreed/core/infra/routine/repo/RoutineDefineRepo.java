@@ -51,8 +51,8 @@ public class RoutineDefineRepo {
 
     // -----
 
-    // sample: tumbler.routine.param.job-watcher.scale=1
-    private static final String ROUTINE_DEFINE_PARAM_PREFIX = "tumbler.routine.param";
+    // sample: tascreed.routine.param.job-watcher.scale=1
+    private static final String ROUTINE_DEFINE_PARAM_PREFIX = "tascreed.routine.param";
 
     private String buildParamKey(String routineName, String paramName) {
         return String.format("%s.%s.%s", ROUTINE_DEFINE_PARAM_PREFIX, routineName, paramName);

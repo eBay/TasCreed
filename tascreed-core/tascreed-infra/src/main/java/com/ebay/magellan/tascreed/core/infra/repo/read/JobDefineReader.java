@@ -5,7 +5,7 @@ import com.ebay.magellan.tascreed.core.domain.validate.JobDefineValidator;
 import com.ebay.magellan.tascreed.core.domain.validate.StepGraphValidator;
 import com.ebay.magellan.tascreed.core.domain.validate.StepPhaseListValidator;
 import com.ebay.magellan.tascreed.core.domain.validate.ValidateResult;
-import com.ebay.magellan.tascreed.core.infra.constant.TumblerConstants;
+import com.ebay.magellan.tascreed.core.infra.constant.TcConstants;
 import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,7 +27,7 @@ public class JobDefineReader extends DefineReader<JobDefine> {
     private TcLogger logger;
 
     @Autowired
-    private TumblerConstants tumblerConstants;
+    private TcConstants tcConstants;
 
     @Override
     public JobDefine readDefineFile(InputStream stream, Class<JobDefine> clazz) {
@@ -59,7 +59,7 @@ public class JobDefineReader extends DefineReader<JobDefine> {
 
         // validate step graph of job define
         if (vr.isValid()) {
-            if (tumblerConstants.isDefineGraphValidateEnable()) {
+            if (tcConstants.isDefineGraphValidateEnable()) {
                 vr = stepGraphValidator.validate(jd);
             }
         }
@@ -74,6 +74,6 @@ public class JobDefineReader extends DefineReader<JobDefine> {
 
     @Override
     protected List<String> getDefineDirs() {
-        return tumblerConstants.getTumblerDefineDirs();
+        return tcConstants.getTcDefineDirs();
     }
 }

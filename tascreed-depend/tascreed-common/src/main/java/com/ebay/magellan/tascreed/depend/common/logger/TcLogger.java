@@ -2,22 +2,22 @@ package com.ebay.magellan.tascreed.depend.common.logger;
 
 public interface TcLogger {
 
-    String TUMBLER_INFO = "TUMBLER_INFO";
-    String TUMBLER_WARN = "TUMBLER_WARN";
-    String TUMBLER_ERROR = "TUMBLER_ERROR";
+    String TC_INFO = "TC_INFO";
+    String TC_WARN = "TC_WARN";
+    String TC_ERROR = "TC_ERROR";
 
     // ------------ log ------------
 
     default void info(String name, String data) {
-        log(TUMBLER_INFO, name, data, TUMBLER_INFO);
+        log(TC_INFO, name, data, TC_INFO);
     }
 
     default void warn(String name, String data) {
-        log(TUMBLER_WARN, String.format("WARN_%s", name), data, TUMBLER_WARN);
+        log(TC_WARN, String.format("WARN_%s", name), data, TC_WARN);
     }
 
     default void error(String name, String data) {
-        log(TUMBLER_ERROR, String.format("ERROR_%s", name), data, TUMBLER_ERROR);
+        log(TC_ERROR, String.format("ERROR_%s", name), data, TC_ERROR);
     }
 
     void log(String type, String name, String data, String status);

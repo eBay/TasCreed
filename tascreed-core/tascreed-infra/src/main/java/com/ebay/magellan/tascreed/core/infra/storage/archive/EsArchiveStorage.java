@@ -6,7 +6,7 @@ import com.ebay.magellan.tascreed.core.domain.job.JobInstKey;
 import com.ebay.magellan.tascreed.core.domain.task.Task;
 import com.ebay.magellan.tascreed.core.domain.task.TaskInstKey;
 import com.ebay.magellan.tascreed.core.domain.util.JsonUtil;
-import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
+import com.ebay.magellan.tascreed.core.infra.constant.TcKeys;
 import com.ebay.magellan.tascreed.depend.common.exception.TcException;
 import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import com.ebay.magellan.tascreed.depend.ext.es.doc.*;
@@ -25,7 +25,7 @@ public class EsArchiveStorage implements ArchiveStorage {
     private static final String THIS_CLASS_NAME = EsArchiveStorage.class.getSimpleName();
 
     @Autowired
-    private TumblerKeys tumblerKeys;
+    private TcKeys tcKeys;
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
@@ -45,8 +45,8 @@ public class EsArchiveStorage implements ArchiveStorage {
 
     private DocValue findJobFromEs(String name, String trigger)
             throws TcException, UnsupportedEncodingException {
-        String jobKey = tumblerKeys.getJobKey(name, trigger);
-        DocKey docKey = new DocKey(DocType.JOB, tumblerKeys.getTumblerConstants().getTumblerNamespace(), jobKey);
+        String jobKey = tcKeys.getJobKey(name, trigger);
+        DocKey docKey = new DocKey(DocType.JOB, tcKeys.getTcConstants().getTcNamespace(), jobKey);
         return esUtil.getDocValue(docKey);
     }
 
@@ -55,7 +55,7 @@ public class EsArchiveStorage implements ArchiveStorage {
     private void updateJobToEs(String key, String value,
                                String jobName, String trigger, String state)
             throws TcException, UnsupportedEncodingException {
-        DocKey docKey = new DocKey(DocType.JOB, tumblerKeys.getTumblerConstants().getTumblerNamespace(), key);
+        DocKey docKey = new DocKey(DocType.JOB, tcKeys.getTcConstants().getTcNamespace(), key);
         DocValue docValue = new DocValue(value, null);
         docValue.addAttr("jobName", jobName);
         docValue.addAttr("trigger", trigger);
@@ -80,7 +80,7 @@ public class EsArchiveStorage implements ArchiveStorage {
                 String key = buildTaskEsKey(task.getJobName(), task.getTrigger(), task.getTaskName());
                 String value = task.toJson(TaskViews.TASK_DONE.class);
 
-                DocKey docKey = new DocKey(DocType.TASK, tumblerKeys.getTumblerConstants().getTumblerNamespace(), key);
+                DocKey docKey = new DocKey(DocType.TASK, tcKeys.getTcConstants().getTcNamespace(), key);
                 DocValue docValue = new DocValue(value, null);
                 docValue.addAttr("jobName", task.getJobName());
                 docValue.addAttr("trigger", task.getTrigger());
@@ -104,7 +104,7 @@ public class EsArchiveStorage implements ArchiveStorage {
     private DocValue findTaskFromEs(String jobName, String trigger, String taskName)
             throws TcException, UnsupportedEncodingException {
         String taskKey = buildTaskEsKey(jobName, trigger, taskName);
-        DocKey docKey = new DocKey(DocType.TASK, tumblerKeys.getTumblerConstants().getTumblerNamespace(), taskKey);
+        DocKey docKey = new DocKey(DocType.TASK, tcKeys.getTcConstants().getTcNamespace(), taskKey);
         return esUtil.getDocValue(docKey);
     }
 

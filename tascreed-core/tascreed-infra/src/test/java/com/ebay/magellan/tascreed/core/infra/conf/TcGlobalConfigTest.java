@@ -1,8 +1,8 @@
 package com.ebay.magellan.tascreed.core.infra.conf;
 
 import com.ebay.magellan.tascreed.core.domain.ban.BanLevelEnum;
-import com.ebay.magellan.tascreed.core.infra.constant.TumblerConstants;
-import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
+import com.ebay.magellan.tascreed.core.infra.constant.TcConstants;
+import com.ebay.magellan.tascreed.core.infra.constant.TcKeys;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.ConfigBulletin;
 import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import org.junit.Before;
@@ -21,28 +21,28 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class TumblerGlobalConfigTest {
+public class TcGlobalConfigTest {
     @InjectMocks
-    private TumblerGlobalConfig globalConfig = new TumblerGlobalConfig();
+    private TcGlobalConfig globalConfig = new TcGlobalConfig();
 
     @Mock
     private ConfigBulletin configBulletin;
     @Mock
     private TcLogger logger;
     @Mock
-    private TumblerKeys tumblerKeys;
+    private TcKeys tcKeys;
     @Mock
-    private TumblerConstants tumblerConstants;
+    private TcConstants tcConstants;
 
     @Before
     public void init() throws Exception {
-        doReturn(tumblerConstants).when(tumblerKeys).getTumblerConstants();
+        doReturn(tcConstants).when(tcKeys).getTcConstants();
     }
 
     @Test
     public void isTaskWatcherSwitchOn() {
-        doReturn("").when(tumblerKeys).buildTaskWatcherSwitchOnKey();
-        doReturn("").when(tumblerConstants).getTaskWatcherSwitchOnDefault();
+        doReturn("").when(tcKeys).buildTaskWatcherSwitchOnKey();
+        doReturn("").when(tcConstants).getTaskWatcherSwitchOnDefault();
         doReturn("true").when(configBulletin).readConfig(anyString(), anyString());
 
         assertTrue(globalConfig.isTaskWatcherSwitchOn(false));
@@ -53,8 +53,8 @@ public class TumblerGlobalConfigTest {
 
     @Test
     public void getMaxWorkerCountPerHost() {
-        doReturn("").when(tumblerKeys).buildMaxWorkerCountPerHostKey();
-        doReturn("").when(tumblerConstants).getMaxWorkerCountPerHostDefault();
+        doReturn("").when(tcKeys).buildMaxWorkerCountPerHostKey();
+        doReturn("").when(tcConstants).getMaxWorkerCountPerHostDefault();
         doReturn("3").when(configBulletin).readConfig(anyString(), anyString());
 
         assertEquals(3, globalConfig.getMaxWorkerCountPerHost());
@@ -64,8 +64,8 @@ public class TumblerGlobalConfigTest {
 
     @Test
     public void getMaxWorkerCountOverall() {
-        doReturn("").when(tumblerKeys).buildMaxWorkerCountOverallKey();
-        doReturn("").when(tumblerConstants).getMaxWorkerCountOverallDefault();
+        doReturn("").when(tcKeys).buildMaxWorkerCountOverallKey();
+        doReturn("").when(tcConstants).getMaxWorkerCountOverallDefault();
         doReturn("20").when(configBulletin).readConfig(anyString(), anyString());
 
         assertEquals(20, globalConfig.getMaxWorkerCountOverall());
@@ -75,7 +75,7 @@ public class TumblerGlobalConfigTest {
 
     @Test
     public void getBanGlobal() throws Exception {
-        doReturn("").when(tumblerKeys).buildBanGlobalKey();
+        doReturn("").when(tcKeys).buildBanGlobalKey();
         doReturn("TASK_PICK").when(configBulletin).readConfig(anyString());
 
         assertEquals(BanLevelEnum.TASK_PICK, globalConfig.getBanGlobal(false));
@@ -95,7 +95,7 @@ public class TumblerGlobalConfigTest {
 
     @Test
     public void getBanJobDefines() throws Exception {
-        doReturn("").when(tumblerKeys).buildBanJobDefinePrefix();
+        doReturn("").when(tcKeys).buildBanJobDefinePrefix();
         doReturn(readBanPrefix()).when(configBulletin).readConfigs(anyString());
 
         assertEquals(3, globalConfig.getBanJobDefines(false).size());
@@ -106,7 +106,7 @@ public class TumblerGlobalConfigTest {
 
     @Test
     public void getBanJobs() throws Exception {
-        doReturn("").when(tumblerKeys).buildBanJobPrefix();
+        doReturn("").when(tcKeys).buildBanJobPrefix();
         doReturn(readBanPrefix()).when(configBulletin).readConfigs(anyString());
 
         assertEquals(3, globalConfig.getBanJobs(false).size());

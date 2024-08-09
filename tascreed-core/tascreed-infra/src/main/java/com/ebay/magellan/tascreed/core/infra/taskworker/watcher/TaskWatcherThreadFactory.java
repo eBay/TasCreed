@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 public class TaskWatcherThreadFactory extends DefaultThreadFactory {
     TaskWatcherThreadFactory() {
         super();
-        namePrefix = "tumbler-task-watcher-thread-";
+        namePrefix = "tascreed-task-watcher-thread-";
     }
 
     public TaskWatcherThread buildTaskWatcherThread() {

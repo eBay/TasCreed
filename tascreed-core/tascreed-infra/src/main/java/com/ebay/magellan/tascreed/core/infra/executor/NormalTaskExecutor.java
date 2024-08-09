@@ -14,7 +14,7 @@ public abstract class NormalTaskExecutor extends TaskExecutor {
 
     @Override
     protected final TaskResult executeRoundImpl() throws TcException {
-        TcExceptionBuilder.throwTumblerException(TcErrorEnum.TUMBLER_FATAL_TASK_EXCEPTION,
+        TcExceptionBuilder.throwTcException(TcErrorEnum.TC_FATAL_TASK_EXCEPTION,
                 String.format("NormalTaskExecutor should not call executeRoundImpl method!"));
         return null;
     }

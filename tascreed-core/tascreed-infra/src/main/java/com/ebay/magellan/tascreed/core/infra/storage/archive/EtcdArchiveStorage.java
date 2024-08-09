@@ -7,7 +7,7 @@ import com.ebay.magellan.tascreed.core.domain.job.JobInstKey;
 import com.ebay.magellan.tascreed.core.domain.task.Task;
 import com.ebay.magellan.tascreed.core.domain.task.TaskInstKey;
 import com.ebay.magellan.tascreed.core.domain.util.JsonUtil;
-import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
+import com.ebay.magellan.tascreed.core.infra.constant.TcKeys;
 import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import com.ebay.magellan.tascreed.depend.ext.etcd.constant.EtcdConstants;
 import com.ebay.magellan.tascreed.depend.ext.etcd.util.EtcdUtil;
@@ -27,14 +27,14 @@ public class EtcdArchiveStorage implements ArchiveStorage {
     private static String ARCHIVE_ETCD_TASK_PREFIX = "%s/archive/task/";
 
     // retention hours, default 7 days; if negative, means keep forever
-    @Value("${tumbler.storage.archive.etcd.retention.hours:168}")
+    @Value("${tascreed.storage.archive.etcd.retention.hours:168}")
     private int retentionHours;
 
     @Autowired
     private EtcdConstants etcdConstants;
 
     @Autowired
-    private TumblerKeys tumblerKeys;
+    private TcKeys tcKeys;
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
@@ -53,17 +53,17 @@ public class EtcdArchiveStorage implements ArchiveStorage {
     // -----
 
     private String archiveJobPrefix() {
-        return tumblerKeys.withNamespace(ARCHIVE_ETCD_JOB_PREFIX);
+        return tcKeys.withNamespace(ARCHIVE_ETCD_JOB_PREFIX);
     }
     private String archiveTaskPrefix() {
-        return tumblerKeys.withNamespace(ARCHIVE_ETCD_TASK_PREFIX);
+        return tcKeys.withNamespace(ARCHIVE_ETCD_TASK_PREFIX);
     }
 
     private String buildArchiveJobKey(String jobName, String trigger) {
-        return tumblerKeys.buildJobKey(archiveJobPrefix(), jobName, trigger);
+        return tcKeys.buildJobKey(archiveJobPrefix(), jobName, trigger);
     }
     private String buildArchiveTaskKey(String jobName, String trigger, String taskName) {
-        return tumblerKeys.buildTaskKey(archiveTaskPrefix(), jobName, trigger, taskName);
+        return tcKeys.buildTaskKey(archiveTaskPrefix(), jobName, trigger, taskName);
     }
 
     // -----

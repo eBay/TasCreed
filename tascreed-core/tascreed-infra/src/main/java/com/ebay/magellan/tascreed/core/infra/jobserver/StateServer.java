@@ -13,7 +13,7 @@ import com.ebay.magellan.tascreed.core.domain.task.TaskInstKey;
 import com.ebay.magellan.tascreed.core.domain.trait.Trait;
 import com.ebay.magellan.tascreed.core.domain.util.FilterUtil;
 import com.ebay.magellan.tascreed.core.domain.util.JsonUtil;
-import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
+import com.ebay.magellan.tascreed.core.infra.constant.TcKeys;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.*;
 import com.ebay.magellan.tascreed.core.infra.duty.DutyHelper;
 import com.ebay.magellan.tascreed.core.infra.routine.repo.RoutineDefineRepo;
@@ -44,7 +44,7 @@ public class StateServer {
     private TcLogger logger;
 
     @Autowired
-    private TumblerKeys tumblerKeys;
+    private TcKeys tcKeys;
     @Autowired
     private JobBulletin jobBulletin;
     @Autowired
@@ -129,7 +129,7 @@ public class StateServer {
     }
 
     public KeyValuePair<String, String> findTaskAdoption(String jobName, String trigger, String taskName) {
-        String k = tumblerKeys.getTaskAdoptionKey(jobName, trigger, taskName);
+        String k = tcKeys.getTaskAdoptionKey(jobName, trigger, taskName);
         String v = taskBulletin.getSingleValue(k);
         if (StringUtils.isBlank(v)) return null;
         return new KeyValuePair(k, v);
@@ -157,7 +157,7 @@ public class StateServer {
     }
 
     public KeyValuePair<String, String> findRoutineAdoption(String routineFullName) {
-        String k = tumblerKeys.getRoutineAdoptionKey(routineFullName);
+        String k = tcKeys.getRoutineAdoptionKey(routineFullName);
         String v = routineBulletin.getSingleValue(k);
         if (StringUtils.isBlank(v)) return null;
         return new KeyValuePair(k, v);
@@ -177,14 +177,14 @@ public class StateServer {
     public Task deleteTodoTask(String jobName, String trigger, String taskName) throws Exception {
         dutyHelper.dutyEnableCheck(NodeDutyEnum.STATE_SERVER);
 
-        String k = tumblerKeys.getTodoTaskKey(jobName, trigger, taskName);
+        String k = tcKeys.getTodoTaskKey(jobName, trigger, taskName);
         String v = jobBulletin.getSingleValue(k);
         if (StringUtils.isBlank(v)) return null;
         boolean deleted = jobBulletin.deleteIfEquals(k, v);
 
         // delete adoption
         if (deleted) {
-            String adoptionKey = tumblerKeys.getTaskAdoptionKey(jobName, trigger, taskName);
+            String adoptionKey = tcKeys.getTaskAdoptionKey(jobName, trigger, taskName);
             jobBulletin.deleteKeyAnyway(adoptionKey);
         }
 
@@ -203,16 +203,16 @@ public class StateServer {
     public Job deleteAliveJob(String jobName, String trigger, Boolean archive) throws Exception {
         dutyHelper.dutyEnableCheck(NodeDutyEnum.STATE_SERVER);
 
-        String k = tumblerKeys.getJobKey(jobName, trigger);
+        String k = tcKeys.getJobKey(jobName, trigger);
         String v = jobBulletin.getSingleValue(k);
         if (StringUtils.isBlank(v)) return null;
 
         boolean deleted = jobBulletin.deleteIfEquals(k, v);
         if (deleted) {
-            String todoTaskOfJobPrefixKey = tumblerKeys.getTodoTaskOfJobPrefixKey(jobName, trigger);
-            String doneTaskOfJobPrefixKey = tumblerKeys.getDoneTaskOfJobPrefixKey(jobName, trigger);
-            String errorTaskOfJobPrefixKey = tumblerKeys.getErrorTaskOfJobPrefixKey(jobName, trigger);
-            String taskAdoptionOfJobPrefixKey = tumblerKeys.getTaskAdoptionOfJobPrefixKey(jobName, trigger);
+            String todoTaskOfJobPrefixKey = tcKeys.getTodoTaskOfJobPrefixKey(jobName, trigger);
+            String doneTaskOfJobPrefixKey = tcKeys.getDoneTaskOfJobPrefixKey(jobName, trigger);
+            String errorTaskOfJobPrefixKey = tcKeys.getErrorTaskOfJobPrefixKey(jobName, trigger);
+            String taskAdoptionOfJobPrefixKey = tcKeys.getTaskAdoptionOfJobPrefixKey(jobName, trigger);
 
             jobBulletin.deletePrefixAnyway(todoTaskOfJobPrefixKey);
             jobBulletin.deletePrefixAnyway(doneTaskOfJobPrefixKey);
@@ -256,8 +256,8 @@ public class StateServer {
 
     void validateBanTarget(BanLevelEnum banLevel, BanTargetEnum banTarget) throws TcException {
         if (!banLevel.getTarget().compatible(banTarget)) {
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_FATAL_VALIDATION_EXCEPTION,
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_FATAL_VALIDATION_EXCEPTION,
                     String.format("ban level %s is not compatible with ban target %s",
                             banLevel.getName(), banTarget.name()));
         }
@@ -286,8 +286,8 @@ public class StateServer {
 
         JobDefine jd = jobDefineRepo.getDefine(jobDefineName);
         if (jd == null) {
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_FATAL_VALIDATION_EXCEPTION,
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_FATAL_VALIDATION_EXCEPTION,
                     String.format("job define %s doesn't exist", jobDefineName));
         }
         return banHelper.submitBanJobDefine(jobDefineName, banLevel);
@@ -307,8 +307,8 @@ public class StateServer {
 
         String aliveJobStr = jobBulletin.readJob(jobName, trigger);
         if (aliveJobStr == null) {
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_FATAL_VALIDATION_EXCEPTION,
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_FATAL_VALIDATION_EXCEPTION,
                     String.format("alive job (%s, %s) doesn't exist", jobName, trigger));
         }
         return banHelper.submitBanJob(jobName, trigger, banLevel);
@@ -330,8 +330,8 @@ public class StateServer {
 
         RoutineDefine rd = routineDefineRepo.getRoutineDefine(routineName);
         if (rd == null) {
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_FATAL_VALIDATION_EXCEPTION,
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_FATAL_VALIDATION_EXCEPTION,
                     String.format("routine define %s doesn't exist", routineName));
         }
         return banHelper.submitBanRoutineDefine(routineName, banLevel);
@@ -351,8 +351,8 @@ public class StateServer {
 
         Routine routine = routineRepo.getRoutine(routineFullName);
         if (routine == null) {
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_FATAL_VALIDATION_EXCEPTION,
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_FATAL_VALIDATION_EXCEPTION,
                     String.format("routine %s doesn't exist", routineFullName));
         }
         return banHelper.submitBanRoutine(routineFullName, banLevel);

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 public class JobNotifyExecThreadFactory extends DefaultThreadFactory {
     JobNotifyExecThreadFactory() {
         super();
-        namePrefix = "tumbler-job-update-thread-";
+        namePrefix = "tascreed-job-update-thread-";
     }
 
     public JobNotifyExecThread buildJobUpdateThread() {

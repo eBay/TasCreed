@@ -1,6 +1,6 @@
 package com.ebay.magellan.tascreed.core.infra.app;
 
-import com.ebay.magellan.tascreed.core.infra.constant.TumblerConstants;
+import com.ebay.magellan.tascreed.core.infra.constant.TcConstants;
 import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import com.ebay.magellan.tascreed.depend.common.util.HostUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,7 @@ public class AppInfoCollector {
     private static final String THIS_CLASS_NAME = AppInfoCollector.class.getSimpleName();
 
     @Autowired
-    private TumblerConstants tumblerConstants;
+    private TcConstants tcConstants;
 
     @Value("${app.version:unknown}")
     private String appVersion;
@@ -23,8 +23,8 @@ public class AppInfoCollector {
 
     // -----
 
-    public String curTumblerVersion() {
-        return tumblerConstants.getTumblerVersion();
+    public String curTcVersion() {
+        return tcConstants.getTcVersion();
     }
 
     // -----

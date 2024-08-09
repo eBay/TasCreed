@@ -28,8 +28,8 @@ public class ThreadUtil {
                 }
             }
         } catch (InterruptedException | ExecutionException e) {
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_FATAL_EXCEPTION, e.getMessage());
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_FATAL_EXCEPTION, e.getMessage());
         }
         return results;
     }

@@ -3,7 +3,7 @@ package com.ebay.magellan.tascreed.core.infra.scheduleserver.help;
 import com.ebay.magellan.tascreed.core.domain.job.Job;
 import com.ebay.magellan.tascreed.core.domain.schedule.Schedule;
 import com.ebay.magellan.tascreed.core.domain.util.JsonUtil;
-import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
+import com.ebay.magellan.tascreed.core.infra.constant.TcKeys;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.ScheduleBulletin;
 import com.ebay.magellan.tascreed.depend.common.exception.TcErrorEnum;
 import com.ebay.magellan.tascreed.depend.common.exception.TcException;
@@ -23,7 +23,7 @@ import java.util.Map;
 public class ScheduleHelper {
 
     @Autowired
-    private TumblerKeys tumblerKeys;
+    private TcKeys tcKeys;
 
     @Autowired
     private ScheduleBulletin scheduleBulletin;
@@ -34,7 +34,7 @@ public class ScheduleHelper {
 
         schedule.getMidState().setModifyTime(new Date());
 
-        String scheduleUpdateLock = tumblerKeys.getScheduleUpdateLockKey(schedule.getScheduleName());
+        String scheduleUpdateLock = tcKeys.getScheduleUpdateLockKey(schedule.getScheduleName());
         EtcdLock lock = null;
         try {
             lock = scheduleBulletin.lock(scheduleUpdateLock);
@@ -42,17 +42,17 @@ public class ScheduleHelper {
             ret = scheduleBulletin.submitScheduleAndJobs(schedule, newJobs);
 
         } catch (JsonProcessingException e) {
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_FATAL_VALIDATION_EXCEPTION, e.getMessage());
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_FATAL_VALIDATION_EXCEPTION, e.getMessage());
         } catch (Exception e) {
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_RETRY_EXCEPTION, e.getMessage());
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_RETRY_EXCEPTION, e.getMessage());
         } finally {
             try {
                 scheduleBulletin.unlock(lock);
             } catch (Exception e) {
-                TcExceptionBuilder.throwTumblerException(
-                        TcErrorEnum.TUMBLER_RETRY_EXCEPTION, e.getMessage());
+                TcExceptionBuilder.throwTcException(
+                        TcErrorEnum.TC_RETRY_EXCEPTION, e.getMessage());
             }
         }
         return ret;

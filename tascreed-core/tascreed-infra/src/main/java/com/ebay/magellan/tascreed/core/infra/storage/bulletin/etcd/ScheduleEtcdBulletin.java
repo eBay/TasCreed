@@ -8,7 +8,7 @@ import io.etcd.jetcd.op.Op;
 import io.etcd.jetcd.options.PutOption;
 import com.ebay.magellan.tascreed.core.domain.job.Job;
 import com.ebay.magellan.tascreed.core.domain.schedule.Schedule;
-import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
+import com.ebay.magellan.tascreed.core.infra.constant.TcKeys;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.ScheduleBulletin;
 import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import com.ebay.magellan.tascreed.depend.ext.etcd.constant.EtcdConstants;
@@ -30,11 +30,11 @@ public class ScheduleEtcdBulletin extends BaseEtcdBulletin implements ScheduleBu
     private static final String THIS_CLASS_NAME = ScheduleEtcdBulletin.class.getSimpleName();
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-    public ScheduleEtcdBulletin(TumblerKeys tumblerKeys,
+    public ScheduleEtcdBulletin(TcKeys tcKeys,
                                 EtcdConstants etcdConstants,
                                 EtcdUtil etcdUtil,
                                 TcLogger logger) {
-        super(tumblerKeys, etcdConstants, etcdUtil, logger);
+        super(tcKeys, etcdConstants, etcdUtil, logger);
     }
 
     // -----
@@ -49,7 +49,7 @@ public class ScheduleEtcdBulletin extends BaseEtcdBulletin implements ScheduleBu
     public boolean submitScheduleAndJobs(Schedule schedule, List<Job> newJobs) throws Exception {
         if (schedule == null) return false;
 
-        String scheduleKey = tumblerKeys.getScheduleKey(schedule.getScheduleName());
+        String scheduleKey = tcKeys.getScheduleKey(schedule.getScheduleName());
 
         Txn txn = etcdUtil.txn();
         Cmp cmp;
@@ -66,7 +66,7 @@ public class ScheduleEtcdBulletin extends BaseEtcdBulletin implements ScheduleBu
         if (CollectionUtils.isNotEmpty(newJobs)) {
             List<Pair<Cmp, Op>> jobOpPairs = new ArrayList<>();
             for (Job job : newJobs) {
-                String jobKey = tumblerKeys.getJobKey(job.getJobName(), job.getTrigger());
+                String jobKey = tcKeys.getJobKey(job.getJobName(), job.getTrigger());
                 String jobValue = job.toJson();
                 Cmp jobCmp = new Cmp(bs(jobKey), Cmp.Op.EQUAL, CmpTarget.createRevision(0));
                 Op jobPut = Op.put(bs(jobKey), bs(jobValue), PutOption.DEFAULT);
@@ -101,16 +101,16 @@ public class ScheduleEtcdBulletin extends BaseEtcdBulletin implements ScheduleBu
     // -----
 
     public String readSchedule(String scheduleName) {
-        return etcdUtil.getSingleValue(tumblerKeys.getScheduleKey(scheduleName));
+        return etcdUtil.getSingleValue(tcKeys.getScheduleKey(scheduleName));
     }
     public Map<String, String> readAllSchedules() throws Exception {
-        return etcdUtil.getKVMapWithPrefix(tumblerKeys.buildScheduleInfoPrefix());
+        return etcdUtil.getKVMapWithPrefix(tcKeys.buildScheduleInfoPrefix());
     }
 
     // -----
 
     public String deleteSchedule(String scheduleName) throws Exception{
-        String k = tumblerKeys.getScheduleKey(scheduleName);
+        String k = tcKeys.getScheduleKey(scheduleName);
         String v = getSingleValue(k);
         if (StringUtils.isBlank(v)) return null;
 

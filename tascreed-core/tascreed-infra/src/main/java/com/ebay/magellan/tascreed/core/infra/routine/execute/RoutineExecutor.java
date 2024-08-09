@@ -94,8 +94,8 @@ public abstract class RoutineExecutor {
     protected void routineOccupationCheck() throws TcException {
         boolean occupied = routineStillOccupied();
         if (!occupied) {
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_NON_RETRY_HEARTBEAT_EXCEPTION,
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_NON_RETRY_HEARTBEAT_EXCEPTION,
                     "routine occupation check fails, will end task execution");
         }
     }

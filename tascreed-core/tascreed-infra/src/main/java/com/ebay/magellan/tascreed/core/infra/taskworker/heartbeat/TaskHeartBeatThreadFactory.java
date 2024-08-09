@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 public class TaskHeartBeatThreadFactory extends DefaultThreadFactory {
     TaskHeartBeatThreadFactory() {
         super();
-        namePrefix = "tumbler-heartbeat-thread-";
+        namePrefix = "tascreed-heartbeat-thread-";
     }
 
     public TaskHeartBeatThread buildHeartBeatThread(TaskWorkerThread workerThread) {

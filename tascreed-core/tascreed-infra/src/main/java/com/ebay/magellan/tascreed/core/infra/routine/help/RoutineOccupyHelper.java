@@ -8,8 +8,8 @@ import com.ebay.magellan.tascreed.core.domain.routine.RoutineCandidate;
 import com.ebay.magellan.tascreed.core.domain.task.WeightLabel;
 import com.ebay.magellan.tascreed.core.domain.util.SortUtil;
 import com.ebay.magellan.tascreed.core.infra.ban.BanHelper;
-import com.ebay.magellan.tascreed.core.infra.conf.TumblerGlobalConfig;
-import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
+import com.ebay.magellan.tascreed.core.infra.conf.TcGlobalConfig;
+import com.ebay.magellan.tascreed.core.infra.constant.TcKeys;
 import com.ebay.magellan.tascreed.core.infra.routine.execute.RoutineExecutorFactory;
 import com.ebay.magellan.tascreed.core.infra.routine.repo.RoutineRepo;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.RoutineBulletin;
@@ -35,10 +35,10 @@ public class RoutineOccupyHelper {
     private static final String THIS_CLASS_NAME = TaskOccupyHelper.class.getSimpleName();
 
     @Autowired
-    private TumblerKeys tumblerKeys;
+    private TcKeys tcKeys;
 
     @Autowired
-    private TumblerGlobalConfig tumblerGlobalConfig;
+    private TcGlobalConfig tcGlobalConfig;
 
     @Autowired
     private RoutineBulletin routineBulletin;
@@ -59,7 +59,7 @@ public class RoutineOccupyHelper {
     // -----
 
     private String getRoutineAdoptionLockKey() {
-        return tumblerKeys.buildRoutineAdoptionLock();
+        return tcKeys.buildRoutineAdoptionLock();
     }
 
     /**
@@ -134,7 +134,7 @@ public class RoutineOccupyHelper {
 
     // there's available routine thread to occupy any routine
     boolean routineThreadAvailable(int adoptedRoutineCount) {
-        int maxRoutineCountOverall = tumblerGlobalConfig.getMaxRoutineCountOverall();
+        int maxRoutineCountOverall = tcGlobalConfig.getMaxRoutineCountOverall();
         return adoptedRoutineCount < maxRoutineCountOverall;
     }
 

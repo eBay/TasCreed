@@ -24,9 +24,9 @@ public class DutyHelperTest {
 
     @Before
     public void init() {
-        doReturn("0.3.4-RELEASE").when(appInfoCollector).curTumblerVersion();
+        doReturn("0.3.4-RELEASE").when(appInfoCollector).curTcVersion();
         doReturn("1.2.7-RELEASE").when(appInfoCollector).curAppVersion();
-        doReturn("lvstumblersampleapp-5200414.lvs02.dev.ebayc3.com").when(appInfoCollector).curHostName();
+        doReturn("lvs-1.xxx.com").when(appInfoCollector).curHostName();
     }
 
     @Test
@@ -41,22 +41,22 @@ public class DutyHelperTest {
     }
 
     @Test
-    public void isCurrentNodeValid_tumblerVersion() {
+    public void isCurrentNodeValid_tcVersion() {
         NodeDutyRule rule = new NodeDutyRule();
 
-        rule.setMinValidTumblerVersion(null);
+        rule.setMinValidTcVersion(null);
         assertTrue(dutyHelper.isCurrentNodeValid(rule));
-        rule.setMinValidTumblerVersion("");
+        rule.setMinValidTcVersion("");
         assertTrue(dutyHelper.isCurrentNodeValid(rule));
 
-        rule.setMinValidTumblerVersion("0.3.4");
+        rule.setMinValidTcVersion("0.3.4");
         assertTrue(dutyHelper.isCurrentNodeValid(rule));
-        rule.setMinValidTumblerVersion("0.3.5");
+        rule.setMinValidTcVersion("0.3.5");
         assertFalse(dutyHelper.isCurrentNodeValid(rule));
 
-        doReturn("").when(appInfoCollector).curTumblerVersion();
+        doReturn("").when(appInfoCollector).curTcVersion();
         assertFalse(dutyHelper.isCurrentNodeValid(rule));
-        doReturn(null).when(appInfoCollector).curTumblerVersion();
+        doReturn(null).when(appInfoCollector).curTcVersion();
         assertFalse(dutyHelper.isCurrentNodeValid(rule));
     }
 

@@ -1,6 +1,6 @@
-tumbler:
+tascreed:
   version: @project.version@
-  namespace: "/tumbler/default"
+  namespace: "/tascreed/default"
   # job define, for job refresh
   define:
     dirs: "jobDefine"

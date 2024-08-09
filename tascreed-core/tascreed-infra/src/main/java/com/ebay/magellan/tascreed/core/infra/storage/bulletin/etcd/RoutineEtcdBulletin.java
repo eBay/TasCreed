@@ -7,7 +7,7 @@ import io.etcd.jetcd.op.CmpTarget;
 import io.etcd.jetcd.op.Op;
 import io.etcd.jetcd.options.PutOption;
 import com.ebay.magellan.tascreed.core.domain.routine.Routine;
-import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
+import com.ebay.magellan.tascreed.core.infra.constant.TcKeys;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.RoutineBulletin;
 import com.ebay.magellan.tascreed.depend.common.exception.TcException;
 import com.ebay.magellan.tascreed.depend.common.exception.TcExceptionBuilder;
@@ -28,18 +28,18 @@ public class RoutineEtcdBulletin extends BaseOccupyEtcdBulletin implements Routi
     private static final String THIS_CLASS_NAME = RoutineEtcdBulletin.class.getSimpleName();
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-    public RoutineEtcdBulletin(TumblerKeys tumblerKeys,
+    public RoutineEtcdBulletin(TcKeys tcKeys,
                                EtcdConstants etcdConstants,
                                EtcdUtil etcdUtil,
                                TcLogger logger) {
-        super(tumblerKeys, etcdConstants, etcdUtil, logger);
+        super(tcKeys, etcdConstants, etcdUtil, logger);
     }
 
     // -----
 
     public String getRoutineAdoptionKey(Routine routine) {
         if (routine == null) return null;
-        return tumblerKeys.getRoutineAdoptionKey(routine.getFullName());
+        return tcKeys.getRoutineAdoptionKey(routine.getFullName());
     }
 
     public String checkRoutineAdoption(Routine routine) throws TcException {
@@ -53,7 +53,7 @@ public class RoutineEtcdBulletin extends BaseOccupyEtcdBulletin implements Routi
     }
 
     public Map<String, String> readAllRoutineAdoptions() throws Exception {
-        return etcdUtil.getKVMapWithPrefix(tumblerKeys.buildRoutineAdoptionPrefix());
+        return etcdUtil.getKVMapWithPrefix(tcKeys.buildRoutineAdoptionPrefix());
     }
 
     // -----
@@ -61,7 +61,7 @@ public class RoutineEtcdBulletin extends BaseOccupyEtcdBulletin implements Routi
     public String readRoutineCheckpoint(Routine routine) throws TcException {
         if (routine == null) return null;
         try {
-            String checkpointKey = tumblerKeys.getRoutineCheckpointKey(routine.getFullName());
+            String checkpointKey = tcKeys.getRoutineCheckpointKey(routine.getFullName());
             return etcdUtil.getSingleValue(checkpointKey);
         } catch (Exception e) {
             TcExceptionBuilder.throwEtcdRetryableException(e);
@@ -77,7 +77,7 @@ public class RoutineEtcdBulletin extends BaseOccupyEtcdBulletin implements Routi
 
         boolean success = false;
 
-        String routineUpdateLock = tumblerKeys.getRoutineUpdateLockKey(routine.getFullName());
+        String routineUpdateLock = tcKeys.getRoutineUpdateLockKey(routine.getFullName());
         EtcdLock lock = null;
 
         try {
@@ -101,7 +101,7 @@ public class RoutineEtcdBulletin extends BaseOccupyEtcdBulletin implements Routi
     boolean updateRoutineCheckpointImpl(Routine routine, String checkpointValue, String adoptionValue) throws Exception {
         if (routine == null) return false;
 
-        String checkpointKey = tumblerKeys.getRoutineCheckpointKey(routine.getFullName());
+        String checkpointKey = tcKeys.getRoutineCheckpointKey(routine.getFullName());
         String adoptionKey = getRoutineAdoptionKey(routine);
 
         Txn txn = etcdUtil.txn();

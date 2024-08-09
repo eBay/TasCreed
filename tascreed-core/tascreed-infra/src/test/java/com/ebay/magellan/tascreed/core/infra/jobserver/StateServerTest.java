@@ -5,7 +5,7 @@ import com.ebay.magellan.tascreed.core.domain.builder.TaskBuilder;
 import com.ebay.magellan.tascreed.core.domain.task.TaskViews;
 import com.ebay.magellan.tascreed.core.domain.job.Job;
 import com.ebay.magellan.tascreed.core.domain.task.Task;
-import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
+import com.ebay.magellan.tascreed.core.infra.constant.TcKeys;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.*;
 import com.ebay.magellan.tascreed.core.infra.help.TestRepo;
 import com.ebay.magellan.tascreed.depend.common.collection.KeyValuePair;
@@ -36,7 +36,7 @@ public class StateServerTest {
     private TcLogger logger;
 
     @Mock
-    private TumblerKeys tumblerKeys;
+    private TcKeys tcKeys;
 
     @Mock
     private JobBulletin jobBulletin;
@@ -75,7 +75,7 @@ public class StateServerTest {
         adoptions.put("/test/job2/trigger2/step2", "node1/thread5");
         doReturn(adoptions).when(taskBulletin).readAllTaskAdoptions();
 
-        doReturn("key").when(tumblerKeys).getTaskAdoptionKey(anyString(), anyString(), anyString());
+        doReturn("key").when(tcKeys).getTaskAdoptionKey(anyString(), anyString(), anyString());
         doReturn("value").when(taskBulletin).getSingleValue(anyString());
     }
 

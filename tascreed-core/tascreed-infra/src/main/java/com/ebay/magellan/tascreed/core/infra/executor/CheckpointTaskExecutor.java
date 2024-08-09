@@ -20,7 +20,7 @@ public abstract class CheckpointTaskExecutor<C extends TaskExecCheckpoint> exten
 
     @Override
     protected final TaskResult executeImpl() throws TcException {
-        TcExceptionBuilder.throwTumblerException(TcErrorEnum.TUMBLER_FATAL_TASK_EXCEPTION,
+        TcExceptionBuilder.throwTcException(TcErrorEnum.TC_FATAL_TASK_EXCEPTION,
                 String.format("CheckpointTaskExecutor should not call executeImpl method!"));
         return null;
     }

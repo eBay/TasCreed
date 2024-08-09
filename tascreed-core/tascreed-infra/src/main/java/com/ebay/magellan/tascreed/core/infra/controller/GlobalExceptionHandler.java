@@ -14,7 +14,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(TcException.class)
     @ResponseBody
     @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
-    public Object TumblerExceptionHandler(TcException e){
+    public Object TcExceptionHandler(TcException e){
         e.printStackTrace();
         TcErrorEnum error = e.getError();
         String msg = e.getMessage();
@@ -26,7 +26,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
     public Object exceptionHandler(Exception e){
         e.printStackTrace();
-        TcErrorEnum error = TcErrorEnum.TUMBLER_UNKNOWN_EXCEPTION;
+        TcErrorEnum error = TcErrorEnum.TC_UNKNOWN_EXCEPTION;
         String msg = e.getMessage();
         return new ErrorResponse(error.getErrorId(), error.getErrorMessage(), msg);
     }

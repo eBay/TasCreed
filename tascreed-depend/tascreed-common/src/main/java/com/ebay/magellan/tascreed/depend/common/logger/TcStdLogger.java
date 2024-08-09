@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConditionalOnProperty(prefix = "tumbler", name = "logger", havingValue = "std", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "tascreed", name = "logger", havingValue = "std", matchIfMissing = true)
 public class TcStdLogger implements TcLogger {
 
     public void log(String type, String name, String data, String status) {

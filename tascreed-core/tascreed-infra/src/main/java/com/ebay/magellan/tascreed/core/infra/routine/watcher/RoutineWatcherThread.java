@@ -1,8 +1,8 @@
 package com.ebay.magellan.tascreed.core.infra.routine.watcher;
 
 import com.ebay.magellan.tascreed.core.domain.duty.NodeDutyEnum;
-import com.ebay.magellan.tascreed.core.infra.conf.TumblerGlobalConfig;
-import com.ebay.magellan.tascreed.core.infra.constant.TumblerConstants;
+import com.ebay.magellan.tascreed.core.infra.conf.TcGlobalConfig;
+import com.ebay.magellan.tascreed.core.infra.constant.TcConstants;
 import com.ebay.magellan.tascreed.core.infra.duty.DutyHelper;
 import com.ebay.magellan.tascreed.core.infra.routine.RoutineThreadFactory;
 import com.ebay.magellan.tascreed.core.infra.routine.RoutineThreadPoolExecutor;
@@ -21,10 +21,10 @@ public class RoutineWatcherThread implements Runnable {
     private static final String THIS_CLASS_NAME = RoutineWatcherThread.class.getSimpleName();
 
     @Autowired
-    private TumblerConstants tumblerConstants;
+    private TcConstants tcConstants;
 
     @Autowired
-    private TumblerGlobalConfig tumblerGlobalConfig;
+    private TcGlobalConfig tcGlobalConfig;
 
     @Autowired
     private RoutineThreadFactory routineThreadFactory;
@@ -42,12 +42,12 @@ public class RoutineWatcherThread implements Runnable {
 
     @Override
     public void run() {
-        long intervalMs = tumblerConstants.getRoutineWatcherIntervalInSeconds() * 1000L;
+        long intervalMs = tcConstants.getRoutineWatcherIntervalInSeconds() * 1000L;
         while (true) {
             try {
                 dutyHelper.dutyEnableCheck(NodeDutyEnum.ROUTINE_EXECUTOR);
 
-                if (tumblerGlobalConfig.isRoutineWatcherSwitchOn(false)) {
+                if (tcGlobalConfig.isRoutineWatcherSwitchOn(false)) {
                     // try to reset max worker count of task worker thread pool
                     tryResetMaxRoutineCount();
 
@@ -82,7 +82,7 @@ public class RoutineWatcherThread implements Runnable {
     }
 
     void tryResetMaxRoutineCount() {
-        int newMaxRoutineCount = tumblerGlobalConfig.getMaxRoutineCountPerHost();
+        int newMaxRoutineCount = tcGlobalConfig.getMaxRoutineCountPerHost();
         routineThreadPoolExecutor.resetMaxWorkerCount(newMaxRoutineCount);
         int newMaxHeartBeatThreadCount = Math.min(newMaxRoutineCount * 2, Integer.MAX_VALUE);
         routineHeartBeatThreadPoolExecutor.resetMaxWorkerCount(newMaxHeartBeatThreadCount);

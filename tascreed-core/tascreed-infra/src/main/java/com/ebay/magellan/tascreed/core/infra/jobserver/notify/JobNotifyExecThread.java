@@ -12,13 +12,13 @@ import com.ebay.magellan.tascreed.core.domain.state.StateChange;
 import com.ebay.magellan.tascreed.core.domain.task.Task;
 import com.ebay.magellan.tascreed.core.domain.trait.Trait;
 import com.ebay.magellan.tascreed.core.domain.util.JsonUtil;
-import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
+import com.ebay.magellan.tascreed.core.infra.constant.TcKeys;
 import com.ebay.magellan.tascreed.core.infra.duty.DutyHelper;
 import com.ebay.magellan.tascreed.core.infra.jobserver.msg.JobMsgState;
 import com.ebay.magellan.tascreed.core.infra.jobserver.msg.JobMsgStatePool;
 import com.ebay.magellan.tascreed.core.infra.storage.archive.ArchiveStorageFactory;
 import com.ebay.magellan.tascreed.core.infra.ban.BanHelper;
-import com.ebay.magellan.tascreed.core.infra.constant.TumblerConstants;
+import com.ebay.magellan.tascreed.core.infra.constant.TcConstants;
 import com.ebay.magellan.tascreed.core.infra.context.JobsContext;
 import com.ebay.magellan.tascreed.core.infra.jobserver.help.JobHelper;
 import com.ebay.magellan.tascreed.core.infra.monitor.Metrics;
@@ -59,13 +59,13 @@ public class JobNotifyExecThread implements Runnable {
     private TaskBuilder taskBuilder = new TaskBuilder();
 
     @Autowired
-    private TumblerConstants tumblerConstants;
+    private TcConstants tcConstants;
 
     @Autowired
     private JobDefineRepo jobDefineRepo;
 
     @Autowired
-    private TumblerKeys tumblerKeys;
+    private TcKeys tcKeys;
     @Autowired
     private JobBulletin jobBulletin;
     @Autowired
@@ -173,7 +173,7 @@ public class JobNotifyExecThread implements Runnable {
                 }
             } else {
                 for (JobInstKey jobId : jms.getKeys()) {
-                    String key = tumblerKeys.getJobKey(jobId.getName(), jobId.getTrigger());
+                    String key = tcKeys.getJobKey(jobId.getName(), jobId.getTrigger());
                     String value = jobBulletin.readJob(jobId.getName(), jobId.getTrigger());
                     Job job = buildJob(value);
                     if (job != null) {
@@ -182,8 +182,8 @@ public class JobNotifyExecThread implements Runnable {
                 }
             }
         } catch (Exception e) {
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_RETRY_EXCEPTION, e.getMessage());
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_RETRY_EXCEPTION, e.getMessage());
         }
         return JobsContext.init(jobMap);
     }
@@ -241,7 +241,7 @@ public class JobNotifyExecThread implements Runnable {
                 }
 
                 // 4. archive done tasks
-                if (tumblerConstants.isArchiveTaskEnable()) {
+                if (tcConstants.isArchiveTaskEnable()) {
                     List<Task> archiveTasks = doneTasks.stream()
                             .filter(t -> t.getTraits().containsTrait(Trait.ARCHIVE))
                             .collect(Collectors.toList());
@@ -279,8 +279,8 @@ public class JobNotifyExecThread implements Runnable {
             Map<String, String> map = taskBulletin.readAllDoneTasks();
             tasks = JsonUtil.parseTasks(map.values());
         } catch (Exception e) {
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_RETRY_EXCEPTION, e.getMessage());
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_RETRY_EXCEPTION, e.getMessage());
         }
         return tasks;
     }

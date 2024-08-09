@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1")
 public class HelloController {
 
-    @Value("${tumbler.version:unknown}")
-    private String tumblerVersion;
+    @Value("${tascreed.version:unknown}")
+    private String tascreedVersion;
 
     @GetMapping("/hello")
     public String hello() {
-        return String.format("Hello Tumbler %s !", tumblerVersion);
+        return String.format("Hello TasCreed %s !", tascreedVersion);
     }
 }

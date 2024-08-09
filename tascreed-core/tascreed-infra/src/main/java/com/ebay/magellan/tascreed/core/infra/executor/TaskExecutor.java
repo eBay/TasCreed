@@ -109,8 +109,8 @@ public abstract class TaskExecutor {
     protected void taskOccupationCheck() throws TcException {
         boolean occupied = taskStillOccupied();
         if (!occupied) {
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_NON_RETRY_HEARTBEAT_EXCEPTION,
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_NON_RETRY_HEARTBEAT_EXCEPTION,
                     "task occupation check fails, will end task execution");
         }
     }

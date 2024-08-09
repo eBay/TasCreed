@@ -12,9 +12,9 @@ public class MetricsServer implements InitializingBean {
 
     private static final String THIS_CLASS_NAME = MetricsServer.class.getSimpleName();
 
-    @Value("${tumbler.metrics.server.enable:true}")
+    @Value("${tascreed.metrics.server.enable:true}")
     private boolean serverEnable;
-    @Value("${tumbler.metrics.server.port:9091}")
+    @Value("${tascreed.metrics.server.port:9091}")
     private int port;
 
     private HTTPServer server;

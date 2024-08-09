@@ -37,8 +37,8 @@ public class JobWatcherRoutineExecutor extends NormalRoutineExecutor {
             // update notify
             JobMsgStatePool.getInstance().addItem(JobMsgItem.refreshAll());
         } catch (Exception e) {
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_NON_RETRY_EXCEPTION, e.getMessage());
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_NON_RETRY_EXCEPTION, e.getMessage());
         }
     }
 

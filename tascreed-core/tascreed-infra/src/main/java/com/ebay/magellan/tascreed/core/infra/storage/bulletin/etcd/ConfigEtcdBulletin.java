@@ -1,6 +1,6 @@
 package com.ebay.magellan.tascreed.core.infra.storage.bulletin.etcd;
 
-import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
+import com.ebay.magellan.tascreed.core.infra.constant.TcKeys;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.ConfigBulletin;
 import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import com.ebay.magellan.tascreed.depend.ext.etcd.constant.EtcdConstants;
@@ -15,11 +15,11 @@ public class ConfigEtcdBulletin extends BaseEtcdBulletin implements ConfigBullet
     private static final String THIS_CLASS_NAME = ConfigEtcdBulletin.class.getSimpleName();
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-    public ConfigEtcdBulletin(TumblerKeys tumblerKeys,
+    public ConfigEtcdBulletin(TcKeys tcKeys,
                               EtcdConstants etcdConstants,
                               EtcdUtil etcdUtil,
                               TcLogger logger) {
-        super(tumblerKeys, etcdConstants, etcdUtil, logger);
+        super(tcKeys, etcdConstants, etcdUtil, logger);
     }
 
     // -----

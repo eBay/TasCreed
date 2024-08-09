@@ -1,8 +1,8 @@
 package com.ebay.magellan.tascreed.core.infra.storage.archive;
 
 import com.ebay.magellan.tascreed.core.domain.task.Task;
-import com.ebay.magellan.tascreed.core.infra.constant.TumblerConstants;
-import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
+import com.ebay.magellan.tascreed.core.infra.constant.TcConstants;
+import com.ebay.magellan.tascreed.core.infra.constant.TcKeys;
 import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import com.ebay.magellan.tascreed.depend.ext.es.util.EsUtil;
 import org.junit.Before;
@@ -25,9 +25,9 @@ public class EsArchiveStorageTest {
     private EsArchiveStorage agent = new EsArchiveStorage();
 
     @Mock
-    private TumblerKeys tumblerKeys;
+    private TcKeys tcKeys;
     @Mock
-    private TumblerConstants tumblerConstants;
+    private TcConstants tcConstants;
 
     @Mock
     private EsUtil esUtil;
@@ -37,15 +37,15 @@ public class EsArchiveStorageTest {
 
     @Before
     public void init() throws Exception {
-        doReturn(tumblerConstants).when(tumblerKeys).getTumblerConstants();
-        doReturn("/tumbler").when(tumblerConstants).getTumblerNamespace();
+        doReturn(tcConstants).when(tcKeys).getTcConstants();
+        doReturn("/tascreed").when(tcConstants).getTcNamespace();
         doNothing().when(esUtil).syncPutDoc(any(), any());
         doNothing().when(esUtil).asyncPutDocs(anyMap(), anyInt());
     }
 
     @Test
     public void archiveJob() throws Exception {
-        agent.archiveJob("/tumbler/job/trigger", "{}",
+        agent.archiveJob("/tascreed/job/trigger", "{}",
                 "job", "trigger", "SUCCESS");
     }
 

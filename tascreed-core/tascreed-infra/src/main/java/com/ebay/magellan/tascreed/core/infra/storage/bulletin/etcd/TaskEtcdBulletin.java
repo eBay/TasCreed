@@ -9,7 +9,7 @@ import io.etcd.jetcd.options.DeleteOption;
 import io.etcd.jetcd.options.PutOption;
 import com.ebay.magellan.tascreed.core.domain.task.Task;
 import com.ebay.magellan.tascreed.core.domain.task.TaskViews;
-import com.ebay.magellan.tascreed.core.infra.constant.TumblerKeys;
+import com.ebay.magellan.tascreed.core.infra.constant.TcKeys;
 import com.ebay.magellan.tascreed.core.infra.storage.bulletin.TaskBulletin;
 import com.ebay.magellan.tascreed.depend.common.exception.TcErrorEnum;
 import com.ebay.magellan.tascreed.depend.common.exception.TcException;
@@ -32,30 +32,30 @@ public class TaskEtcdBulletin extends BaseOccupyEtcdBulletin implements TaskBull
     private static final String THIS_CLASS_NAME = TaskEtcdBulletin.class.getSimpleName();
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-    public TaskEtcdBulletin(TumblerKeys tumblerKeys,
+    public TaskEtcdBulletin(TcKeys tcKeys,
                             EtcdConstants etcdConstants,
                             EtcdUtil etcdUtil,
                             TcLogger logger) {
-        super(tumblerKeys, etcdConstants, etcdUtil, logger);
+        super(tcKeys, etcdConstants, etcdUtil, logger);
     }
 
     // -----
 
     public Map<String, String> readAllTodoTasks() throws Exception {
-        return etcdUtil.getKVMapWithPrefix(tumblerKeys.buildTaskInfoTodoPrefix());
+        return etcdUtil.getKVMapWithPrefix(tcKeys.buildTaskInfoTodoPrefix());
     }
     public Map<String, String> readAllDoneTasks() throws Exception {
-        return etcdUtil.getKVMapWithPrefix(tumblerKeys.buildTaskInfoDonePrefix());
+        return etcdUtil.getKVMapWithPrefix(tcKeys.buildTaskInfoDonePrefix());
     }
     public Map<String, String> readAllErrorTasks() throws Exception {
-        return etcdUtil.getKVMapWithPrefix(tumblerKeys.buildTaskInfoErrorPrefix());
+        return etcdUtil.getKVMapWithPrefix(tcKeys.buildTaskInfoErrorPrefix());
     }
 
     // -----
 
     public String getTaskAdoptionKey(Task task) {
         if (task == null) return null;
-        return tumblerKeys.getTaskAdoptionKey(task.getJobName(), task.getTrigger(), task.getTaskName());
+        return tcKeys.getTaskAdoptionKey(task.getJobName(), task.getTrigger(), task.getTaskName());
     }
 
     public String checkTaskAdoption(Task task) throws TcException {
@@ -69,7 +69,7 @@ public class TaskEtcdBulletin extends BaseOccupyEtcdBulletin implements TaskBull
     }
 
     public Map<String, String> readAllTaskAdoptions() throws Exception {
-        return etcdUtil.getKVMapWithPrefix(tumblerKeys.buildTaskAdoptionPrefix());
+        return etcdUtil.getKVMapWithPrefix(tcKeys.buildTaskAdoptionPrefix());
     }
 
     // -----
@@ -82,14 +82,14 @@ public class TaskEtcdBulletin extends BaseOccupyEtcdBulletin implements TaskBull
         try {
             value = task.toJson(TaskViews.TASK_DONE.class);
         } catch (JsonProcessingException e) {
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_FATAL_VALIDATION_EXCEPTION, e.getMessage());
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_FATAL_VALIDATION_EXCEPTION, e.getMessage());
         }
         if (StringUtils.isBlank(value)) return false;
 
         boolean success = false;
 
-        String taskUpdateLock = tumblerKeys.getTaskUpdateLockKey(task.getJobName(), task.getTrigger(), task.getTaskName());
+        String taskUpdateLock = tcKeys.getTaskUpdateLockKey(task.getJobName(), task.getTrigger(), task.getTaskName());
         EtcdLock lock = null;
 
         try {
@@ -114,9 +114,9 @@ public class TaskEtcdBulletin extends BaseOccupyEtcdBulletin implements TaskBull
                                       String adoptionValue, boolean withError) throws Exception {
         if (task == null) return false;
 
-        String todoTaskKey = tumblerKeys.getTodoTaskKey(task.getJobName(), task.getTrigger(), task.getTaskName());
-        String doneTaskKey = tumblerKeys.getDoneTaskKey(task.getJobName(), task.getTrigger(), task.getTaskName());
-        String errorTaskKey = tumblerKeys.getErrorTaskKey(task.getJobName(), task.getTrigger(), task.getTaskName());
+        String todoTaskKey = tcKeys.getTodoTaskKey(task.getJobName(), task.getTrigger(), task.getTaskName());
+        String doneTaskKey = tcKeys.getDoneTaskKey(task.getJobName(), task.getTrigger(), task.getTaskName());
+        String errorTaskKey = tcKeys.getErrorTaskKey(task.getJobName(), task.getTrigger(), task.getTaskName());
         String adoptionKey = getTaskAdoptionKey(task);
 
         Txn txn = etcdUtil.txn();
@@ -170,14 +170,14 @@ public class TaskEtcdBulletin extends BaseOccupyEtcdBulletin implements TaskBull
         try {
             value = task.toJson(TaskViews.TASK_TODO.class);
         } catch (JsonProcessingException e) {
-            TcExceptionBuilder.throwTumblerException(
-                    TcErrorEnum.TUMBLER_FATAL_VALIDATION_EXCEPTION, e.getMessage());
+            TcExceptionBuilder.throwTcException(
+                    TcErrorEnum.TC_FATAL_VALIDATION_EXCEPTION, e.getMessage());
         }
         if (StringUtils.isBlank(value)) return false;
 
         boolean success = false;
 
-        String taskUpdateLock = tumblerKeys.getTaskUpdateLockKey(task.getJobName(), task.getTrigger(), task.getTaskName());
+        String taskUpdateLock = tcKeys.getTaskUpdateLockKey(task.getJobName(), task.getTrigger(), task.getTaskName());
         EtcdLock lock = null;
 
         try {
@@ -201,7 +201,7 @@ public class TaskEtcdBulletin extends BaseOccupyEtcdBulletin implements TaskBull
     boolean updateTodoTaskImpl(Task task, String todoTaskValue, String adoptionValue) throws Exception {
         if (task == null) return false;
 
-        String todoTaskKey = tumblerKeys.getTodoTaskKey(task.getJobName(), task.getTrigger(), task.getTaskName());
+        String todoTaskKey = tcKeys.getTodoTaskKey(task.getJobName(), task.getTrigger(), task.getTaskName());
         String adoptionKey = getTaskAdoptionKey(task);
 
         Txn txn = etcdUtil.txn();

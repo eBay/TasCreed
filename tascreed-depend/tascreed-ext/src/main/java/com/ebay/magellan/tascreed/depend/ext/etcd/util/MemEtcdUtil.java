@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 @Component
-@ConditionalOnProperty(prefix = "tumbler", name = "etcd", havingValue = "mem", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "tascreed", name = "etcd", havingValue = "mem", matchIfMissing = true)
 public class MemEtcdUtil implements EtcdUtil {
 
     private static final String THIS_CLASS_NAME = MemEtcdUtil.class.getSimpleName();
