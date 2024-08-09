@@ -1,0 +1,81 @@
+tumbler:
+  version: @project.version@
+  namespace: "/tumbler/default"
+  # job define, for job refresh
+  define:
+    dirs: "jobDefine"
+    graph.validate.enable: true
+  watcher:
+    # routine watcher, for routine occupation
+    routine:
+      switch.on:
+        key: "%s/watch/routine/switch_on"
+        default: true
+      interval.seconds: 30
+    # task watcher, for task occupation
+    task:
+      switch.on:
+        key: "%s/watch/task/switch_on"
+        default: true
+      interval.seconds: 30
+  worker:
+    # num of overall available workers
+    max.count.overall:
+      key: "%s/max_worker_count_overall"
+      default: 20
+    # num of available worker per host
+    max.count.per.host:
+      key: "%s/max_worker_count_per_host"
+      default: 5
+    affinity.enable: false
+  routine:
+    # num of overall available routines
+    max.count.overall:
+      key: "%s/max_routine_count_overall"
+      default: 20
+    # num of available routine thread per host
+    max.count.per.host:
+      key: "%s/max_routine_count_per_host"
+      default: 5
+  # bulletin key prefix configuration
+  bulletin:
+    routine:
+      adoption.lock: "%s/lock/routine-adoption"
+      adoption.prefix: "%s/routine-adoption/"
+      update.lock.prefix: "%s/lock/routine-checkpoint/"
+      checkpoint.prefix: "%s/routine-checkpoint/"
+    job:
+      update.lock.prefix: "%s/lock/job-info/"
+      info.prefix: "%s/job-info/"
+    task:
+      update.lock.prefix: "%s/lock/task-info/"
+      info:
+        todo.prefix: "%s/task-info/todo/"
+        done.prefix: "%s/task-info/done/"
+        error.prefix: "%s/task-info/error/"
+      adoption.lock: "%s/lock/task-adoption"
+      adoption.prefix: "%s/task-adoption/"
+    schedule:
+      update.lock.prefix: "%s/lock/schedule-info/"
+      info.prefix: "%s/schedule-info/"
+  # pause and resume job execution
+  ban:
+    enable: true
+    global.key: "%s/ban/global"
+    job.define.prefix: "%s/ban/job-define/"
+    job.prefix: "%s/ban/job/"
+    routine.define.prefix: "%s/ban/routine-define/"
+    routine.prefix: "%s/ban/routine/"
+  # node duty configuration
+  duty:
+    # feature of duty enable or not
+    enable: true
+    rules.global.key: "%s/duty/rules/global"
+  archive:
+    task.enable: false
+  # storage configuration
+  storage:
+    archive: "ES"
+    bulletin: "ETCD"
+  # logger
+  logger.default: "CAL"

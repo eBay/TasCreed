@@ -1,0 +1,39 @@
+{
+  "jobName": "sample",
+  "version": 1,
+  "params": {
+    "p1": "0"
+  },
+  "steps": [
+    {
+      "stepName": "sample-prep",
+      "stepType": "SHARD",
+      "shardConf": {
+        "shard": 4
+      }
+    },
+    {
+      "stepName": "sample-calc",
+      "stepType": "PACK",
+      "packConf": {
+        "size": 100,
+        "start": 0,
+        "end": 1005,
+        "maxTaskCount": 6
+      },
+      "dependentStep": "sample-prep"
+    },
+    {
+      "stepName": "sample-aggr-1",
+      "dependentStep": "sample-calc"
+    },
+    {
+      "stepName": "sample-aggr-2",
+      "dependentStep": "sample-calc",
+      "params": {
+        "p1": "2",
+        "p2": "4"
+      }
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "jobName": "cycle",
+  "version": 1,
+  "steps": [
+    {
+      "stepName": "prep"
+    },
+    {
+      "stepName": "c1",
+      "dependency": {
+        "steps": ["prep", "c3"]
+      }
+    },
+    {
+      "stepName": "c2",
+      "dependency": {
+        "steps": ["prep", "c1"]
+      }
+    },
+    {
+      "stepName": "c3",
+      "dependency": {
+        "steps": ["prep", "c2"]
+      }
+    },
+    {
+      "stepName": "next-1",
+      "dependency": {
+        "steps": ["c1", "c2"]
+      }
+    },
+    {
+      "stepName": "next-2",
+      "dependency": {
+        "steps": ["c2", "c3"]
+      }
+    },
+    {
+      "stepName": "other-1"
+    },
+    {
+      "stepName": "other-2",
+      "dependency": {
+        "steps": ["other-1"]
+      }
+    }
+  ]
+}

@@ -1,0 +1,1462 @@
+---
+openapi: '3.0.3'
+info:
+  title: Tumbler Application
+  description: Tumbler based application for batch job execution
+  version: 0.4.0-RELEASE
+servers:
+  - url: http://localhost:8080/api/v1
+    description: dev
+paths:
+  /hello:
+    get:
+      summary: hello to Tumbler app
+      operationId: hello
+      tags:
+        - hello
+      responses:
+        200:
+          description: ack from Tumbler app
+          content:
+            'text/plain':
+              schema:
+                type: string
+                example: 'Hello Tumbler 1.0.0-RELEASE !'
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+  /job:
+    post:
+      summary: submit a job instance
+      operationId: submitJob
+      tags:
+        - job
+      requestBody:
+        description: job payload
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/requestBodies/JobRequest'
+      responses:
+        200:
+          description: job submitted or already existed
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Job'
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+  /job/{jobName}/{trigger}:
+    get:
+      summary: query a job instance by job name and trigger id
+      operationId: queryJob
+      tags:
+        - job
+      parameters:
+        - $ref: '#/components/parameters/JobName'
+        - $ref: '#/components/parameters/Trigger'
+      responses:
+        200:
+          description: job found
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Job'
+        204:
+          description: job not found
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+  /job/update:
+    post:
+      summary: update an alive job instance
+      operationId: updateJob
+      tags:
+        - job
+      requestBody:
+        description: job payload
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/requestBodies/JobRequest'
+      responses:
+        200:
+          description: job update success
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Job'
+        204:
+          description: job update fails
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+  /job/retry:
+    post:
+      summary: retry alive error job, reset the error job/step state, and retry error tasks
+      operationId: retryJob
+      tags:
+        - job
+      requestBody:
+        description: job instance id
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/requestBodies/JobIdRequest'
+      responses:
+        200:
+          description: job retry success
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Job'
+        204:
+          description: job retry fails
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+  /state/aliveJobs:
+    get:
+      summary: query all alive jobs, filter by query params
+      operationId: queryAliveJobs
+      tags:
+        - state
+      parameters:
+        - $ref: '#/components/parameters/JobNameInQuery'
+        - $ref: '#/components/parameters/TriggerInQuery'
+      responses:
+        200:
+          description: jobs found
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Job'
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+  /state/todoTasks:
+    get:
+      summary: query all todo tasks, filter by query params
+      operationId: queryTodoTasks
+      tags:
+        - state
+      parameters:
+        - $ref: '#/components/parameters/JobNameInQuery'
+        - $ref: '#/components/parameters/TriggerInQuery'
+        - $ref: '#/components/parameters/StepNameInQuery'
+      responses:
+        200:
+          description: tasks found
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+  /state/doneTasks:
+    get:
+      summary: query all done tasks, filter by query params
+      operationId: queryDoneTasks
+      tags:
+        - state
+      parameters:
+        - $ref: '#/components/parameters/JobNameInQuery'
+        - $ref: '#/components/parameters/TriggerInQuery'
+        - $ref: '#/components/parameters/StepNameInQuery'
+      responses:
+        200:
+          description: tasks found
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+  /state/errorTasks:
+    get:
+      summary: query all error tasks, filter by query params
+      operationId: queryErrorTasks
+      tags:
+        - state
+      parameters:
+        - $ref: '#/components/parameters/JobNameInQuery'
+        - $ref: '#/components/parameters/TriggerInQuery'
+        - $ref: '#/components/parameters/StepNameInQuery'
+      responses:
+        200:
+          description: tasks found
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+  /state/adoptions:
+    get:
+      summary: query all task adoptions, filter by query params
+      operationId: queryTaskAdoptions
+      tags:
+        - state
+      parameters:
+        - name: filter
+          description: if exist, key string should contains the filter string
+          in: query
+          type: string
+          example: sample-job
+      responses:
+        200:
+          description: task adoptions found
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/parameters/TaskAdoption'
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+  /state/adoption/{jobName}/{trigger}/{taskName}:
+    get:
+      summary: query task adoption by job name, trigger id and task name
+      operationId: queryTaskAdoption
+      tags:
+          - state
+      parameters:
+        - $ref: '#/components/parameters/JobName'
+        - $ref: '#/components/parameters/Trigger'
+        - $ref: '#/components/parameters/TaskName'
+      responses:
+        200:
+          description: task adoption found
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/parameters/TaskAdoption'
+        204:
+          description: task adoption not found
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+    delete:
+      summary: delete task adoption by job name, trigger id and task name
+      operationId: deleteTaskAdoption
+      tags:
+        - state
+      parameters:
+        - $ref: '#/components/parameters/JobName'
+        - $ref: '#/components/parameters/Trigger'
+        - $ref: '#/components/parameters/TaskName'
+      responses:
+        200:
+          description: task adoption deleted
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/parameters/RoutineAdoption'
+        204:
+          description: task adoption not found or deleted
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+  /state/routine-adoptions:
+    get:
+      summary: query all routine adoptions, filter by query params
+      operationId: queryRoutineAdoptions
+      tags:
+        - state
+      parameters:
+        - name: filter
+          description: if exist, key string should contains the filter string
+          in: query
+          type: string
+          example: sample-job
+      responses:
+        200:
+          description: routine adoptions found
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/parameters/RoutineAdoption'
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+  /state/routine-adoption/{routineFullName}:
+    get:
+      summary: query routine adoption by routine full name
+      operationId: queryRoutineAdoption
+      tags:
+        - state
+      parameters:
+        - $ref: '#/components/parameters/RoutineFullName'
+      responses:
+        200:
+          description: routine adoption found
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/parameters/RoutineAdoption'
+        204:
+          description: routine adoption not found
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+    delete:
+      summary: delete routine adoption by routine full name
+      operationId: deleteRoutineAdoption
+      tags:
+        - state
+      parameters:
+        - $ref: '#/components/parameters/RoutineFullName'
+      responses:
+        200:
+          description: routine adoption deleted
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/parameters/RoutineAdoption'
+        204:
+          description: routine adoption not found or deleted
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+  /state/todoTask/{jobName}/{trigger}/{taskName}:
+    delete:
+      summary: delete todo task by job name, trigger id and task name
+      operationId: deleteTodoTask
+      tags:
+        - state
+      parameters:
+        - $ref: '#/components/parameters/JobName'
+        - $ref: '#/components/parameters/Trigger'
+        - $ref: '#/components/parameters/TaskName'
+      responses:
+        200:
+          description: task deleted
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Task'
+        204:
+          description: task not found or deleted
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+  /state/aliveJob/{jobName}/{trigger}:
+    delete:
+      summary: delete alive job by job name and trigger id
+      operationId: deleteAliveJob
+      tags:
+        - state
+      parameters:
+        - $ref: '#/components/parameters/JobName'
+        - $ref: '#/components/parameters/Trigger'
+        - name: archive
+          in: query
+          type: boolean
+          description: whether to force archive the job instance or not, by default is false
+      responses:
+        200:
+          description: job deleted
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Job'
+        204:
+          description: job not found or deleted
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+  /state/archivedTask/{jobName}/{trigger}/{taskName}:
+    get:
+      summary: query archived task by job name, trigger id and task name
+      operationId: queryArchivedTask
+      tags:
+        - state
+      parameters:
+        - $ref: '#/components/parameters/JobName'
+        - $ref: '#/components/parameters/Trigger'
+        - $ref: '#/components/parameters/TaskName'
+      responses:
+        200:
+          description: task found
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Task'
+        204:
+          description: task not found
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+  /state/ban/global:
+    put:
+      summary: ban ability level of whole cluster
+      operationId: banGlobal
+      tags:
+        - ban
+      parameters:
+        - $ref: '#/components/parameters/BanLevelEnum'
+      responses:
+        200:
+          description: ban success
+          content:
+            'application/json':
+              schema:
+                type: boolean
+                example: true
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+  /state/resume/global:
+    put:
+      summary: resume from ban of whole cluster
+      operationId: resumeGlobal
+      tags:
+        - ban
+      responses:
+        200:
+          description: resume success
+          content:
+            'application/json':
+              schema:
+                type: boolean
+                example: true
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+  /state/ban/jobDefine/{jobName}:
+    put:
+      summary: ban ability level of job define
+      operationId: banJobDefine
+      tags:
+        - ban
+      parameters:
+        - $ref: '#/components/parameters/JobName'
+        - $ref: '#/components/parameters/BanLevelEnum'
+      responses:
+        200:
+          description: ban success
+          content:
+            'application/json':
+              schema:
+                type: boolean
+                example: true
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+  /state/resume/jobDefine/{jobName}:
+    put:
+      summary: resume from ban of job define
+      operationId: resumeJobDefine
+      tags:
+        - ban
+      parameters:
+        - $ref: '#/components/parameters/JobName'
+      responses:
+        200:
+          description: resume success
+          content:
+            'application/json':
+              schema:
+                type: boolean
+                example: true
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+  /state/ban/job/{jobName}/{trigger}:
+    put:
+      summary: ban ability level of job instance
+      operationId: banJob
+      tags:
+        - ban
+      parameters:
+        - $ref: '#/components/parameters/JobName'
+        - $ref: '#/components/parameters/Trigger'
+        - $ref: '#/components/parameters/BanLevelEnum'
+      responses:
+        200:
+          description: ban success
+          content:
+            'application/json':
+              schema:
+                type: boolean
+                example: true
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+  /state/resume/job/{jobName}/{trigger}:
+    put:
+      summary: resume from ban of job instance
+      operationId: resumeJob
+      tags:
+        - ban
+      parameters:
+        - $ref: '#/components/parameters/JobName'
+        - $ref: '#/components/parameters/Trigger'
+      responses:
+        200:
+          description: resume success
+          content:
+            'application/json':
+              schema:
+                type: boolean
+                example: true
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+  /state/ban/routineDefine/{routineName}:
+    put:
+      summary: ban ability level of routine define
+      operationId: banRoutineDefine
+      tags:
+        - ban
+      parameters:
+        - $ref: '#/components/parameters/RoutineName'
+        - $ref: '#/components/parameters/BanLevelEnum'
+      responses:
+        200:
+          description: ban success
+          content:
+            'application/json':
+              schema:
+                type: boolean
+                example: true
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+  /state/resume/routineDefine/{routineName}:
+    put:
+      summary: resume from ban of routine define
+      operationId: resumeRoutineDefine
+      tags:
+        - ban
+      parameters:
+        - $ref: '#/components/parameters/RoutineName'
+      responses:
+        200:
+          description: resume success
+          content:
+            'application/json':
+              schema:
+                type: boolean
+                example: true
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+  /state/ban/routine/{routineFullName}:
+    put:
+      summary: ban ability level of routine instance
+      operationId: banRoutineInstance
+      tags:
+        - ban
+      parameters:
+        - $ref: '#/components/parameters/RoutineFullName'
+        - $ref: '#/components/parameters/BanLevelEnum'
+      responses:
+        200:
+          description: ban success
+          content:
+            'application/json':
+              schema:
+                type: boolean
+                example: true
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+  /state/resume/routine/{routineFullName}:
+    put:
+      summary: resume from ban of routine instance
+      operationId: resumeRoutineInstance
+      tags:
+        - ban
+      parameters:
+        - $ref: '#/components/parameters/RoutineFullName'
+      responses:
+        200:
+          description: resume success
+          content:
+            'application/json':
+              schema:
+                type: boolean
+                example: true
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+  /state/duty/rules/global:
+    get:
+      summary: query global duty rules
+      operationId: queryGlobalDutyRules
+      tags:
+        - duty
+      parameters:
+        - name: forceRefresh
+          in: query
+          type: boolean
+          description: whether to read duty rules from storage directly or not, by default is false
+      responses:
+        200:
+          description: global duty rules found
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/parameters/DutyRules'
+        204:
+          description: global duty rules not found
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+    put:
+      summary: update global duty rules
+      operationId: updateGlobalDutyRules
+      tags:
+        - duty
+      requestBody:
+        description: global duty rules payload
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/parameters/DutyRules'
+      responses:
+        200:
+          description: global duty rules update success
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/parameters/DutyRules'
+        204:
+          description: global duty rules update fails
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+    delete:
+      summary: delete global duty rules
+      operationId: deleteGlobalDutyRules
+      tags:
+        - duty
+      responses:
+        200:
+          description: global duty rules deleted
+          content:
+            'application/json':
+              schema:
+                type: boolean
+                example: true
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+  /schedule:
+    post:
+      summary: submit a schedule
+      operationId: submitSchedule
+      tags:
+        - schedule
+      requestBody:
+        description: schedule payload
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Schedule'
+      responses:
+        200:
+          description: schedule submitted or already existed
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Schedule'
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+    put:
+      summary: update a schedule
+      operationId: updateSchedule
+      tags:
+        - schedule
+      requestBody:
+        description: schedule payload
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Schedule'
+      responses:
+        200:
+          description: schedule updated
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Schedule'
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+  /schedule/{scheduleName}:
+    get:
+      summary: query a schedule by schedule name
+      operationId: querySchedule
+      tags:
+        - schedule
+      parameters:
+        - $ref: '#/components/parameters/ScheduleName'
+      responses:
+        200:
+          description: schedule found
+          content:
+            'application/json':
+              schema:
+                  $ref: '#/components/schemas/Schedule'
+        204:
+          description: schedule not found
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+    delete:
+      summary: delete a schedule by schedule name
+      operationId: deleteSchedule
+      tags:
+        - schedule
+      parameters:
+        - $ref: '#/components/parameters/ScheduleName'
+      responses:
+        200:
+          description: schedule deleted
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Schedule'
+        204:
+          description: schedule not found or deleted
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+components:
+  parameters:
+    JobName:
+      name: jobName
+      in: path
+      type: string
+      description: unique name of job define
+      example: sample-job
+    Trigger:
+      name: trigger
+      in: path
+      type: string
+      description: unique trigger id of job instance
+      example: 2023-11-30
+    StepName:
+      name: stepName
+      in: path
+      type: string
+      description: unique name of step in job define
+      example: process
+    TaskName:
+      name: taskName
+      in: path
+      type: string
+      description: unique name of task in job instance
+      example: process.pack-2
+    RoutineName:
+      name: routineName
+      in: path
+      type: string
+      description: unique name of routine define
+      example: job-watcher
+    RoutineFullName:
+      name: routineFullName
+      in: path
+      type: string
+      description: unique name of routine instance
+      example: job-watcher-3.1
+    ScheduleName:
+      name: scheduleName
+      in: path
+      type: string
+      description: unique name of schedule
+      example: schedule-1
+    TraitsAmend:
+      properties:
+        enable:
+          type: array
+          items:
+            type: string
+            description: enable traits for this step execution
+        disable:
+          type: array
+          items:
+            type: string
+            description: disable traits for this step execution
+    StepAllConf:
+      properties:
+        shardConf:
+          description: config for shard type step
+          properties:
+            shard:
+              type: integer
+              format: int32
+              description: total shard number
+              example: 10
+            startShardId:
+              type: integer
+              format: int32
+              description: start shard id
+              example: 1
+        packConf:
+          description: config for pack type step
+          properties:
+            infinite:
+              type: boolean
+              description: whether the range is endless or not
+              example: false
+            size:
+              type: integer
+              format: int64
+              description: size of each pack
+              example: 100
+            start:
+              type: integer
+              format: int64
+              description: start of range, included
+              example: 1
+            end:
+              type: integer
+              format: int64
+              description: end of range, included, optional if infinite is true
+              example: 9999
+            startPackId:
+              type: integer
+              format: int64
+              description: start pack id
+              example: 1
+        maxPickTimes:
+          type: integer
+          format: int32
+          description: max pick times for this step execution, negative denotes infinity
+          example: 3
+    ReqTime:
+      properties:
+        timeString:
+          type: string
+          description: time string in pattern format
+          example: 2023-11-30T16:00:00.000Z
+        timePattern:
+          type: string
+          description: time pattern format, by default is "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+          example: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+        timeZone:
+          type: string
+          description: time zone, by default is UTC
+          example: UTC
+        timestamp:
+          type: integer
+          format: int64
+          description: timestamp in milliseconds; if timestamp exists, use timestamp, if not exists, use time string
+          example: 1672531200000
+    TriggerTimeParam:
+      properties:
+        after:
+          description: optional, execute after a time, by default no limit
+          $ref: '#/components/parameters/ReqTime'
+        duration:
+          type: integer
+          format: int64
+          description: expect execute duration of each task, in milliseconds, by default no limit
+          example: 300000
+    TaskAllCreation:
+      properties:
+        shardCrt:
+          description: task creation for shard type step
+          properties:
+            lastIndex:
+              type: integer
+              format: int32
+              description: last created shard index
+              example: 3
+        packCrt:
+          description: task creation for pack type step
+          properties:
+            lastId:
+              type: integer
+              format: int64
+              description: last created pack id
+              example: 5
+            lastOffset:
+              type: integer
+              format: int64
+              description: last assigned offset of range
+              example: 3999
+    StepAllDoneRange:
+      properties:
+        shardDoneRange:
+          description: step done range for shard type step
+          properties:
+            indexes:
+              type: string
+              description: done shard indexes
+              example: '0,1,3,4'
+        packDoneRange:
+          description: step done range for pack type step
+          properties:
+            offsets:
+              type: string
+              description: done pack range offsets
+              example: '[13,595512]'
+    TaskAllConf:
+      properties:
+        shardConf:
+          description: config for shard type task
+          properties:
+            total:
+              type: integer
+              format: int32
+              description: total shard number
+              example: 10
+            index:
+              type: integer
+              format: int32
+              description: shard id
+              example: 1
+        packConf:
+          description: config for pack type task
+          properties:
+            id:
+              type: integer
+              format: int64
+              description: pack id
+              example: 1
+            start:
+              type: integer
+              format: int64
+              description: start of pack range, included
+              example: 1
+            end:
+              type: integer
+              format: int64
+              description: end of pack range, included
+              example: 999
+        maxPickTimes:
+          type: integer
+          format: int32
+          description: max pick times for this task execution, negative denotes infinity
+          example: 3
+    TaskResult:
+      state:
+        $ref: '#/components/parameters/TaskStateEnum'
+      reason:
+        type: string
+        description: reason of task result, if task is error or failed
+        example: 'too many retries'
+      checkpoint:
+        type: string
+        description: stored checkpoint of task state, for failure recovery
+      progression:
+        type: string
+        description: task progression
+        example: 100%
+    StepTypeEnum:
+      type: string
+      description: step type
+      enum: [ SIMPLE, SHARD, PACK ]
+      example: PACK
+    JobStateEnum:
+      type: string
+      description: job state
+      enum: [ UNDONE, SUCCESS, FAILED, ERROR, STUCK ]
+      example: UNDONE
+    StepStateEnum:
+      type: string
+      description: step state
+      enum: [ DORMANT, START, READY, SUCCESS, IGNORED, ACCEPTABLE_FAILED, FAILED, ERROR, SKIP_BY_FAILED, SKIP_BY_ERROR ]
+      example: SUCCESS
+    TaskStateEnum:
+      type: string
+      description: task state
+      enum: [ UNDONE, SUCCESS, FAILED, ERROR ]
+      example: SUCCESS
+    TaskAdoption:
+      properties:
+        key:
+          type: string
+          description: adoption key
+          example: /tumbler/dev/sample-job/2023-11-30/process.pack-2
+        value:
+          type: string
+          description: adoption value, the task thread name
+          example: pool-1-thread-1
+    RoutineAdoption:
+      properties:
+        key:
+          type: string
+          description: adoption key
+          example: /tumbler/sample-dev/routine-adoption/job-watcher
+        value:
+          type: string
+          description: adoption value, the routine thread name
+          example: pool-1-thread-1
+    BanLevelEnum:
+      name: level
+      in: query
+      type: string
+      enum: [ TASK_PICK, TASK_CREATE, JOB_SUBMIT, ROUTINE_EXEC, ROUTINE_OCCUPY ]
+      description: the level to ban abilities of node or cluster; JOB_SUBMIT > TASK_CREATE > TASK_PICK; ROUTINE_OCCUPY > ROUTINE_EXEC
+    JobNameInQuery:
+      name: jobName
+      in: query
+      type: string
+      description: unique name of job define
+      example: sample-job
+    TriggerInQuery:
+      name: trigger
+      in: query
+      type: string
+      description: unique trigger id of job instance
+      example: 2023-11-30
+    StepNameInQuery:
+      name: stepName
+      in: query
+      type: string
+      description: unique name of step in job define
+      example: process
+    DutyRules:
+      properties:
+        rules:
+          type: array
+          items:
+            $ref: '#/components/parameters/DutyRule'
+    DutyRule:
+      properties:
+        minValidTumblerVersion:
+          type: string
+          description: min valid tumbler version
+          example: 1.0.0-RELEASE
+        minValidAppVersion:
+          type: string
+          description: min valid app version
+          example: 1.0.0-RELEASE
+        validHostNameRegex:
+          type: string
+          description: regular expression of valid host name
+          example: '.*\.lvs\.com'
+        invalidHostNameRegex:
+          type: string
+          description: regular expression of invalid host name
+          example: '.*\.slc\.com'
+        disableDutiesIfInvalid:
+          type: array
+          items:
+            $ref: '#/components/parameters/NodeDutyEnum'
+          example: [ JOB_SERVER, EXECUTOR ]
+    NodeDutyEnum:
+      type: string
+      enum: [ NONE, JOB_SERVER, STATE_SERVER, SCHEDULE_SERVER, SERVER, TASK_EXECUTOR, ROUTINE_EXECUTOR, EXECUTOR, ALL ]
+      description: duty of each cluster node; SERVER covers all server duties, EXECUTOR covers all executor duties, ALL covers all duties
+    ScheduleConf:
+      allOf:
+        - properties:
+            type:
+              type: string
+              description: schedule config type
+              enum: [ cron, period, point ]
+              example: period
+        - oneOf:
+            - $ref: '#/components/parameters/ScheduleCronConf'
+            - $ref: '#/components/parameters/SchedulePeriodConf'
+            - $ref: '#/components/parameters/SchedulePointConf'
+    ScheduleCronConf:
+      description: trigger as cron expression
+      allOf:
+        - properties:
+            cron:
+              type: string
+              description: cron expression
+              example: '0 0 0 * * ?'
+        - $ref: '#/components/parameters/DateRange'
+    SchedulePeriodConf:
+      description: trigger periodically
+      allOf:
+        - properties:
+            intervalMs:
+              type: integer
+              format: int64
+              description: interval of schedule, in milliseconds
+              example: 86400000
+        - $ref: '#/components/parameters/DateRange'
+    SchedulePointConf:
+      description: trigger by time points
+      properties:
+        points:
+          description: trigger time points
+          type: array
+          items:
+            type: string
+          example: [ '2023-11-30T16:00:00.000Z', '2023-12-01T16:00:00.000Z' ]
+    DateRange:
+      properties:
+        startDate:
+          type: string
+          description: optional, start time of schedule, in app time zone, by default is no limit
+          example: '2023-11-30T16:00:00.000Z'
+        endDate:
+          type: string
+          description: optional, end time of schedule, in app time zone, by default is no limit
+          example: '2023-12-31T16:00:00.000Z'
+    Var:
+      allOf:
+        - properties:
+            type:
+              type: string
+              description: variable type
+              enum: [ const, time, count ]
+              example: count
+        - oneOf:
+            - $ref: '#/components/parameters/ConstVar'
+            - $ref: '#/components/parameters/TimeVar'
+            - $ref: '#/components/parameters/CountVar'
+    ConstVar:
+      description: const variable, generated param is the value
+      properties:
+        value:
+          type: string
+          description: const value
+          example: 'value1'
+    TimeVar:
+      description: time variable, generated param is calculated by trigger time
+      properties:
+        pattern:
+          type: string
+          description: time pattern format
+          example: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+        zone:
+          type: string
+          description: time zone
+          example: 'UTC'
+        deltaMs:
+          type: integer
+          format: int64
+          description: delta milliseconds, to calculate time value = trigger time + delta milliseconds
+          example: 5000
+    CountVar:
+      description: count variable, generated param is increased by 1
+      properties:
+        next:
+          type: integer
+          format: int64
+          description: next count value
+          example: 1
+    TriggerState:
+      properties:
+        time:
+          type: string
+          description: schedule trigger time
+          example: '2023-11-30T16:00:00.000Z'
+        success:
+          type: boolean
+          description: triggered or not
+          example: true
+        error:
+          type: string
+          description: reason of trigger error
+  schemas:
+    Job:
+      required:
+        - jobName
+        - trigger
+      properties:
+        jobName:
+          $ref: '#/components/parameters/JobName'
+        trigger:
+          $ref: '#/components/parameters/Trigger'
+        priority:
+          description: priority of job instance, the bigger number the higher priority
+          type: integer
+          format: int32
+          example: 10
+        params:
+          description: job init params when submitted
+          type: object
+          additionalProperties:
+            type: string
+        updatedParams:
+          description: job updated params during execution, will be seen in subsequent task executions
+          type: object
+          additionalProperties:
+            type: string
+        steps:
+          type: array
+          items:
+            $ref: '#/components/schemas/Step'
+        progression:
+          type: string
+          description: job progression
+          example: 75%
+        state:
+          $ref: '#/components/parameters/JobStateEnum'
+        traits:
+          type: array
+          items:
+            type: string
+            description: traits of job
+        after:
+          type: string
+          description: optional, job create task after a time, by default no limit
+          example: 2023-11-30T16:00:00.000Z
+        duration:
+          type: integer
+          format: int64
+          description: expect execute duration of the job, in milliseconds
+          example: 300000
+        createTime:
+          type: string
+          description: job create time
+          example: 2023-11-30T15:23:64.000Z
+        modifyTime:
+          type: string
+          description: job last modified time
+          example: 2023-11-30T15:26:55.000Z
+    Step:
+      required:
+        - stepName
+      allOf:
+        - properties:
+            stepName:
+              $ref: '#/components/parameters/StepName'
+            exeClass:
+              type: string
+              description: overwrite full path class name of task executor for this step execution
+            affinityRule:
+              type: string
+              description: specify affinity rule for this step execution
+            ignore:
+              type: boolean
+              description: ignore this step execution or not, by default is false
+            traits:
+              type: array
+              items:
+                type: string
+                description: traits of step
+                example: [canFail, canIgnore]
+        - $ref: '#/components/parameters/StepAllConf'
+        - $ref: '#/components/parameters/TaskAllCreation'
+        - properties:
+            params:
+              description: step params, can overwrite params in step define and job level
+              type: object
+              additionalProperties:
+                type: string
+            state:
+              $ref: '#/components/parameters/StepStateEnum'
+            progression:
+              type: string
+              description: step progression
+              example: 100%
+            taskStates:
+              type: object
+              additionalProperties:
+                $ref: '#/components/parameters/TaskStateEnum'
+        - $ref: '#/components/parameters/StepAllDoneRange'
+        - properties:
+            after:
+              type: string
+              description: optional, step create task after a time, by default no limit
+              example: 2023-11-30T16:00:00.000Z
+            duration:
+              type: integer
+              format: int64
+              description: expect execute duration of the step, in milliseconds
+              example: 300000
+            modifyTime:
+              type: string
+              description: step last modified time
+              example: 2023-11-30T15:26:55.000Z
+    Task:
+      required:
+        - jobName
+        - trigger
+        - stepName
+      allOf:
+        - properties:
+            jobName:
+              $ref: '#/components/parameters/JobName'
+            trigger:
+              $ref: '#/components/parameters/Trigger'
+            stepName:
+              $ref: '#/components/parameters/StepName'
+            priority:
+              description: priority of task, the bigger number the higher priority
+              type: integer
+              format: int32
+              example: 10
+            exeClass:
+              type: string
+              description: full path class name of task executor for this task execution
+            stepType:
+              $ref: '#/components/parameters/StepTypeEnum'
+        - $ref: '#/components/parameters/TaskAllConf'
+        - properties:
+            dependentStepStates:
+              type: object
+              additionalProperties:
+                $ref: '#/components/parameters/StepStateEnum'
+            prevPhaseStepStates:
+              type: object
+              additionalProperties:
+                $ref: '#/components/parameters/StepStateEnum'
+            params:
+              description: task params, can overwrite params in step level and job level
+              type: object
+              additionalProperties:
+                type: string
+            updatedParams:
+              description: task updated params during execution, will be merged to job updated params
+              type: object
+              additionalProperties:
+                type: string
+            updatedConfigs:
+              description: task updated step configs during execution, can be used to update subsequent step configs
+              type: object
+              additionalProperties:
+                $ref: '#/components/parameters/StepAllConf'
+            affinityRule:
+              type: string
+              description: specify affinity rule for this task execution
+            traits:
+              type: array
+              items:
+                type: string
+                description: traits of task
+            result:
+              $ref: '#/components/parameters/TaskResult'
+            after:
+              type: string
+              description: optional, task pick after a time, by default no limit
+              example: 2023-11-30T16:00:00.000Z
+            duration:
+              type: integer
+              format: int64
+              description: expect execute duration of task, in milliseconds
+              example: 300000
+            pickedTimes:
+              type: integer
+              format: int32
+              description: picked times, indicates the task has been picked (but not done) for how many times, by default 0
+              example: 3
+            triedTimes:
+              type: integer
+              format: int32
+              description: try times, indicates the task has been tried (but not done) for how many times, by default 0
+              example: 3
+            createTime:
+              type: string
+              description: task create time
+              example: 2023-11-30T15:23:64.000Z
+            modifyTime:
+              type: string
+              description: task last modified time
+              example: 2023-11-30T15:26:55.000Z
+            modifyThread:
+              type: string
+              description: task last modified thread
+              example: 'pool-1-thread-1'
+    Schedule:
+      required:
+      properties:
+        scheduleName:
+          $ref: '#/components/parameters/ScheduleName'
+        jobRequest:
+          $ref: '#/components/requestBodies/JobRequest'
+        conf:
+          $ref: '#/components/parameters/ScheduleConf'
+        variables:
+          type: object
+          description: variables of schedule, will be generated as params in triggered jobs
+          additionalProperties:
+            $ref: '#/components/parameters/Var'
+        after:
+          type: string
+          description: optional, schedule works after a time, by default no limit
+          example: 2023-11-30T16:00:00.000Z
+        createTime:
+          type: string
+          description: task create time
+          example: 2023-11-30T15:23:64.000Z
+        modifyTime:
+          type: string
+          description: task last modified time
+          example: 2023-11-30T15:26:55.000Z
+        lastTriggerState:
+          $ref: '#/components/parameters/TriggerState'
+  requestBodies:
+    JobIdRequest:
+      required:
+        - jobName
+        - trigger
+      properties:
+        jobName:
+          $ref: '#/components/parameters/JobName'
+        trigger:
+          $ref: '#/components/parameters/Trigger'
+    JobRequest:
+      required:
+        - jobName
+        - trigger
+      allOf:
+        - properties:
+            jobName:
+              $ref: '#/components/parameters/JobName'
+            trigger:
+              $ref: '#/components/parameters/Trigger'
+            priority:
+              type: integer
+              format: int32
+              description: overwrite priority of job instance, default as in job define; the bigger number the higher priority
+              example: 10
+            params:
+              description: job params, can overwrite params in job define
+              type: object
+              additionalProperties:
+                type: string
+            steps:
+              type: array
+              items:
+                $ref: '#/components/requestBodies/StepRequest'
+            traits:
+              $ref: '#/components/parameters/TraitsAmend'
+        - $ref: '#/components/parameters/TriggerTimeParam'
+      example:
+        jobName: 'sample-job'
+        trigger: '2023-11-30'
+        params:
+          param1: value1
+          param2: value2
+        steps:
+          - stepName: prepare
+            ignore: true
+          - stepName: process
+            params:
+              param1: value2
+            shardConf:
+              shard: 12
+    StepRequest:
+      required:
+        - stepName
+      allOf:
+        - properties:
+            stepName:
+              $ref: '#/components/parameters/StepName'
+            exeClass:
+              type: string
+              description: overwrite full path class name of task executor for this step execution
+            affinityRule:
+              type: string
+              description: specify affinity rule for this step execution
+            ignore:
+              type: boolean
+              description: ignore this step execution or not, by default is false
+            traits:
+              $ref: '#/components/parameters/TraitsAmend'
+            params:
+              description: step params, can overwrite params in step define and job level
+              type: object
+              additionalProperties:
+                type: string
+        - $ref: '#/components/parameters/StepAllConf'
+        - $ref: '#/components/parameters/TriggerTimeParam'
+      example:
+        stepName: process
+        params:
+          param1: value1
+          param2: value2
+        traits:
+          disable: [canFail, canIgnore]
+        shardConf:
+          shard: 12
+  responses:
+    ErrorResponse:
+      description: unexpected error
+      content:
+        'application/json':
+          schema:
+            type: object
+            properties:
+              errorCode:
+                type: integer
+                format: int32
+              errorType:
+                type: string
+              errorMessage:
+                type: string

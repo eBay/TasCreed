@@ -1,0 +1,40 @@
+{
+  "jobName": "sample",
+  "version": 1,
+  "params": {
+    "p1": "0"
+  },
+  "steps": [
+    {
+      "stepName": "prep",
+      "stepType": "SHARD",
+      "shardConf": {
+        "shard": 4,
+        "maxTaskCount": 2
+      }
+    },
+    {
+      "stepName": "calc",
+      "stepType": "PACK",
+      "packConf": {
+        "size": 100,
+        "start": 0,
+        "end": 1005,
+        "maxTaskCount": 6
+      },
+      "dependentStep": "prep"
+    },
+    {
+      "stepName": "aggr-1",
+      "dependentStep": "calc"
+    },
+    {
+      "stepName": "aggr-2",
+      "dependentStep": "calc",
+      "params": {
+        "p1": "2",
+        "p2": "4"
+      }
+    }
+  ]
+}
