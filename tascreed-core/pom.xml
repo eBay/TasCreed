@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>tumbler</artifactId>
+        <artifactId>tascreed</artifactId>
         <groupId>com.ebay.magellan</groupId>
         <version>0.4.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>tumbler-core</artifactId>
+    <artifactId>tascreed-core</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>tumbler-domain</module>
-        <module>tumbler-infra</module>
-        <module>tumbler-schedule</module>
+        <module>tascreed-domain</module>
+        <module>tascreed-infra</module>
+        <module>tascreed-schedule</module>
     </modules>
 
     <dependencyManagement>

@@ -4,12 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>com.ebay.magellan</groupId>
-        <artifactId>tumbler-depend</artifactId>
+        <artifactId>tascreed-depend</artifactId>
         <version>0.4.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>tumbler-ext</artifactId>
+    <artifactId>tascreed-ext</artifactId>
 
     <dependencies>
         <dependency>
@@ -41,10 +41,10 @@
             </exclusions>
         </dependency>
 
-        <!-- tumbler -->
+        <!-- tascreed -->
         <dependency>
             <groupId>com.ebay.magellan</groupId>
-            <artifactId>tumbler-common</artifactId>
+            <artifactId>tascreed-common</artifactId>
         </dependency>
 
         <dependency>

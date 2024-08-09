@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.ebay.magellan</groupId>
-    <artifactId>tumbler</artifactId>
+    <artifactId>tascreed</artifactId>
     <packaging>pom</packaging>
     <version>0.4.2-SNAPSHOT</version>
 
@@ -14,23 +14,23 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-                <module>tumbler-depend</module>
-                <module>tumbler-core</module>
+                <module>tascreed-depend</module>
+                <module>tascreed-core</module>
             </modules>
         </profile>
         <profile>
             <id>ci</id>
             <modules>
-                <module>tumbler-depend</module>
-                <module>tumbler-core</module>
+                <module>tascreed-depend</module>
+                <module>tascreed-core</module>
             </modules>
         </profile>
         <profile>
             <id>oss</id>
             <modules>
-                <module>tumbler-depend/tumbler-common</module>
-                <module>tumbler-depend/tumbler-ext</module>
-                <module>tumbler-core</module>
+                <module>tascreed-depend/tascreed-common</module>
+                <module>tascreed-depend/tascreed-ext</module>
+                <module>tascreed-core</module>
             </modules>
         </profile>
     </profiles>
@@ -75,35 +75,30 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- tumbler -->
+            <!-- tascreed -->
             <dependency>
                 <groupId>com.ebay.magellan</groupId>
-                <artifactId>tumbler-common</artifactId>
+                <artifactId>tascreed-common</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.ebay.magellan</groupId>
-                <artifactId>tumbler-ext</artifactId>
+                <artifactId>tascreed-ext</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.ebay.magellan</groupId>
-                <artifactId>tumbler-ext-ebay</artifactId>
+                <artifactId>tascreed-domain</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.ebay.magellan</groupId>
-                <artifactId>tumbler-domain</artifactId>
+                <artifactId>tascreed-schedule</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.ebay.magellan</groupId>
-                <artifactId>tumbler-schedule</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.ebay.magellan</groupId>
-                <artifactId>tumbler-infra</artifactId>
+                <artifactId>tascreed-infra</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
