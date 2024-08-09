@@ -1,6 +1,6 @@
 # Schedule
 
-With the feature of schedule, job defines can be triggered by Tumbler itself, as user scheduled, e.g. trigger at a specific time, every two hours, daily, weekly, etc.
+With the feature of schedule, job defines can be triggered by TasCreed itself, as user scheduled, e.g. trigger at a specific time, every two hours, daily, weekly, etc.
 
 ## Time schedule
 
@@ -8,7 +8,7 @@ With the feature of schedule, job defines can be triggered by Tumbler itself, as
 
 The job define can be triggered when the scheduled time comes. Here introduces a new concept `Schedule`, users can submit a schedule of a job request, with the config of time schedule.
 
-Across the whole Tumbler cluster, a routine thread runs to submit job requests when the related schedule condition meets.
+Across the whole TasCreed cluster, a routine thread runs to submit job requests when the related schedule condition meets.
 
 An example of schedule could be like this:
 ```json

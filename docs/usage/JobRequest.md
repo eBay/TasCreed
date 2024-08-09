@@ -1,6 +1,6 @@
 # Job Request Introduction
 
-The job request triggers Tumbler server to submit a tumbler job instance, the params and configs in job request will overwrite the default values in job define.
+The job request triggers TasCreed server to submit a TasCreed job instance, the params and configs in job request will overwrite the default values in job define.
 
 ## Job Request
 
@@ -45,7 +45,7 @@ Step request sample
 
 | Field Name | Description | Type | Mandatory | Default Value |
 | ----- | ----- | ----- | ----- | ----- |
-| stepName | the name of step to overwrite params and config values, Tumbler server find the step by name. | `string` | Yes | |
+| stepName | the name of step to overwrite params and config values, TasCreed server find the step by name. | `string` | Yes | |
 | exeClass | the executor class name, overwrite the value in step define. | `string` | No | |
 | ignore | if true, and the step define is `ignorable`, then this step will be ignored in this triggered job. | `boolean` | No | `false` |
 | affinityRule | task pick affinity rule name, overwrite the value in step define. | `string` | No | |

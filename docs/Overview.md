@@ -1,4 +1,4 @@
-# Tumbler Overview
+# TasCreed Overview
 
 ## Story
 
@@ -6,7 +6,7 @@ When you want to execute a **job**, you would like to get this commitment: **job
 
 There are lots of possible job execution exceptions, so we can hardly guarantee it runs exactly once, but we can run it at least once, with the idempotency of job execution, then it will perform the same as exactly once.
 
-Tumbler provides the ability to execute a **job** at least once, the jobs are recommended to be idempotency, to avoid incorrect result or side effect if the job runs several times.
+TasCreed provides the ability to execute a **job** at least once, the jobs are recommended to be idempotency, to avoid incorrect result or side effect if the job runs several times.
 
 The progress is like this:
 1. User submits a **job request**, *job server* will create a **job** instance from the pre-defined **job define**.
@@ -143,7 +143,7 @@ The roles of entities.
 
 ![role](pic/role.png)
 
-In tumbler application, there are two instance roles: `job server` and `task worker`.
+In TasCreed application, there are two instance roles: `job server` and `task worker`.
 
 ### Job Server
 Job server works as a web server, to manage all the jobs and tasks. Job server receives the job request, to create jobs and tasks, and update job status.
@@ -181,7 +181,7 @@ The processes of job and task lifecycle.
 2. Server update the job status by done tasks, and create more undependent tasks into bulletin.
 
 ## Threads
-In each tumbler instance, there is 1 job server component, 1 job watcher thread, 1 task watcher thread, and serveral task worker threads, with `tumbler.worker.max.count.per.host` configurable.
+In each TasCreed instance, there is 1 job server component, 1 job watcher thread, 1 task watcher thread, and several task worker threads, with `tascreed.worker.max.count.per.host` configurable.
 
 ### Job Server
 Job server is the component to receive job request, create job and undependent tasks, it handles the job trigger process.

@@ -4,7 +4,7 @@
 
 **from: 0.2.4-SNAPSHOT**
 
-In job and step level, Tumbler can show the progression in percentage format, in this way, users can easier to know their job execution progress.
+In job and step level, TasCreed can show the progression in percentage format, in this way, users can easier to know their job execution progress.
 
 Users can set an optional parameter `effort` in the steps, by default is `1`.
 

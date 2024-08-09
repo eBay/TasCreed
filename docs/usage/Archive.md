@@ -15,7 +15,7 @@ Now, users can configure and choose different implementations of archive storage
 
 The sample of configuration could be like this:
 ```
-tumbler.storage.archive = ETCD, ES
+tascreed.storage.archive = ETCD, ES
 ```
 The value is a list of the archive storage names. By default, it is set as `ES` only, the same as before.
 
@@ -24,12 +24,12 @@ The value is a list of the archive storage names. By default, it is set as `ES` 
 ### ES
 done jobs are archived in ES, and the archived jobs can also be found from ES for deduplication or query.
 
-the archived jobs are saved in the ES index `tumbler_job_*`, with the wildcard replaced by the tumbler namespace.
+the archived jobs are saved in the ES index `tascreed_job_*`, with the wildcard replaced by the TasCreed namespace.
 
 ### ETCD
 done jobs are archived in ETCD, and teh archived jobs can also be found from ETCD for deduplication or query.
 
-the archived jobs are saved in the ETCD prefix `*/archive/job/`, with the wildcard replaced by the tumbler namespace.
+the archived jobs are saved in the ETCD prefix `*/archive/job/`, with the wildcard replaced by the TasCreed namespace.
 
 the archived jobs in ETCD has a special feature called retention time. It will be kept in ETCD for 7 days by default, which can be also changed by users in configuration. After the retention time, the archived jobs will be removed from ETCD itself.
 

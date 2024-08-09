@@ -1,4 +1,4 @@
-# Tumbler Upgrade Guide
+# TasCreed Upgrade Guide
 
 ## Extra version history
 
@@ -38,7 +38,7 @@
 
 The extra versions are for environment compatibility, not for main features, so there should be no code change required to use the extra versions with the same minor version. For example, 0.2.3.1-RELEASE has the same features as 0.2.3-RELEASE.
 
-Let's start from version 0.2.3, and list all the new features that requires code change if the users want to use the new versions of Tumbler.
+Let's start from version 0.2.3, and list all the new features that requires code change if the users want to use the new versions of TasCreed.
 
 ### from 0.2.3 to 0.2.4
 1. checkpoint task executor: this feature enables a new task executor type which can temporarily save checkpoint in task in etcd, then the next task executor of the same task can continue to process data from the checkpoint.
@@ -46,7 +46,7 @@ Let's start from version 0.2.3, and list all the new features that requires code
 	- if user wants to use checkpoint executor, it should extends `CheckpointTaskExecutor`
 2. refactor ban function, only covered ban level can be banned: this feature changes the ban logic and behaviour.
 	- there should be no usage of ban feature, so no change needed
-3. embed job/state controller into infra: internally build the api controllers in infra level, so application can simply support the tumbler apis.
+3. embed job/state controller into infra: internally build the api controllers in infra level, so application can simply support the TasCreed apis.
 
 ### from 0.2.4 to 0.2.5
 - no mandatory code change required for compatibility
@@ -74,34 +74,34 @@ Let's start from version 0.2.3, and list all the new features that requires code
 3. task occupation can be checked by user in code.
 
 ### from 0.2.9 to 0.3.0
-1. a Tumbler dedicated ES cluster is applied, the Tumbler applications will access to it by default. Also, you can still choose to configure for your specific ES cluster. 
+1. a TasCreed dedicated ES cluster is applied, the TasCreed applications will access to it by default. Also, you can still choose to configure for your specific ES cluster. 
 2. step max task count and max pick times can be updated even it is still running.
 
-**Please be aware that, from this version on, the Tumbler jobs will be archived to the dedicated ES cluster, instead of the previous shared ES cluster; so all the archived historical jobs can not be found in the new ES cluster.**
+**Please be aware that, from this version on, the TasCreed jobs will be archived to the dedicated ES cluster, instead of the previous shared ES cluster; so all the archived historical jobs can not be found in the new ES cluster.**
 
 You are free to choose the new specific ES cluster or the previous shared one.
-- If you choose the default new ES, the dependency and esams key access should be applied. (To apply the key `/xfasdatadumper/tumbler/es/auth` in Fidelius production environment)
-- If you choose the previous ES, you just need to explicitly configure the endpoint and related parameters of the old ES in your application properties file to overwrite the ES related configuration in Tumbler infra.
+- If you choose the default new ES, the dependency and esams key access should be applied. (To apply the key `/xfasdatadumper/tascreed/es/auth` in Fidelius production environment)
+- If you choose the previous ES, you just need to explicitly configure the endpoint and related parameters of the old ES in your application properties file to overwrite the ES related configuration in TasCreed infra.
 
 ### from 0.3.0 to 0.3.1
 1. [routine](usage/Routine.md) introduced, for the long run jobs across the whole cluster.
 2. done range state of pack/shard step defined, users can get the progress of the step, even generate watermark for the pack step.
 3. worker count per host can be updated in etcd on the fly, no need to restart.
 4. [annotation](usage/Annotation.md) to simplify the executor register code effort
-5. **code change required:** In the `run` method of user's `Application` class, the `TumblerRunner` start up way changes, from 1 step to 2 steps.
+5. **code change required:** In the `run` method of user's `Application` class, the `TcRunner` start up way changes, from 1 step to 2 steps.
 
 Sample code
 ```java
     @Override
     public void run(ApplicationArguments args) {
-        // tumbler registers all the executors by annotations
-        tumblerRunner.init();
+        // TasCreed registers all the executors by annotations
+        tcRunner.init();
 
-        // users can manually register or overwrite the executors before tumbler runner start
+        // users can manually register or overwrite the executors before TasCreed runner start
         registerTaskExecutors();
 
-        // tumbler runner start
-        tumblerRunner.start();
+        // TasCreed runner start
+        tcRunner.start();
     }
 ```
 
@@ -133,33 +133,33 @@ Details can be found in this [document](usage/NodeDuty.md).
 
 ### from 0.3.5 to 0.4.0 (latest version)
 1. refactor etcd util
-2. tumbler api spec
-3. refactor tumbler dependency lib, ebay related dependency can be replaced by external users
+2. TasCreed api spec
+3. refactor TasCreed dependency lib, ebay related dependency can be replaced by external users
 4. ebay related configuration wrapped in one file
 5. refactor to extract ebay related dependency from infra package
 
 **code change required**: 
 eBay users need to change the configuration file name of es and etcd in the application class. For example:
 ```java
-public class TumblerSampleApplication {
+public class TasCreedSampleApplication {
     public static void main(String[] args) {
-        new SpringApplicationBuilder(TumblerSampleApplication.class)
-                .properties("spring.config.name:fasrt-logger,fasrt-commons,etcd,tumbler-ebay,tumbler,application")
+        new SpringApplicationBuilder(TasCreedSampleApplication.class)
+                .properties("spring.config.name:fasrt-logger,fasrt-commons,etcd,tascreed-ebay,tascreed,application")
                 .build()
                 .run(args);
     }
 }
 ```
-The configuration files `tumbler-es`, `tumbler-etcd` are wrapped into one file `tumbler-ebay`.
+The configuration files `tascreed-es`, `tascreed-etcd` are wrapped into one file `tascreed-ebay`.
 
 **pom file change required**:
 eBay users need to add another dependency of eBay related external storage implementation, including es, etcd, cal, etc. For example:
 ```pom
 <dependency>
     <groupId>com.ebay.magellan</groupId>
-    <artifactId>tumbler-ext-ebay</artifactId>
-    <version>${tumbler.version}</version>
+    <artifactId>tascreed-ext-ebay</artifactId>
+    <version>${tascreed.version}</version>
 </dependency>
 ```
 
-Also, from this version on, Tumbler sample app can run without real deployment of etcd or es, there is a default in-memory implementation of etcd, and in-disk implementation of es, developers can debug or run the sample app at local. You can refer to [environment configuration](config/EnvConfig.md).
+Also, from this version on, TasCreed sample app can run without real deployment of etcd or es, there is a default in-memory implementation of etcd, and in-disk implementation of es, developers can debug or run the sample app at local. You can refer to [environment configuration](config/EnvConfig.md).

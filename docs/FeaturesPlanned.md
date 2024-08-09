@@ -1,4 +1,4 @@
-# Tumbler Planned Features
+# TasCreed Planned Features
 
 ## 0.4.1-SNAPSHOT
 1. refine schedule, should be guaranteed
@@ -12,7 +12,7 @@
 3. namespace unique constraint
 4. multi namespace for one app [will not do]
 5. resource management in sharing group, to better assign task to nodes; similar to the flink task slot sharing
-6. monitor of tumbler
+6. monitor of TasCreed
 7. follow shard/pack step config, when a sub task finishes, the same shard/pack sub task of the following step can start, as pipeline feature
 8. metrics of more alive job insight
 ## Ideas

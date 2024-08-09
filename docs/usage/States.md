@@ -40,7 +40,7 @@ The difference between `FAILED` and `ERROR` results:
 | `FAILED` | `DONE` | `FAILED` | the task is finished with a failed result |
 | `ERROR` | `DONE` | `ERROR` | the task is finished by a non-expected exception |
 
-Please be noted that Tumbler will **NOT** mark the task from undone state to the done states, the task state change should be explicitly implemented in the execution method of `TaskExecutor` by users. So it's your choice to use any kind of the task states.
+Please be noted that TasCreed will **NOT** mark the task from undone state to the done states, the task state change should be explicitly implemented in the execution method of `TaskExecutor` by users. So it's your choice to use any kind of the task states.
 
 ## Step state
 

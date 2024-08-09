@@ -2,7 +2,7 @@
 
 **from 0.2.6-SNAPSHOT**
 
-Trait describes a character of a Tumbler data object, each object can have arbitrary number of traits.
+Trait describes a character of a TasCreed data object, each object can have arbitrary number of traits.
 
 ## Trait Type
 Each trait should be categorized to one type, and each type of trait can be configured on multiple kinds of data objects.

@@ -14,7 +14,7 @@ It can support most of the use cases, if you want to use non-string parameters, 
 
 ## Param Overwrite
 
-The params can be configured in `JobDefine`, `StepDefine`, `Job Request`, `Job`, `Step` and `Task`. Only the Tumbler executors can use the params, so only the task params are the effective ones.
+The params can be configured in `JobDefine`, `StepDefine`, `Job Request`, `Job`, `Step` and `Task`. Only the TasCreed executors can use the params, so only the task params are the effective ones.
 
 Therefore, all the params in non-task level are leveraged as default params, which can be overwritten. `Job`, `Step` and `Task` are generated, so their params are also generated, here will introduce how are these params generated.
 

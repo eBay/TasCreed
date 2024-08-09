@@ -4,9 +4,9 @@
 
 Routine is a new kind of executor, which is like a cluster level long run job, running a round and a round again, with a configured interval.
 
-Not like a Tumbler job, users don't need to submit a routine to activate it, they just need to define the routines in the code, with the configured parameters. When the Tumbler nodes start up, they will try to occupy the routine job and start process.
+Not like a TasCreed job, users don't need to submit a routine to activate it, they just need to define the routines in the code, with the configured parameters. When the TasCreed nodes start up, they will try to occupy the routine job and start process.
 
-At current, the Tumbler internal monitor thread and job watcher thread (to update job status and create new tasks) are refactored to be routines.
+At current, the TasCreed internal monitor thread and job watcher thread (to update job status and create new tasks) are refactored to be routines.
 
 ## How to define your own routine
 
@@ -25,12 +25,12 @@ public class SimpleRoutineExecutor extends NormalRoutineExecutor {
     int i = 0;
 
     @Override
-    protected void initImpl() throws TumblerException {
+    protected void initImpl() throws TcException {
         System.out.println(String.format("routine [%s] init", routine.getFullName()));
     }
 
     @Override
-    protected void executeRoundImpl() throws TumblerException {
+    protected void executeRoundImpl() throws TcException {
         try {
             System.out.println("===== routine executor run round begins =====");
             i++;
@@ -44,7 +44,7 @@ public class SimpleRoutineExecutor extends NormalRoutineExecutor {
     }
 
     @Override
-    protected void closeImpl() throws TumblerException {
+    protected void closeImpl() throws TcException {
         System.out.println(String.format("routine [%s] close", routine.getFullName()));
     }
 
@@ -72,13 +72,13 @@ The annotations are important.
 	+ The `RoutineExec` annotation implemention actually depends on the `Component` annotation
 - The `Scope` is better to be defined as `@Scope("prototype")`
 
-That's all, the routine is defined and will be registered by Tumbler, and it will be occupied and executed by the routine threads across the whole cluster.
+That's all, the routine is defined and will be registered by TasCreed, and it will be occupied and executed by the routine threads across the whole cluster.
 
 ## How to configure the routine threads across cluster
 
 ### Configuration of routine threads
 ```yaml
-tumbler:
+tascreed:
   routine:
     # num of overall available routines
     max.count.overall:
@@ -91,19 +91,19 @@ tumbler:
 ```
 This is the default configuration of routine threads
 - whole cluster can run at most 20 routine threads, which can be overwritten by the properties file or etcd
-- each Tumbler node can run at most 5 routine threads, which can be overwritten by the properties file or etcd
+- each TasCreed node can run at most 5 routine threads, which can be overwritten by the properties file or etcd
 
 ### Configure routine parameters
 ```properties
-# tumbler routine param
-tumbler.routine.param.job-watcher.scale=1
-tumbler.routine.param.job-watcher.interval=10000
-tumbler.routine.param.monitor.interval=5000
-tumbler.routine.param.monitor.priority=101
+# tascreed routine param
+tascreed.routine.param.job-watcher.scale=1
+tascreed.routine.param.job-watcher.interval=10000
+tascreed.routine.param.monitor.interval=5000
+tascreed.routine.param.monitor.priority=101
 ```
 The routine parameters are initially configured in the code, they can also be overwritten by properties file.
 
-The format of the parameter configuration is like `{tumbler.routine.param}.{routineName}.{paramName}`, in this way, we can overwrite the default routine parameters as you like.
+The format of the parameter configuration is like `{tascreed.routine.param}.{routineName}.{paramName}`, in this way, we can overwrite the default routine parameters as you like.
 
 ### Ban and resume routines
 

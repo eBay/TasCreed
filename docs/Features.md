@@ -1,4 +1,4 @@
-# Tumbler Features
+# TasCreed Features
 
 ## 0.1.0-SNAPSHOT
 1. define job and step by name
@@ -49,7 +49,7 @@
 2. ban job/task in different level by request
 3. fix bug of all ignored steps in a job instance stuck there
 4. record the modify thread of task; done tasks could be archived to ES, need to enable this feature in configuration and step define
-5. job/step request with task create after time; task with task pick after time. With this feature, tumbler can support delayed task creation and back-off task retry across threads
+5. job/step request with task create after time; task with task pick after time. With this feature, TasCreed can support delayed task creation and back-off task retry across threads
 
 ## 0.2.6-SNAPSHOT
 1. trait to support ignorable, archive, delete, canFail features
@@ -57,10 +57,10 @@
 3. redefine job/step/task states and state transfer logic
 
 ## 0.2.7-RELEASE
-1. unit test of tumbler domain and infra
+1. unit test of TasCreed domain and infra
 2. enrich job and step validation
 3. fix watcher thread sleep bug if any exception
-4. metrics to expose tumbler working state
+4. metrics to expose TasCreed working state
 5. task pick priority consider step empty rate as well
 6. update alive job to change step pack size
 7. auto archive failed job as success job, fail is acceptable result
@@ -87,7 +87,7 @@
 5. users can do task occupation check by demand
 
 ## 0.3.0-RELEASE
-1. tumbler dedicated es cluster
+1. TasCreed dedicated es cluster
 2. update alive job step max task count and max pick times
 
 ## 0.3.1-RELEASE
@@ -101,7 +101,7 @@
 
 ## 0.3.2-RELEASE
 1. controller of routine adoption
-2. tumbler lib doesn't depend on raptor parent pom file
+2. TasCreed lib doesn't depend on raptor parent pom file
 3. infinite retry when read global config from etcd
 4. node duty rules for node validity control
 
@@ -124,7 +124,7 @@
 
 ## 0.4.0-RELEASE
 1. refactor EtcdBulletinStorage to distinguish different data types
-2. tumbler api spec
-3. refactor tumbler dependency lib, ebay related dependency can be replaced by external users
+2. TasCreed api spec
+3. refactor TasCreed dependency lib, ebay related dependency can be replaced by external users
 4. ebay related configuration wrapped in one file
 5. refactor to extract ebay related dependency from infra package

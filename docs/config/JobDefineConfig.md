@@ -2,7 +2,7 @@
 
 ## Job Define
 
-Job define files are pre-defined in the `jobDefine` folder in your application resources path. Here `jobDefine` folder is configured as `tumbler.define.dirs` by default, you can also overwrite the folder or append some more folders.  
+Job define files are pre-defined in the `jobDefine` folder in your application resources path. Here `jobDefine` folder is configured as `tascreed.define.dirs` by default, you can also overwrite the folder or append some more folders.  
 Tumbler application will try to load all the job define files, after parse and validation, register the job defines into memory.  
 Each job define file describes a job template, to define what it is and how it works.  
 
@@ -23,12 +23,12 @@ Job define file sample
 
 | Field Name | Description | Type | Mandatory | Default Value |
 | ----- | ----- | ----- | ----- | ----- |
-| jobName | the name of job define, it should be unique, or it might be overwritten by the other jobs with the same job name, which is always unexpected. To create jobs, Tumbler will find the job define by `jobName`. | `string` | Yes | |
+| jobName | the name of job define, it should be unique, or it might be overwritten by the other jobs with the same job name, which is always unexpected. To create jobs, TasCreed will find the job define by `jobName`. | `string` | Yes | |
 | version | the job define version, to indicate the differen job define versions, not in use now. | `long` | No | `0` |
-| priority | the priority of the job define, the job instance and tasks created by this job defin will inherit the priority value. Tumbler executors will firstly to pick tasks with larger priority value. | `int` | No | `0` |
+| priority | the priority of the job define, the job instance and tasks created by this job defin will inherit the priority value. TasCreed executors will firstly to pick tasks with larger priority value. | `int` | No | `0` |
 | uniqueAliveInstance | if `true`, at most one alive job instance of this job define can be created at the same time; otherwise, more than one job instances of this job define can be created at the same time. | `boolean` | No | `false` |
 | params | the parameters of job level, all the job instances of this job define will inherit the job parameters. | `map<string, string>` | No | `Null` |
-| steps | the step define list of the job define, to describe all the steps in this job. In theory, it can be empty; but normally we don't want to create a job without any step, which means no task can be created, and no Tumbler executor works. | `list<StepDefine>` | No | `empty list` |
+| steps | the step define list of the job define, to describe all the steps in this job. In theory, it can be empty; but normally we don't want to create a job without any step, which means no task can be created, and no TasCreed executor works. | `list<StepDefine>` | No | `empty list` |
 
 ## Step Define
 
@@ -94,7 +94,7 @@ The step define fields are the same as simple mode, with one more shard mode con
 | Field Name | Description | Type | Mandatory | Default Value |
 | ----- | ----- | ----- | ----- | ----- |
 | maxTaskCount | the max alive task number of this step at the same time. The value should be more than 0, and it is recommended to be less than `100`. | `int` | No | `50` |
-| shard | the total sharding number N of this step. Tumbler will create N task instances for this step, with different shard id in each task instance. The value should be more than 0. | `int` | Yes | |
+| shard | the total sharding number N of this step. TasCreed will create N task instances for this step, with different shard id in each task instance. The value should be more than 0. | `int` | Yes | |
 | startShardId | the start shard id of created shard tasks. | `int` | No | `0` |
 
 ### Pack mode step
@@ -132,7 +132,7 @@ The step define fields are the same as simple mode, with one more pack mode conf
 
 #### Infinite pack mode step
 
-This is a special usage of pack mode step, if we set `infinite` as true, Tumbler will ignore the `end` field, and generate infinite packs.
+This is a special usage of pack mode step, if we set `infinite` as true, TasCreed will ignore the `end` field, and generate infinite packs.
 
 ![infinite pack mode](../pic/pack_mode_infinite.png)
 
