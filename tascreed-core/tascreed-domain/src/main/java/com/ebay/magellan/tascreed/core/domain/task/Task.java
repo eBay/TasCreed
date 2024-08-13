@@ -16,6 +16,7 @@ import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -29,6 +30,7 @@ import java.util.Map;
 @Getter
 @Setter
 @ToString
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class Task {
     @JsonProperty("jobName")
     private String jobName;

@@ -2,6 +2,7 @@ package com.ebay.magellan.tascreed.core.domain.task.mid;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -11,6 +12,7 @@ import java.util.Date;
 @Getter
 @Setter
 @ToString
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class TaskMidState {
     // optional, task pick after a time, by default no limit
     // when error and need to retry, it will be set a future time for back-off retry

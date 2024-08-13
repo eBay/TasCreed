@@ -7,12 +7,14 @@ import com.ebay.magellan.tascreed.depend.common.util.DefaultValueUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
 
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class TaskResult {
     @JsonView(TaskViews.TASK_DONE.class)
     @JsonProperty("state")
