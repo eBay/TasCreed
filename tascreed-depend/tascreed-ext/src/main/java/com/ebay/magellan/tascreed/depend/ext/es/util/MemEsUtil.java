@@ -5,25 +5,21 @@ import com.ebay.magellan.tascreed.depend.common.exception.TcException;
 import com.ebay.magellan.tascreed.depend.common.exception.TcExceptionBuilder;
 import com.ebay.magellan.tascreed.depend.common.logger.TcLogger;
 import com.ebay.magellan.tascreed.depend.ext.es.doc.*;
-import com.ebay.magellan.tascreed.depend.ext.es.help.UriBuilder;
-import org.rocksdb.Options;
-import org.rocksdb.RocksDB;
-import org.rocksdb.RocksDBException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
-import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
- * mock EsUtil, using local RocksDB as storage, for testing purpose at local
+ * mock EsUtil, using memory as storage, for testing purpose at local
  */
 @Component
 @ConditionalOnProperty(prefix = "tascreed", name = "es", havingValue = "disk", matchIfMissing = true)
-public class DiskEsUtil implements EsUtil {
+public class MemEsUtil implements EsUtil {
 
-    private static final String THIS_CLASS_NAME = DiskEsUtil.class.getSimpleName();
+    private static final String THIS_CLASS_NAME = MemEsUtil.class.getSimpleName();
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
@@ -31,31 +27,17 @@ public class DiskEsUtil implements EsUtil {
 
     // -----
 
-    static private final String dbPath = "rocks_data";
-    static private RocksDB rocksDB = null;
-    static private RocksDB getRocksDB() {
-        if (rocksDB == null) {
-            try {
-                RocksDB.loadLibrary();
-                Options options = new Options();
-                options.setCreateIfMissing(true);
-                rocksDB = RocksDB.open(options, dbPath);
-            } catch (RocksDBException e) {
-                e.printStackTrace();
-            }
-        }
-        return rocksDB;
-    }
+    private final Map<String, String> memStore = new HashMap<>();
 
     // ----- read -----
 
-    public DocValue getDocValue(DocKey docKey) throws TcException, UnsupportedEncodingException {
-        String key = UriBuilder.base64Encode(docKey.uniqueKey());
+    public DocValue getDocValue(DocKey docKey) throws TcException {
+        String key = docKey.uniqueKey();
         DocValue ret = null;
         try {
-            byte[] value = getRocksDB().get(key.getBytes());
+            String value = memStore.get(key);
             if (value != null) {
-                ret = DocValue.fromJson(new String(value));
+                ret = DocValue.fromJson(value);
             }
         } catch (Exception e) {
             String errMsg = String.format("getDocValue failed, key: %s, error: %s", key, e.getMessage());
@@ -68,11 +50,11 @@ public class DiskEsUtil implements EsUtil {
 
     // ----- write -----
 
-    public void syncPutDoc(DocKey docKey, DocValue docValue) throws TcException, UnsupportedEncodingException {
-        String key = UriBuilder.base64Encode(docKey.uniqueKey());
+    public void syncPutDoc(DocKey docKey, DocValue docValue) throws TcException {
+        String key = docKey.uniqueKey();
         try {
             String value = docValue.toJson();
-            getRocksDB().put(key.getBytes(), value.getBytes());
+            memStore.put(key, value);
         } catch (Exception e) {
             String errMsg = String.format("syncPutDoc failed, key: %s, value: %s, error: %s", key, docValue, e.getMessage());
             logger.error(THIS_CLASS_NAME, errMsg);
@@ -84,7 +66,7 @@ public class DiskEsUtil implements EsUtil {
     // -----
 
     // mock impl, actually not async put, not guaranteed persistence
-    public void asyncPutDocs(Map<DocKey, DocValue> docKvs, int sizePerGroup) throws UnsupportedEncodingException {
+    public void asyncPutDocs(Map<DocKey, DocValue> docKvs, int sizePerGroup) {
         for (Map.Entry<DocKey, DocValue> entry : docKvs.entrySet()) {
             try {
                 syncPutDoc(entry.getKey(), entry.getValue());

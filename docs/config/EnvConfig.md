@@ -11,7 +11,7 @@ The environment of dependent storages like etcd and ES can be configured, which 
 	+ `tascreed.etcd = mem`: in-memory impl of etcd, for local test
 	+ `tascreed.etcd = magellan`: real etcd deployment
 - es
-	+ `tascreed.es = disk`: in-disk impl of es, for local test
+	+ `tascreed.es = mem`: in-memory impl of es, for local test
 	+ `tascreed.es = magellan`: real es deployment
 - metrics
 	+ `tascreed.metrics.server.enable = true`: prometheus metrics server enabled or not
