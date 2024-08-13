@@ -3,7 +3,7 @@
     <parent>
         <artifactId>tascreed-depend</artifactId>
         <groupId>com.ebay.magellan</groupId>
-        <version>0.4.2-SNAPSHOT</version>
+        <version>0.4.4-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
