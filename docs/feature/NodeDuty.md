@@ -13,7 +13,7 @@ To better support these use cases, we've defined the node duties and the control
 
 The node duties are defined as a tree, each duty is a tree node.
 
-![node_duty](../pic/node_duty.png)
+![node_duty](../images/node_duty.png)
 
 The parent duty covers child duties, and only the leaf ones are the real duties can be enabled or disabled.
 

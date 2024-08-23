@@ -31,7 +31,7 @@ The difference between `FAILED` and `ERROR` results:
 
 ## Task state
 
-![task_state](../pic/task_state.png)
+![task_state](../images/task_state.png)
 
 | State | Done enum | Result enum | Description |
 | ----- | ----- | ----- | ----- |
@@ -44,7 +44,7 @@ Please be noted that TasCreed will **NOT** mark the task from undone state to th
 
 ## Step state
 
-![step_state](../pic/step_state.png)
+![step_state](../images/step_state.png)
 
 | State | Done enum | Result enum | Description |
 | ----- | ----- | ----- | ----- |
@@ -72,7 +72,7 @@ Something about the `FAILED` result:
 
 ## Job state
 
-![job_state](../pic/job_state.png)
+![job_state](../images/job_state.png)
 
 | State | Done enum | Result enum | Description |
 | ----- | ----- | ----- | ----- |

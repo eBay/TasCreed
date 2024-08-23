@@ -54,7 +54,7 @@ Let's start from version 0.2.3, and list all the new features that requires code
 ### from 0.2.5 to 0.2.6
 1. trait to support ignorable, archive, delete, canFail features: this feature implements the `ignore step`, `archive task`, `delete task`, `step can fail` features in trait mode. Actually all these features are not supported in 0.2.3 except the `ignore step`, but the implementation is backward compatible, so no code change required.
 2. multiple dependent steps to support DAG, verify DAG of job define: this feature supports multiple dependent steps instead of only one dependent step. The implementation is backward compatible, so no code change required.
-3. redefine job/step/task states and state transfer logic: this feature redefines the job/step/task states and logic, it defines a full state machine, users can refer to [this document](usage/States.md). The users of previous versions only generate the `SUCCESS` task state as result, so it is backward compatible. 
+3. redefine job/step/task states and state transfer logic: this feature redefines the job/step/task states and logic, it defines a full state machine, users can refer to [this document](../feature/States.md). The users of previous versions only generate the `SUCCESS` task state as result, so it is backward compatible. 
 	- From this version on, users can generate the other task states like `FAILED` and `ERROR`, and the behaviour of these abnormal states are safely defined, users need to carefully read the document before use the states.
 
 ### from 0.2.6 to 0.2.7
@@ -84,10 +84,10 @@ You are free to choose the new specific ES cluster or the previous shared one.
 - If you choose the previous ES, you just need to explicitly configure the endpoint and related parameters of the old ES in your application properties file to overwrite the ES related configuration in TasCreed infra.
 
 ### from 0.3.0 to 0.3.1
-1. [routine](usage/Routine.md) introduced, for the long run jobs across the whole cluster.
+1. [routine](../feature/Routine.md) introduced, for the long run jobs across the whole cluster.
 2. done range state of pack/shard step defined, users can get the progress of the step, even generate watermark for the pack step.
 3. worker count per host can be updated in etcd on the fly, no need to restart.
-4. [annotation](usage/Annotation.md) to simplify the executor register code effort
+4. [annotation](../feature/Annotation.md) to simplify the executor register code effort
 5. **code change required:** In the `run` method of user's `Application` class, the `TcRunner` start up way changes, from 1 step to 2 steps.
 
 Sample code
@@ -110,13 +110,13 @@ In this way, users can overwrite the executors registered by code (happens in `i
 ### from 0.3.1 to 0.3.2
 1. routine adoption can be checked via state controller
 2. infinite retry when read global config from etcd
-3. [node duty rules](usage/NodeDuty.md) for node validity control
+3. [node duty rules](../feature/NodeDuty.md) for node validity control
 
 ### from 0.3.2 to 0.3.3
 1. enable min valid app version control feature
 2. version comparison use maven ComparableVersion for better compatibility
 
-Details can be found in this [document](usage/NodeDuty.md).
+Details can be found in this [document](../feature/NodeDuty.md).
 
 ### from 0.3.3 to 0.3.4
 1. invalid node regex in node duty rule
@@ -162,4 +162,4 @@ eBay users need to add another dependency of eBay related external storage imple
 </dependency>
 ```
 
-Also, from this version on, TasCreed sample app can run without real deployment of etcd or es, there is a default in-memory implementation of etcd, and in-memory implementation of es, developers can debug or run the sample app at local. You can refer to [environment configuration](config/EnvConfig.md).
+Also, from this version on, TasCreed sample app can run without real deployment of etcd or es, there is a default in-memory implementation of etcd, and in-memory implementation of es, developers can debug or run the sample app at local. You can refer to [environment configuration](../spec/EnvConfig.md).

@@ -14,7 +14,7 @@ The trigger condition of dependent step and phase are the same, the difference i
 
 ## Example
 
-![phase](../pic/phase.png)
+![phase](../images/phase.png)
 
 The job define of the DAG as illustrated could be like this:
 ```json

@@ -40,7 +40,7 @@ There are several step types:
 
 ### Simple mode step
 
-![simple mode](../pic/simple_mode.png)
+![simple mode](../images/simple_mode.png)
 
 sample of simple mode step
 ```
@@ -75,7 +75,7 @@ The advanced fields:
 
 ### Shard mode step
 
-![shard mode](../pic/shard_mode.png)
+![shard mode](../images/shard_mode.png)
 
 sample of shard mode step
 ```
@@ -99,7 +99,7 @@ The step define fields are the same as simple mode, with one more shard mode con
 
 ### Pack mode step
 
-![pack mode](../pic/pack_mode.png)
+![pack mode](../images/pack_mode.png)
 
 sample of pack mode step
 ```
@@ -134,5 +134,5 @@ The step define fields are the same as simple mode, with one more pack mode conf
 
 This is a special usage of pack mode step, if we set `infinite` as true, TasCreed will ignore the `end` field, and generate infinite packs.
 
-![infinite pack mode](../pic/pack_mode_infinite.png)
+![infinite pack mode](../images/pack_mode_infinite.png)
 

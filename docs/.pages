@@ -1,0 +1,8 @@
+nav:
+    - Introduction: index.md
+    - Quick Start: Quickstart.md
+    - Tutorial: Tutorial.md
+    - Design: design
+    - Feature: feature
+    - Spec: spec
+    - Misc: misc
