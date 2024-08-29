@@ -5,4 +5,5 @@ nav:
     - Design: design
     - Feature: feature
     - Spec: spec
+    - Config: config
     - Misc: misc

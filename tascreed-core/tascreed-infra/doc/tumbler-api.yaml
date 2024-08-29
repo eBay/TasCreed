@@ -1,8 +1,8 @@
 ---
 openapi: '3.0.3'
 info:
-  title: Tumbler Application
-  description: Tumbler based application for batch job execution
+  title: TasCreed Application
+  description: TasCreed based application for batch job execution
   version: 0.4.0-RELEASE
 servers:
   - url: http://localhost:8080/api/v1
@@ -10,18 +10,18 @@ servers:
 paths:
   /hello:
     get:
-      summary: hello to Tumbler app
+      summary: hello to TasCreed app
       operationId: hello
       tags:
         - hello
       responses:
         200:
-          description: ack from Tumbler app
+          description: ack from TasCreed app
           content:
             'text/plain':
               schema:
                 type: string
-                example: 'Hello Tumbler 1.0.0-RELEASE !'
+                example: 'Hello TasCreed 1.0.0-RELEASE !'
         500:
           $ref: '#/components/responses/ErrorResponse'
   /job:
@@ -953,7 +953,7 @@ components:
         key:
           type: string
           description: adoption key
-          example: /tumbler/dev/sample-job/2023-11-30/process.pack-2
+          example: /tascreed/dev/sample-job/2023-11-30/process.pack-2
         value:
           type: string
           description: adoption value, the task thread name
@@ -963,7 +963,7 @@ components:
         key:
           type: string
           description: adoption key
-          example: /tumbler/sample-dev/routine-adoption/job-watcher
+          example: /tascreed/sample-dev/routine-adoption/job-watcher
         value:
           type: string
           description: adoption value, the routine thread name
@@ -1000,9 +1000,9 @@ components:
             $ref: '#/components/parameters/DutyRule'
     DutyRule:
       properties:
-        minValidTumblerVersion:
+        minValidTcVersion:
           type: string
-          description: min valid tumbler version
+          description: min valid tascreed version
           example: 1.0.0-RELEASE
         minValidAppVersion:
           type: string

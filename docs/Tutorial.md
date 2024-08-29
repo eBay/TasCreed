@@ -9,17 +9,18 @@ As a start, you need to understand the basic design of TasCreed.
 
 ## Feature
 
-Then you can review the features of TasCreed, to see what it can do for you.
+Then you can review the features, to see what it can do for you.
 
 - a
 - b
 
-## Spec
+## Details
 
-The spec of configuration and APIs are very important for implementation.
+For implementation, you will need some detailed documents of domain spec, configuration, APIs, etc.
 
-- a
-- b
+- [Domain spec](spec)
+- [Configuration](config)
+- [APIs](api)
 
 ## Misc
 

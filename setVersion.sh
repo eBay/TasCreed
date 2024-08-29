@@ -63,13 +63,13 @@ BACKUP=true
 
 OLD_VERSION=`mvn help:evaluate -Dexpression=project.version -q -DforceStdout`
 
-VERSION_FILE=src/main/resources/tumbler.yaml
+VERSION_FILE=src/main/resources/tascreed.yaml
 
 echo "start to update version from $OLD_VERSION to $NEW_VERSION"
 
 mvn versions:set -DnewVersion=$NEW_VERSION -DgenerateBackupPoms=$BACKUP
 
-replace_version tumbler-core/tumbler-infra/$VERSION_FILE $NEW_VERSION $OLD_VERSION
+replace_version tascreed-core/tascreed-infra/$VERSION_FILE $NEW_VERSION $OLD_VERSION
 
 CONFIRMED=0
 
@@ -93,7 +93,7 @@ if [ $CONFIRMED -eq 1 ] ;then
 
     mvn versions:commit
 
-    commit_verion tumbler-core/tumbler-infra/$VERSION_FILE
+    commit_verion tascreed-core/tascreed-infra/$VERSION_FILE
 
     echo "version update finished."
 else
@@ -101,7 +101,7 @@ else
 
     mvn versions:revert
 
-    revert_verion tumbler-core/tumbler-infra/$VERSION_FILE
+    revert_verion tascreed-core/tascreed-infra/$VERSION_FILE
 
     echo "version update reverted."
 fi

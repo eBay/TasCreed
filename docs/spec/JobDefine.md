@@ -1,9 +1,11 @@
-# Job Define Config
+# Job Define
 
 ## Job Define
 
-Job define files are pre-defined in the `jobDefine` folder in your application resources path. Here `jobDefine` folder is configured as `tascreed.define.dirs` by default, you can also overwrite the folder or append some more folders.  
-Tumbler application will try to load all the job define files, after parse and validation, register the job defines into memory.  
+Job define files are pre-defined in the `jobDefine` folder in your application resources path. 
+The `jobDefine` folder is configured as `tascreed.define.dirs` by default, you can also overwrite the folder or append some more folders.  
+
+TasCreed application will try to load all the job define files, after parse and validation, register the job defines into memory.  
 Each job define file describes a job template, to define what it is and how it works.  
 
 Job define file sample
@@ -21,14 +23,14 @@ Job define file sample
 }
 ```
 
-| Field Name | Description | Type | Mandatory | Default Value |
-| ----- | ----- | ----- | ----- | ----- |
-| jobName | the name of job define, it should be unique, or it might be overwritten by the other jobs with the same job name, which is always unexpected. To create jobs, TasCreed will find the job define by `jobName`. | `string` | Yes | |
-| version | the job define version, to indicate the differen job define versions, not in use now. | `long` | No | `0` |
-| priority | the priority of the job define, the job instance and tasks created by this job defin will inherit the priority value. TasCreed executors will firstly to pick tasks with larger priority value. | `int` | No | `0` |
-| uniqueAliveInstance | if `true`, at most one alive job instance of this job define can be created at the same time; otherwise, more than one job instances of this job define can be created at the same time. | `boolean` | No | `false` |
-| params | the parameters of job level, all the job instances of this job define will inherit the job parameters. | `map<string, string>` | No | `Null` |
-| steps | the step define list of the job define, to describe all the steps in this job. In theory, it can be empty; but normally we don't want to create a job without any step, which means no task can be created, and no TasCreed executor works. | `list<StepDefine>` | No | `empty list` |
+| Field Name          | Description                                                                                                                                                                                                                   | Type | Mandatory | Default Value |
+|---------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| ----- | ----- | ----- |
+| jobName             | the job name to identify a unique job define. TasCreed finds a job define by `jobName`, if multiple job defines have the same name, only one will be found.                                                                   | `string` | Yes | |
+| version             | the job define version, to indicate the differen job define versions, not in use now.                                                                                                                                         | `long` | No | `0` |
+| priority            | the priority of the job define, the job instance and tasks created by this job defin will inherit the priority value. TasCreed executors will firstly to pick tasks with larger priority value.                               | `int` | No | `0` |
+| uniqueAliveInstance | by default `false`, multiple job instances of the job define can be created at the same time; if `true`, at most one alive job instance of this job define can exist at any time                                              | `boolean` | No | `false` |
+| params              | the parameters of job level, all the job instances of this job define will inherit the job parameters.                                                                                                                        | `map<string, string>` | No | `Null` |
+| steps               | the list of step defines to describe all the steps in this job. In theory, it can be empty; but normally we don't want to create a job without any step, which means no task can be created, and no TasCreed executor works.  | `list<StepDefine>` | No | `empty list` |
 
 ## Step Define
 

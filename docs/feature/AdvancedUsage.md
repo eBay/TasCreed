@@ -50,4 +50,4 @@ users can do task occupation check by demand
 
 **from: 0.2.9-RELEASE**
 
-with the `duration` configured in job or step, if the alive job/task execution time exceeds the duration, the metric can be reported by Tumbler infra, to tell the users there are some slow jobs or tasks.
+with the `duration` configured in job or step, if the alive job/task execution time exceeds the duration, the metric can be reported by TasCreed infra, to tell the users there are some slow jobs or tasks.

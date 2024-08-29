@@ -4,7 +4,7 @@
 
 ## TaskExec
 
-In the previous version of Tumbler, a task executor can be only registered explicitly in code like this:
+In the previous version of TasCreed, a task executor can be only registered explicitly in code like this:
 ```
 taskExecutorRegistry.registerTaskExecutor("sample-dag", "calc-1", ExceptionTaskExecutor.class);
 ```

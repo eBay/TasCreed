@@ -38,14 +38,14 @@ You can refer to [more documents](docs/Overview.md) to learn the details about T
 
 ## Configuration
 
-- [Application Config](docs/spec/ApplicationConfig.md) introduces how to config the TasCreed application.
-- [Application Detailed Config](docs/spec/AppDetailedConfig.md) introduces the detailed config of TasCreed application.
+- [Application Config](docs/config/ApplicationConfig.md) introduces how to config the TasCreed application.
+- [Application Detailed Config](docs/config/AppDetailedConfig.md) introduces the detailed config of TasCreed application.
 - [Job Define Config](docs/spec/JobDefineConfig.md) introduces how to config a job define file.
 
 ## Usage
 
 - [Job Request](docs/feature/JobRequest.md) introduces how to submit job request to trigger a job instance.
-- [Params](docs/feature/Params.md) introduces the params usage.
+- [Params](docs/spec/Params.md) introduces the params usage.
 - [Advanced Usage](docs/feature/AdvancedUsage.md) introduces some advanced features you can leverage in TasCreed job.
 - [Update Param Config](docs/feature/UpdateParamConfig.md) introduces how to update params and configs for the later tasks.
 - [Ban Jobs](docs/feature/BanJobs.md) introduces how to pause and resume a job in different levels.

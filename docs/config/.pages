@@ -1,0 +1,4 @@
+nav:
+    - EnvConfig.md
+    - ApplicationConfig.md
+    - AppDetailedConfig.md

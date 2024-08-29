@@ -162,4 +162,4 @@ eBay users need to add another dependency of eBay related external storage imple
 </dependency>
 ```
 
-Also, from this version on, TasCreed sample app can run without real deployment of etcd or es, there is a default in-memory implementation of etcd, and in-memory implementation of es, developers can debug or run the sample app at local. You can refer to [environment configuration](../spec/EnvConfig.md).
+Also, from this version on, TasCreed sample app can run without real deployment of etcd or es, there is a default in-memory implementation of etcd, and in-memory implementation of es, developers can debug or run the sample app at local. You can refer to [environment configuration](../config/EnvConfig.md).

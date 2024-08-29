@@ -1,6 +1,6 @@
 # Application Configuration
 
-The Tumbler application parameters are defaultly configured in `tascreed.yaml`, they can be also overwritten in application properties file.
+The TasCreed application parameters are defaultly configured in `tascreed.yaml`, they can be also overwritten in application properties file.
 
 ## Application Parameters
 
