@@ -107,4 +107,4 @@ The format of the parameter configuration is like `{tascreed.routine.param}.{rou
 
 ### Ban and resume routines
 
-You can refer to the [doc of ban feature](BanJobs.md) to check out how to ban and resume routines.
+You can refer to the [doc of ban feature](../execution/BanJobs.md) to check out how to ban and resume routines.

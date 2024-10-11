@@ -61,16 +61,16 @@ theme:
 plugins:
   - search
   - macros
-  - mermaid2:
-      arguments:
-        securityLevel: 'loose'
+#  - mermaid2:
+#      arguments:
+#        securityLevel: 'loose'
   - awesome-pages
   - offline
   - git-authors
   - git-revision-date-localized:
       enable_creation_date: true
       type: datetime
-repo_url: https://github.corp.ebay.com/Magellan/tascreed
+repo_url: https://github.com/eBay/TasCreed
 repo_name: Magellan/tascreed
 copyright: Copyright &copy; 2023 - 2024 eBay
 markdown_extensions:

@@ -1,5 +1,7 @@
 # Tutorial
 
+*this document seems redundant*
+
 ## Design
 
 As a start, you need to understand the basic design of TasCreed.

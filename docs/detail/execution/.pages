@@ -1,0 +1,6 @@
+nav:
+    - States: States.md
+    - Progression: Progression.md
+    - Ban job & task: BanJobs.md
+    - Update param & config: UpdateParamConfig.md
+    - Advanced usages: AdvancedUsage.md

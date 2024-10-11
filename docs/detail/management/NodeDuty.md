@@ -9,11 +9,11 @@ A TasCreed application can be deployed in multiple nodes, even in multiple DCs(d
 To better support these use cases, we've defined the node duties and the control rules, to guide the TasCreed application nodes work or not.
 
 ## Node duty
-[Reference code](../../tascreed-core/tascreed-domain/src/main/java/com/ebay/magellan/tascreed/core/domain/duty/NodeDutyEnum.java)
+[Reference code](../../../tascreed-core/tascreed-domain/src/main/java/com/ebay/magellan/tascreed/core/domain/duty/NodeDutyEnum.java)
 
 The node duties are defined as a tree, each duty is a tree node.
 
-![node_duty](../images/node_duty.png)
+![node_duty](../../images/node_duty.png)
 
 The parent duty covers child duties, and only the leaf ones are the real duties can be enabled or disabled.
 
@@ -29,7 +29,7 @@ For simplicity, the parent duties are defined for simpler configuration.
 - `ALL`: covers `SERVER` and `EXECUTOR`
 
 ## Node duty rule
-[Reference code](../../tascreed-core/tascreed-domain/src/main/java/com/ebay/magellan/tascreed/core/domain/duty/NodeDutyRule.java)
+[Reference code](../../../tascreed-core/tascreed-domain/src/main/java/com/ebay/magellan/tascreed/core/domain/duty/NodeDutyRule.java)
 
 The node duty rule describes several filter conditions to identify a node is valid or not, and a list of duties to be disabled if a node is invalid.
 
@@ -82,7 +82,7 @@ With this rule, if a node is invalid, it can not serve as a server, or execute a
 
 ## APIs of node duty rules
 
-The APIs of node duty rules are defined [here](../../tascreed-core/tascreed-infra/src/main/java/com/ebay/magellan/tascreed/core/infra/controller/StateController.java#L376-L413).
+The APIs of node duty rules are defined [here](../../../tascreed-core/tascreed-infra/src/main/java/com/ebay/magellan/tascreed/core/infra/controller/StateController.java#L376-L413).
 
 To submit the duty rules, a sample payload could be like this:
 ```json

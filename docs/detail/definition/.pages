@@ -1,0 +1,6 @@
+nav:
+    - Annotation: Annotation.md
+    - Trait: Trait.md
+    - Phase: Phase.md
+    - Schedule: Schedule.md
+    - Routine: Routine.md

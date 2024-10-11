@@ -44,20 +44,20 @@ You can refer to [more documents](docs/Overview.md) to learn the details about T
 
 ## Usage
 
-- [Job Request](docs/feature/JobRequest.md) introduces how to submit job request to trigger a job instance.
+- [Job Request](docs/detail/JobRequest.md) introduces how to submit job request to trigger a job instance.
 - [Params](docs/spec/Params.md) introduces the params usage.
-- [Advanced Usage](docs/feature/AdvancedUsage.md) introduces some advanced features you can leverage in TasCreed job.
-- [Update Param Config](docs/feature/UpdateParamConfig.md) introduces how to update params and configs for the later tasks.
-- [Ban Jobs](docs/feature/BanJobs.md) introduces how to pause and resume a job in different levels.
-- [Progression](docs/feature/Progression.md) introduces the visualization of progression of a job.
-- [States](docs/feature/States.md) introduces the state of task, step and job, as well as the state machine.
-- [Phase](docs/feature/Phase.md) introduces the phase feature of step, as a weaker dependency relationship.
-- [Archive](docs/feature/Archive.md) introduces the archive feature of done jobs, users can choose their own combinations of implementations, such as etcd, es.
-- [Trait](docs/feature/Trait.md) introduces the trait feature of TasCreed data objects, users can configure the optional characters of the job, step and task in different level.
-- [Routine](docs/feature/Routine.md) introduces a new kind of executor named routine, the long run routine job across the whole TasCreed cluster can be defined as a routine. It is an important complement of the task executor.
-- [Annotation](docs/feature/Annotation.md) introduces the TasCreed defined annotations, to help register the task executors and routine executors in code.
-- [Node Duty](docs/feature/NodeDuty.md) introduces the duty rules of the TasCreed application nodes, to help users control which nodes can work as expected.
-- [Schedule](docs/feature/Schedule.md) introduces the schedule feature, users can schedule trigger time of job defines in advance, which means TasCreed can work as a time scheduler.
+- [Advanced Usage](docs/detail/execution/AdvancedUsage.md) introduces some advanced features you can leverage in TasCreed job.
+- [Update Param Config](docs/detail/execution/UpdateParamConfig.md) introduces how to update params and configs for the later tasks.
+- [Ban Jobs](docs/detail/execution/BanJobs.md) introduces how to pause and resume a job in different levels.
+- [Progression](docs/detail/execution/Progression.md) introduces the visualization of progression of a job.
+- [States](docs/detail/execution/States.md) introduces the state of task, step and job, as well as the state machine.
+- [Phase](docs/detail/definition/Phase.md) introduces the phase feature of step, as a weaker dependency relationship.
+- [Archive](docs/detail/management/Archive.md) introduces the archive feature of done jobs, users can choose their own combinations of implementations, such as etcd, es.
+- [Trait](docs/detail/definition/Trait.md) introduces the trait feature of TasCreed data objects, users can configure the optional characters of the job, step and task in different level.
+- [Routine](docs/detail/definition/Routine.md) introduces a new kind of executor named routine, the long run routine job across the whole TasCreed cluster can be defined as a routine. It is an important complement of the task executor.
+- [Annotation](docs/detail/definition/Annotation.md) introduces the TasCreed defined annotations, to help register the task executors and routine executors in code.
+- [Node Duty](docs/detail/management/NodeDuty.md) introduces the duty rules of the TasCreed application nodes, to help users control which nodes can work as expected.
+- [Schedule](docs/detail/definition/Schedule.md) introduces the schedule feature, users can schedule trigger time of job defines in advance, which means TasCreed can work as a time scheduler.
 
 ## Acknowledgements
 Special thanks to [people](ACKNOWLEDGEMENTS.md) who give your support on this project.
