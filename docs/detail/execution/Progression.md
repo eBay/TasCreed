@@ -1,18 +1,22 @@
 # Progression
 
-## Job, Step Progression
+TasCreed can calculate the progress of a job or step in percentage format, then users can easier to know where the execution achieves.
 
-**from: 0.2.4-SNAPSHOT**
+## Job progression
 
-In job and step level, TasCreed can show the progression in percentage format, in this way, users can easier to know their job execution progress.
+Job progression is determined by steps.
 
-Users can set an optional parameter `effort` in the steps, by default is `1`.
+Each step has an optional parameter `effort`, by default is `1`, as the weight during calculation.
 
-Job progression is calculated as `sum(success step effort) / sum(all step effort) * 100%`.
+```
+Job progression = sum(success step effort) / sum(all step effort) * 100%
+```
 
-Step progression is calculated in different step modes:
+## Step progression
+
+Step progression is determined by tasks, but differentiated by step modes.
+
 - Simple: success `100%`, other `0%`
-- Shard: `success shard num / total shard num * 100%`
-- Pack: `success pack num / total pack num * 100%`
-- Infinite Pack: `0%`
-
+- Shard: `count(success shard) / count(total shard) * 100%`
+- Pack: `count(success pack) / count(total pack) * 100%`
+    + Infinite Pack: `0%`, because the step never ends

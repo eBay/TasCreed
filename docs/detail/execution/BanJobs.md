@@ -1,59 +1,50 @@
-# Job Control
+# Ban & Resume
 
-## Ban Job Submit, Task Create, Task Pick
+In TasCreed, we provide the ban function to disable/enable the execution of task or routine, this feature is called ban & resume.
 
-**from: 0.2.3-RELEASE**
+## Ban jobs
 
-In the first version to support ban function, we can ban the jobs in these 3 levels: 
-- Job Submit: job can not be submitted if the job or job define is banned, also covers `Task Create` & `Task Pick` level
-- Task Create: new taks can not be created if the job or job define is banned, also covers `Task Pick` level
-- Task Pick: task can not be picked if the job or job define is banned
+We can ban a job, to disable all the tasks of this job; or we can ban all the jobs, to disable any task execution.  
+The ban function is determined by two dimensions, scope and action.
 
-The ban level is defined in the application configuration, by default is Job Submit level, which means all the 3 functions can be banned.
+First, users need to decide to ban at which scope:
 
-Users can ban the job or job define, to disable the job submission, task creation and task pick functions of the specific job or job define. Furthermore, users can ban all the job and job defines via ban `allJobs` api.
+- job: all tasks of the specific job instance will be impacted
+- job define: bigger scope than job, all tasks of the job instances of the specific job define will be impacted
+- global: bigger scope than job define, all tasks are impacted
 
-**from: 0.2.3.3-SNAPSHOT**
+After determining the scope, we can choose the action level, defined for different scopes:
 
-The ban config in etcd will be read and cached in memory, and refreshed after 1 minute, this works for `Task Create` and `Task Pick`; But for `Job Submit`, it always refresh the cached data from etcd, so it can be affected immediately after the ban request.
+| Ban level     | Global | Job define | Job |
+|---------------|--------|------------|-----|
+| `TASK_PICK`   | Y      | Y          | Y   |
+| `TASK_CREATE` | Y      | Y          | Y   |
+| `JOB_SUBMIT`  | Y      | Y          | -   |
 
-**from: 0.2.5-SNAPSHOT**
+- `TASK_PICK`: can not pick task to execute, but can still create new tasks
+- `TASK_CREATE`: cover `TASK_PICK` level, and can not create new tasks
+- `JOB_SUBMIT`: cover `TASK_CREATE` level, and can not submit new job instance
 
-The enhancement of ban function includes:
-- rename ban `allJobs` api to ban `global` api
-- only the covered level can be banned, covered can be explained in two ways:
-    + covered by default ban level (as before)
-    + covered by ban element type, as the following relation table
-- remove `default ban level` configuration, instead, add a `ban enable` configuration
-- all the ban request should give the ban level
-- ban request succeed with response `true`, fails with response `false` or other exceptions
-    + the failure reason could be: `ban enable` not enabled, ban level in request is not valid
-    + the exception reason could be: job define or job is not exist
+*If a task has been picked and executing, it can not be stopped.*
 
-| Action can be banned | Global | Job Define | Job |
-| ----- | ----- | ----- | ----- |
-| Job Sumbit | Y | Y | - |
-| Task Create | Y | Y | Y |
-| Task Pick | Y | Y | Y |
+## Ban routines
 
-Explanations:
-- If `Global` banned: the actions covered by its ban level will be affected. All the jobDefines and jobs are banned.
-- If `Job Define` banned: the actions covered by its ban level will be affected. Only the specific jobDefines are banned.
-- If `Job` banned: the actions covered by its ban level will be affected. Only the specific jobs are banned.
+Similarly, we can ban the execution of routines.  
+The ban function is also determined by the two dimensions.
 
-## Ban Routine Execute, Routine Occupy
+First, users need to decide to ban at which scope:
 
-**from: 0.3.1-RELEASE**
+- routine: the specific routine instance will be impacted
+- routine define: all instances of a specific routine define will be impacted
 
-The routines can be banned and resumed on different levels as well:
-- `ROUTINE_EXEC`: the routine job can not be executed, simply skip the execution of each round
-- `ROUTINE_OCCUPY`: covers `ROUTINE_EXEC`, the routine job can not be occupied; if the routine is already occupied, it will be dropped
+After determining the scope, we can choose the action level, defined for different scopes:
 
-| Action can be banned | Routine Define | Routine |
-| ----- | ----- | ----- |
-| Routine Occupy | Y | Y |
-| Routine Execute | Y | Y |
+| Ban level        | Routine define | Routine |
+|------------------|----------------|---------|
+| `ROUTINE_EXEC`   | Y              | Y       |
+| `ROUTINE_OCCUPY` | Y              | Y       |
 
-Explanations:
-- If `Routine Define` banned: the actions covered by its ban level will be affected, only the specific routineDefines are banned.
-- If `Routine` banned: the actions covered by its ban level will be affected, only the specific routines are banned.
+- `ROUTINE_EXEC`: can not execute routine
+- `ROUTINE_OCCUPY`: cover `ROUTINE_EXEC` level, and can not occupy routine; if a routine is already occupied, it will be dropped
+
+*Routine is executed round and round, thus the current running round can not be stopped, but the next round can.*
