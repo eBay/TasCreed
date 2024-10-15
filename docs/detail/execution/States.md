@@ -66,6 +66,8 @@ flowchart LR
 | `SKIP_BY_FAILED` | `DONE`     | `FAILED` | if any dependent step has a `FAILED` result, and this step can not fail, then the step is skipped with a `FAILED` result |
 | `SKIP_BY_ERROR` | `DONE`     | `ERROR` | if any dependent step has a `ERROR` result, and this step can not fail, then the step is skipped with a `ERROR` result; `ERROR` is prior than `FAILED` |
 
+*Only if all dependent steps are done, the current step state can be updated.*
+
 !!! note "Difference between `START` and `READY` states"
 	The `START` and `READY` states are similar, with the only difference of task creation finished or not.  
 	Actually the `START` state step can be changed to `FAILED`, `ACCEPTABLE_FAILED`, `ERROR` like `READY` state, but only the `READY` state step can be changed to `SUCCESS` state.
