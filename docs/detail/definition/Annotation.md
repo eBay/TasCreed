@@ -1,42 +1,56 @@
 # Annotation
 
-**from: 0.3.1-RELEASE**
+Users need to implement their own task executors, and register them to the framework.   
+Annotation helps to register the executors more efficiently.
 
-## TaskExec
+## Without annotation
 
-In the previous version of TasCreed, a task executor can be only registered explicitly in code like this:
+Task executors can be registered explicitly in code like this:
+``` java
+taskExecutorRegistry.registerTaskExecutor("job1", "step1", MyTaskExecutor.class);
 ```
-taskExecutorRegistry.registerTaskExecutor("sample-dag", "calc-1", ExceptionTaskExecutor.class);
-```
 
-Now with the `TaskExec` annotation, we can simply register the task executor class by the annotation.
+It should be registered at the initialization phase of the application, then the framework can find the executor for the specific step.
 
-Sample code
-```
-@TaskExec(job="sample", step={"prep", "calc", "aggr-1", "aggr-2"})
-@TaskExec(job="sample-infinite", step="calc")
-@TaskExec(job="sample-dag", step={"prep", "calc-1", "calc-2", "calc-3",
-        "aggr-1", "aggr-2", "final-11", "final-12", "final-21"})
-@Setter
+This way is more likely to be ignored by users, leading to unexpected exceptions.
+
+## With annotation
+
+Then we've introduced the annotation way to register task executors. For example,
+
+``` java
+@TaskExec(job="job1", step="step1")
+@TaskExec(job="job2", step={"step2", "step3"})
 @Component
 @Scope("prototype")
-public class DefaultTaskExecutor extends NormalTaskExecutor {
+public class MyTaskExecutor extends NormalTaskExecutor {
 	...
 }
 ```
 
-One task executor class can be registered to mapping with multiple steps, even in different jobs, so the `TaskExec` annotation can be also registered multiple times.
+- `job`: job name
+- `step`: list of step names
 
-The params of `TaskExec`
-- job: the mapping job name
-- step: list of the mapping step names
+The annotation describes which steps the task executor is bound to, during startup, the framework will register these executors automatically.
 
-The annotation actually is scanned by the spring boot, so the `Component` and `Scope("prototype")` annotations are also necessary for the task executors.
+This way is much more convenient and less error-prone.
 
-We also keeps the old way to register task executors, which can be used to overwrite the default configuration by annotation, for debug or test purpose. And the old code is compatible.
+*`@Component` and `@Scope("prototype")` are both necessary for task executors, because the executors are scanned by spring boot.*
 
-## RoutineExec
+## Routine executor
 
-The `RoutineExec` works for the feature of routine executor.
+Similarly, the routine executor can also be registered by annotation. For example,
 
-You can refer to the [Routine](Routine.md) to check out the usage of this annotation.
+``` java
+@RoutineExec(routine="job-watcher", scale = 3, priority = 100, interval = 30 * 1000L)
+@Component
+@Scope("prototype")
+public class JobWatcherRoutineExecutor extends NormalRoutineExecutor {
+	...
+}
+```
+
+- `routine`: routine name
+- `scale`: the number of threads to run the routine, for high availability
+- `priority`: priority of the routine
+- `interval`: interval of the routine execution round
