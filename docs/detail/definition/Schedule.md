@@ -1,17 +1,25 @@
 # Schedule
 
-With the feature of schedule, job defines can be triggered by TasCreed itself, as user scheduled, e.g. trigger at a specific time, every two hours, daily, weekly, etc.
+Jobs are triggered by job requests from users or other systems. What if we want to trigger a job at a specific time, or periodically?
 
-## Time schedule
+Scheduling is such a feature to trigger jobs as predefined time points or periods, automatically.
 
-**from 0.3.5-SNAPSHOT**
+## Workflow
 
-The job define can be triggered when the scheduled time comes. Here introduces a new concept `Schedule`, users can submit a schedule of a job request, with the config of time schedule.
+``` mermaid
+flowchart LR
+	SD["Schedule Define"] -->|generate when<br> condition meets| TR["Trigger"]
+	TR -->|submit| JR["Job Request"]
+	JR -->|build| JB["Job"]
+```
 
-Across the whole TasCreed cluster, a routine thread runs to submit job requests when the related schedule condition meets.
+When schedule triggers, a job request is generated and submitted to the job system.
 
-An example of schedule could be like this:
-```json
+## Example
+
+Let's define a schedule like this:
+
+``` json
 {
   "scheduleName": "schedule-test",
   "jobRequest": {
@@ -64,20 +72,30 @@ An example of schedule could be like this:
 }
 ```
 
-- scheduleName: the unique name of schedule, it should not conflict
-- jobRequest: the job request pattern to be scheduled, please refer to the [Job Request](JobRequest.md) doc for detailed introduction; however, some fields will be replaced when triggered as instance of job request:
-	+ trigger: the instance trigger will be suffixed by trigger time in format of `-yyyyMMddHHmmss`; e.g. the schedule job request trigger is `test`, a triggered instance can be `test-20230210110000`
-	+ params: the `${xxx}` format string in the param value can be replaced by variables when triggered, including the job params and step params; e.g. if a variable `var1` is calculated as `123`, then the param value `abc${var1}` can be replaced to `abc123`
-- conf: config of time schedule
-- variables: map of string to variable object, key is the variable name, value describes the variable
+## Job request
 
-### Schedule config types
-- point: list of time points to trigger
-- period: periodically trigger, within an optional time range
-- cron: cron expression described trigger time, within an optional time range
+The `jobRequest` field defines the job request template, which is used to generate a job request each time triggered.
 
-examples
-```json
+!!! annotate note "Distinguish triggers"
+	To distinguish triggers, the job requests can differ in some fields, by replacing some fields with the trigger time.
+
+	- `trigger` field in job request will be suffixed by the trigger time (UTC) in format of `-yyyyMMddHHmmss` (1)
+  	- the `${xxx}` format string in the param values can be replaced by variables, both job params and step params (2)
+
+1. For example, the schedule is triggered at `2023-02-10T11:00:00.000Z`, the `trigger` field of the job request is `test-20230210110000`
+2. For example, `${var2}` can be replaced by the value of `var2`, like `5`, `${var3}` can be replaced by trigger time in format of `20230210`
+
+## Schedule config
+
+The `conf` field defines the schedule config, indicating the time-based schedule information.
+
+- `point`: list of time points to trigger
+- `period`: periodically trigger, within an optional time range
+- `cron`: cron expression described trigger time, within an optional time range
+
+Examples
+
+``` json
 // point type, trigger at 3 time points
 {
   "type": "point",
@@ -99,13 +117,17 @@ examples
 }
 ```
 
-### Variable types
-- const: constant string for direct replacement
-- count: counter number, increase after replacement
-- time: time string of trigger time for replacement
+## Variable
 
-examples
-```json
+The `variables` field defines the variables calculated for each trigger, used to replace param values in job request.
+
+- `const`: constant string for direct replacement
+- `count`: counter number, increase after replacement
+- `time`: time string of trigger time for replacement
+
+Examples
+
+``` json
 // const type, value is constant
 {
   "type": "const",
