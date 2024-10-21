@@ -1,22 +1,27 @@
 # Routine
 
-**from: 0.3.1-RELEASE**
+Routine introduces a new kind of executor, working as a long run job across the whole cluster, round and round again.
 
-Routine is a new kind of executor, which is like a cluster level long run job, running a round and a round again, with a configured interval.
+When TasCreed cluster starts up, the routines will be occupied and executed automatically.
 
-Not like a TasCreed job, users don't need to submit a routine to activate it, they just need to define the routines in the code, with the configured parameters. When the TasCreed nodes start up, they will try to occupy the routine job and start process.
+Some system routines are defined to work as
 
-At current, the TasCreed internal monitor thread and job watcher thread (to update job status and create new tasks) are refactored to be routines.
+- monitor: collect and export whole cluster status
+- job watcher: update job status and create new tasks
+- schedule watcher: check schedule trigger condition and trigger jobs
 
-## How to define your own routine
+## Define a routine
 
-The routine executor can be implemented based on two types of parent classes
-- NormalRoutineExecutor
-- CheckpointRoutineExecutor: with running state can be recorded in the bulletin
+Routine executor can be implemented based on two types of parent classes
 
-Usually, a normal routine executor is enough. The sample code defines a routine executor.
+- `NormalRoutineExecutor`
+- `CheckpointRoutineExecutor`, can persist checkpoint in bulletin, for failure recovery
 
-```java
+Normal routine executor is usually enough.
+
+A sample routine executor is defined as below:
+
+``` java
 @RoutineExec(routine="simple", scale = 2, interval = 15 * 1000L)
 @Component
 @Scope("prototype")
@@ -51,33 +56,19 @@ public class SimpleRoutineExecutor extends NormalRoutineExecutor {
 }
 ```
 
-Similar to the task executor, the routine executor needs to implement some methods:
-- initImpl: invoked when executor starts
-- executeRoundImpl: invoked in a while loop, with a configured interval
-- closeImpl: invoked when executor ends
+The routine executor needs to implement the methods:
 
-The annotations are important.
-```java
-@RoutineExec(routine="simple", scale = 2, interval = 15 * 1000L)
-@Component
-@Scope("prototype")
-```
-- The `RoutineExec` defines a routine executor, and also defines a routine name, with some pre-defined parameters
-	+ routine: string, routine name, mandatory
-	+ scale: integer, default 1, indicates how many routine threads can be running in parallel across the whole cluster
-	+ priority: integer, default 1, the routine with larger priority can be occupied in prioritize
-	+ interval: long, in millisecond, default `60000` which is 1 minute, indicates the interval of the while loop to invoke the `executeRoundImpl` method
-- The `Component` is the spring boot annotation, it is mandatory because
-	+ The executors are constructed by spring boot
-	+ The `RoutineExec` annotation implemention actually depends on the `Component` annotation
-- The `Scope` is better to be defined as `@Scope("prototype")`
+- `initImpl`: invoked when executor starts
+- `executeRoundImpl`: invoked in a while loop, with a configured interval
+- `closeImpl`: invoked when executor ends
 
-That's all, the routine is defined and will be registered by TasCreed, and it will be occupied and executed by the routine threads across the whole cluster.
+The annotation part is introduced in the [document of annotation](Annotation.md#routine-executor).
 
-## How to configure the routine threads across cluster
+## Configure the routine resources
 
-### Configuration of routine threads
-```yaml
+### Configure routine threads
+
+``` yaml
 tascreed:
   routine:
     # num of overall available routines
@@ -89,22 +80,26 @@ tascreed:
       key: "%s/max_routine_count_per_host"
       default: 5
 ```
+
 This is the default configuration of routine threads
-- whole cluster can run at most 20 routine threads, which can be overwritten by the properties file or etcd
-- each TasCreed node can run at most 5 routine threads, which can be overwritten by the properties file or etcd
+
+- whole cluster can run at most `20` routine threads, which can be overwritten by the properties file or config bulletin
+- each TasCreed node can run at most `5` routine threads, which can be overwritten by the properties file or config bulletin
 
 ### Configure routine parameters
-```properties
+
+The routine parameters are initially configured in the code, they can also be overwritten by properties file.
+
+``` properties
 # tascreed routine param
 tascreed.routine.param.job-watcher.scale=1
 tascreed.routine.param.job-watcher.interval=10000
 tascreed.routine.param.monitor.interval=5000
 tascreed.routine.param.monitor.priority=101
 ```
-The routine parameters are initially configured in the code, they can also be overwritten by properties file.
 
-The format of the parameter configuration is like `{tascreed.routine.param}.{routineName}.{paramName}`, in this way, we can overwrite the default routine parameters as you like.
+The format of the parameter configuration is like `tascreed.routine.param.<routineName>.<paramName>`.
 
-### Ban and resume routines
+## Ban routines
 
-You can refer to the [doc of ban feature](../execution/BanJobs.md) to check out how to ban and resume routines.
+To enable or disable the routines, you can refer to the [document of ban feature](../execution/BanJobs.md#ban-routines).
