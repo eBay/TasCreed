@@ -1,39 +1,45 @@
 # Archive
 
-**from 0.2.9-SNAPSHOT**
+## Archive jobs
 
-## Archive storage
-
-The done jobs will be automatically archived to the archive storage, only if it can be auto-archived: the job state is `SUCCESS` or `FAILED`.
+When a job is done with a determined result, `SUCCESS` or `FAILED`, it can be archived to the archive storage.
 
 Archived jobs can be used for:
-- job query
-- job deduplication
 
-Before version 0.2.9-SNAPSHOT, there is a default archive storage implementation, which is built on ElasticSearch.  
-Now, users can configure and choose different implementations of archive storages, even there could be none or more than one choices.
+- job query, to find the historical jobs
+- job deduplication, to avoid dual running of the same job
 
-The sample of configuration could be like this:
-```
-tascreed.storage.archive = ETCD, ES
-```
-The value is a list of the archive storage names. By default, it is set as `ES` only, the same as before.
+## Archive tasks
+
+By default, a task is simply removed when it is done.
+
+But for the tasks with `archive` trait (1), it can be archived to the archive storage when it is done.
+{ .annotate }
+
+1. `archive` trait of a task is inherited from its belonged step, which can be defined in the step define, or overwritten in job request
 
 ## Archive storage types
 
-### ES
-done jobs are archived in ES, and the archived jobs can also be found from ES for deduplication or query.
+Users can configure to choose different implementations of archive storages.
 
-the archived jobs are saved in the ES index `tascreed_job_*`, with the wildcard replaced by the TasCreed namespace.
+An example of configuration could be like this:
+
+``` properties
+tascreed.storage.archive = ETCD, ES
+```
+
+The value is a list of the archive storage names. By default, it is set as `ES` only.
+
+### ES (ElasticSearch)
+
+Archived jobs are saved in index `tascreed_job_<namespace>`, and archived tasks are saved in index `tascreed_task_<namespace>`.
 
 ### ETCD
-done jobs are archived in ETCD, and teh archived jobs can also be found from ETCD for deduplication or query.
 
-the archived jobs are saved in the ETCD prefix `*/archive/job/`, with the wildcard replaced by the TasCreed namespace.
+Archived jobs are saved in keys with prefix `<namespace>/archive/job/`, and archive tasks is not supported in ETCD.
 
-the archived jobs in ETCD has a special feature called retention time. It will be kept in ETCD for 7 days by default, which can be also changed by users in configuration. After the retention time, the archived jobs will be removed from ETCD itself.
-
-the retention feature will keep the ETCD usage a constant space, with the price of historical jobs dropped forever. It could be useful in some special scenarios.
+In ETCD archive storage, `tascreed.storage.archive.etcd.retention.hours` can configure the retention time of the archived jobs, 7 days by default.
 
 ### NONE
-Literally as the name, no archive, do nothing.
+
+Literally, no archive.
