@@ -1,15 +1,24 @@
 # Job Define
 
-## Job Define
+Usually we start from a job define, to describe what we want to do.
 
-Job define files are pre-defined in the `jobDefine` folder in your application resources path. 
-The `jobDefine` folder is configured as `tascreed.define.dirs` by default, you can also overwrite the folder or append some more folders.  
+## Where to define jobs
 
-TasCreed application will try to load all the job define files, after parse and validation, register the job defines into memory.  
-Each job define file describes a job template, to define what it is and how it works.  
+A job define is stored in a file, which is 
 
-Job define file sample
-```
+- placed in folders configured by `tascreed.define.dirs`
+- suffixed with `.json`
+- visited through `classpath:/<dir>/<file>.json`
+
+TasCreed application loads all the job define files when starting up, after parsing and validating, valid job defines are registered into memory.
+
+## How to define a job
+
+Each job define file describes a job template, to define how it works.  
+
+Example
+
+``` json
 {
   "jobName": "sample",
   "version": 1,
@@ -19,33 +28,68 @@ Job define file sample
     "k1": "v1",
     "k2": "v2"
   },
-  "steps": [...]
+  "steps": [
+    {
+      "stepName": "prep"
+    }, {
+      "stepName": "calc",
+      "stepType": "SHARD",
+      "shardConf": {
+        "shard": 4
+      },
+      "dependentStep": "prep"
+    }
+  ]
 }
 ```
 
-| Field Name          | Description                                                                                                                                                                                                                   | Type | Mandatory | Default Value |
-|---------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| ----- | ----- | ----- |
-| jobName             | the job name to identify a unique job define. TasCreed finds a job define by `jobName`, if multiple job defines have the same name, only one will be found.                                                                   | `string` | Yes | |
-| version             | the job define version, to indicate the differen job define versions, not in use now.                                                                                                                                         | `long` | No | `0` |
-| priority            | the priority of the job define, the job instance and tasks created by this job defin will inherit the priority value. TasCreed executors will firstly to pick tasks with larger priority value.                               | `int` | No | `0` |
-| uniqueAliveInstance | by default `false`, multiple job instances of the job define can be created at the same time; if `true`, at most one alive job instance of this job define can exist at any time                                              | `boolean` | No | `false` |
-| params              | the parameters of job level, all the job instances of this job define will inherit the job parameters.                                                                                                                        | `map<string, string>` | No | `Null` |
-| steps               | the list of step defines to describe all the steps in this job. In theory, it can be empty; but normally we don't want to create a job without any step, which means no task can be created, and no TasCreed executor works.  | `list<StepDefine>` | No | `empty list` |
+### Job define
 
-## Step Define
+Generally, a job can be simply defined by two parts:
 
-Step define describes a step of a job define, to define what it is and how it works.  
-There are several step types:
-- SIMPLE: default step type, only one task can be created
-- SHARD: several tasks can be created in sharding mode
-- PACK: several tasks can be created in pack mode
+- `jobName`: unique name of the job define, TasCreed finds a job by it
+- `steps`: list of step defines, to describe the steps and their dependencies
 
-### Simple mode step
+Other optional fields are used to impact the job scheduling and execution:
 
-![simple mode](../images/simple_mode.png)
+- `version`: version of the job define, not in use now
+- `priority`: priority of the job define, inherited by job instances and tasks; the larger number the higher priority
+- `uniqueAliveInstance`: if true, only one alive job instance can exist at any time
+- `params`: [parameters](Params.md) at job level, inherited by all job instances
+- `traits`: traits of the job define, inherited by job instance
+- `duration`: expected execution time of a job, inherited by job instance
 
-sample of simple mode step
-```
+### Step define
+
+A step can also be simply defined by some part:
+
+- `stepName`: unique name of the step define within the job define, TasCreed finds a step by it
+- `stepType`: indicates the step work mode
+    + `SIMPLE`: default step type, only one task can be created
+    + `SHARD`: several tasks can be created in sharding mode
+    + `PACK`: several tasks can be created in pack mode
+- `dependentStep`: dependent step name of the step, meaning the step can start only after the dependent step done; deprecated, use `dependency` instead
+- `dependency`: describe the dependency information of the step
+    + `doneSteps`: name list of dependent steps, only when all these steps done can this step start
+    + `phase`: belonged phase of this step
+
+*`dependentStep` can only define one dependent step, while `dependency` can define multiple dependent steps.*
+
+Other optional fields are used to impact the step scheduling and execution:
+
+- `exeClass`: task executor class name of the step, to overwrite the registered executor
+- `affinityRule`: affinity rule of the step, to guide task selection of each node
+- `effort`: effort of the step, used for progress percentage calculation of the whole job
+- `traits`: traits of the step, inherited by tasks
+- `ignorable`: if true, the step can be ignored if the step is set `ignore` in job request; deprecated, use `traits` instead
+- `duration`: expected execution time of a step
+- `params`: [parameters](Params.md) at step level, inherited by all tasks of the step
+
+#### Simple mode step
+
+<div class="grid" markdown>
+
+``` json title="sample of simple mode step" hl_lines="3"
 {
   "stepName": "prep",
   "stepType": "SIMPLE",
@@ -57,84 +101,118 @@ sample of simple mode step
 }
 ```
 
-With `stepType` set as `SIMPLE` or not set by default, the step will be recognized as a simple mode step.
-
-The basic fields:
-| Field Name | Description | Type | Mandatory | Default Value |
-| ----- | ----- | ----- | ----- | ----- |
-| stepName | the name of step define, it should be unique inside of job define, or it might be wrong when find step by name. alias `name`. | `string` | Yes | |
-| stepType | the step type, to indicate the step working mode. Current supported step types are `SIMPLE`, `SHARD` and `PACK`. alias `type`. | `enum` | No | `SIMPLE` |
-| dependentStep | previous dependent step name of this step, it means this step can start only after the dependent step succeeded. | `string` | No | |
-| params | the parameters of step level, all the tasks of this step will inherit the step parameters. | `map<string, string>` | No | `Null` |
-
-The advanced fields:
-| Field Name | Description | Type | Mandatory | Default Value |
-| ----- | ----- | ----- | ----- | ----- |
-| exeClass | if you want to different task executor other than the registered, you can overwrite this field with the executor full class name. | `string` | No | |
-| affinityRule | when scheduling the task worker node, the affinity rule can help decide which node to pick which tasks. The affinity rule can be implemented by users, enabled after registered in code. | `string` | No | |
-| ignorable | if true, this step can be ignored if this step is set `ignore` in job request; if false, this step is not ignorable in any case. | `boolean` | No | `false` |
-| effort | to define the effort of this step, used for working progress percentage calculation of the whole job. | `int` | No | `1` |
-
-### Shard mode step
-
-![shard mode](../images/shard_mode.png)
-
-sample of shard mode step
+``` mermaid
+block-beta
+  T["prep<br>(simple task)"]
 ```
+
+</div>
+
+*If `stepType` not set, it is `SIMPLE` mode by default.*
+
+#### Shard mode step
+
+<div class="grid" markdown>
+
+``` json title="sample of shard mode step" hl_lines="3-6"
 {
   "stepName": "calc",
   "stepType": "SHARD",
   "shardConf": {
-    "shard": 4
+    "shard": 5
   }
 }
 ```
 
-With `stepType` set as `SHARD`, the step will be recognized as a shard mode step.
-
-The step define fields are the same as simple mode, with one more shard mode configuration field `shardConf`. In `shardConf`, the fields are:
-| Field Name | Description | Type | Mandatory | Default Value |
-| ----- | ----- | ----- | ----- | ----- |
-| maxTaskCount | the max alive task number of this step at the same time. The value should be more than 0, and it is recommended to be less than `100`. | `int` | No | `50` |
-| shard | the total sharding number N of this step. TasCreed will create N task instances for this step, with different shard id in each task instance. The value should be more than 0. | `int` | Yes | |
-| startShardId | the start shard id of created shard tasks. | `int` | No | `0` |
-
-### Pack mode step
-
-![pack mode](../images/pack_mode.png)
-
-sample of pack mode step
+``` mermaid
+block-beta
+  columns 2
+  T0["calc.shard-0<br>(total: 5, index: 0)"]
+  T1["calc.shard-1<br>(total: 5, index: 1)"]
+  T2["calc.shard-2<br>(total: 5, index: 2)"]
+  T3["calc.shard-3<br>(total: 5, index: 3)"]
+  T4["calc.shard-4<br>(total: 5, index: 4)"]
 ```
+
+</div>
+
+The shard mode configuration is defined in `shardConf` field.
+
+- `shard`: the total sharding number, larger than `0`, recommended to be less than `100`
+- `startShardId`: the start shard id of created shard tasks, by default is `0`
+- `maxTaskCount`: the max number of alive tasks of this step at the same time, by default is `50`
+
+#### Pack mode step
+
+<div class="grid" markdown>
+
+``` json title="sample of pack mode step" hl_lines="3-8"
 {
   "stepName": "calc",
   "stepType": "PACK",
   "packConf": {
     "size": 100,
     "start": 0,
-    "end": 1005,
-    "maxTaskCount": 6
+    "end": 925
   },
-  "dependentStep": "prep",
-  "ignorable": true,
-  "effort": 5
+  "dependentStep": "prep"
 }
 ```
 
-With `stepType` set as `PACK`, the step will be recognized as a pack mode step.
+``` mermaid
+block-beta
+  columns 2
+  T0["calc.pack-0<br>(id: 0, start: 0, end: 99)"]
+  T1["calc.pack-1<br>(id: 1, start: 100, end: 199)"]
+  T2["calc.pack-2<br>(id: 2, start: 200, end: 299)"]
+  T3["calc.pack-3<br>(id: 3, start: 300, end: 399)"]
+  T4["calc.pack-4<br>(id: 4, start: 400, end: 499)"]
+  T5["calc.pack-5<br>(id: 5, start: 500, end: 599)"]
+  T6["calc.pack-6<br>(id: 6, start: 600, end: 699)"]
+  T7["calc.pack-7<br>(id: 7, start: 700, end: 799)"]
+  T8["calc.pack-8<br>(id: 8, start: 800, end: 899)"]
+  T9["calc.pack-9<br>(id: 9, start: 900, end: 925)"]
+```
 
-The step define fields are the same as simple mode, with one more pack mode configuration field `packConf`. In `packConf`, the fields are:
-| Field Name | Description | Type | Mandatory | Default Value |
-| ----- | ----- | ----- | ----- | ----- |
-| maxTaskCount | the same as `maxTaskCount` field in `shardConf`. | `int` | No | `50` |
-| size | the size of each pack. The value should be more than 0. | `long` | Yes | |
-| start | the start point of the whole range, included. The value should not be negative. | `long` | Yes | |
-| end | the end point of the whole range, included. The value should not be negative if the step is not infinite; and it is optional if the step is infinite. | `long` | Yes | |
-| infinite | if true, this pack step will ignore `end` field, when create pack task instances, there's no end point, so the packs can be created forever. | `boolean` | No | `false` |
-| startPackId | the start pack id of created pack tasks. | `long` | No | `0` |
+</div>
 
-#### Infinite pack mode step
+The pack mode configuration is defined in `packConf` field.
 
-This is a special usage of pack mode step, if we set `infinite` as true, TasCreed will ignore the `end` field, and generate infinite packs.
+- `size`: the size of each pack, larger than `0`
+- `start`: the start point of the whole range, included, should not be negative
+- `end`: the end point of the whole range, included, not needed if the step is infinite
+- `infinite`: if true, the whole range has no end point, the step will create pack tasks infinitely
+- `startPackId`: the start pack id of created pack tasks, by default is `0`
+- `maxTaskCount`: the max number of alive tasks of this step at the same time, by default is `50`
 
-![infinite pack mode](../images/pack_mode_infinite.png)
+As a special usage, an infinite pack mode step can create tasks infinitely. A sample usage is to consume an endless data stream.
+
+<div class="grid" markdown>
+
+``` json title="sample of infinite pack mode step" hl_lines="3-8"
+{
+  "stepName": "consume",
+  "stepType": "PACK",
+  "packConf": {
+    "size": 100,
+    "start": 0,
+    "infinite": true
+  },
+  "dependentStep": "prep"
+}
+```
+
+``` mermaid
+block-beta
+  columns 2
+  T0["consume.pack-0<br>(id: 0, start: 0, end: 99)"]
+  T1["consume.pack-1<br>(id: 1, start: 100, end: 199)"]
+  T2["consume.pack-2<br>(id: 2, start: 200, end: 299)"]
+  T3["consume.pack-3<br>(id: 3, start: 300, end: 399)"]
+  T4["consume.pack-4<br>(id: 4, start: 400, end: 499)"]
+  T5["consume.pack-5<br>(id: 5, start: 500, end: 599)"]
+  ...
+```
+
+</div>
 
