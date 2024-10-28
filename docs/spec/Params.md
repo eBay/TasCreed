@@ -15,10 +15,10 @@ Params are configured as a map of key-value pairs, in string format. For example
 
 ## Overwrite rule
 
-Params are
+Params can be
 
 - configured in `JobDefine`, `StepDefine`
-- overwritten in `JobRequest`
+- updated or complemented in `JobRequest`
 - inherited in `Job`, `Step`, `Task`
 
 Only the params in `Task` are actually used at runtime.

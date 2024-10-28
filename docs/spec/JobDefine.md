@@ -2,7 +2,7 @@
 
 Usually we start from a job define, to describe what we want to do.
 
-## Where to define jobs
+## Job define directories
 
 A job define is stored in a file, which is 
 
@@ -12,11 +12,9 @@ A job define is stored in a file, which is
 
 TasCreed application loads all the job define files when starting up, after parsing and validating, valid job defines are registered into memory.
 
-## How to define a job
+Each job define file describes a job template, to define how it works.
 
-Each job define file describes a job template, to define how it works.  
-
-Example
+## Example
 
 ``` json
 {
@@ -43,7 +41,7 @@ Example
 }
 ```
 
-### Job define
+## Job define
 
 Generally, a job can be simply defined by two parts:
 
@@ -59,7 +57,7 @@ Other optional fields are used to impact the job scheduling and execution:
 - `traits`: traits of the job define, inherited by job instance
 - `duration`: expected execution time of a job, inherited by job instance
 
-### Step define
+## Step define
 
 A step can also be simply defined by some part:
 
@@ -84,8 +82,9 @@ Other optional fields are used to impact the step scheduling and execution:
 - `ignorable`: if true, the step can be ignored if the step is set `ignore` in job request; deprecated, use `traits` instead
 - `duration`: expected execution time of a step
 - `params`: [parameters](Params.md) at step level, inherited by all tasks of the step
+- `maxPickTimes`: max times to pick a task of the step, default is `-1`, meaning no limit
 
-#### Simple mode step
+### Simple mode step
 
 <div class="grid" markdown>
 
@@ -110,7 +109,7 @@ block-beta
 
 *If `stepType` not set, it is `SIMPLE` mode by default.*
 
-#### Shard mode step
+### Shard mode step
 
 <div class="grid" markdown>
 
@@ -136,13 +135,13 @@ block-beta
 
 </div>
 
-The shard mode configuration is defined in `shardConf` field.
+The shard mode configuration is defined in `shardConf` field, which is available for `SHARD` mode step.
 
 - `shard`: the total sharding number, larger than `0`, recommended to be less than `100`
 - `startShardId`: the start shard id of created shard tasks, by default is `0`
 - `maxTaskCount`: the max number of alive tasks of this step at the same time, by default is `50`
 
-#### Pack mode step
+### Pack mode step
 
 <div class="grid" markdown>
 
@@ -176,7 +175,7 @@ block-beta
 
 </div>
 
-The pack mode configuration is defined in `packConf` field.
+The pack mode configuration is defined in `packConf` field, which is available for `PACK` mode step.
 
 - `size`: the size of each pack, larger than `0`
 - `start`: the start point of the whole range, included, should not be negative

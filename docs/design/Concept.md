@@ -51,7 +51,9 @@ erDiagram
 - `Task`: execution unit of a `Step`
 
 ## Job Define
+
 `JobDefine` is pre-defined as job template, identified by `jobName`. e.g.
+
 ``` json
 {
   "jobName": "balance-report",
@@ -60,7 +62,9 @@ erDiagram
 ```
 
 ## Step Define
+
 `StepDefine` is pre-defined as step template, identified by `stepName` within its belonged `JobDefine`. e.g.
+
 ``` json
 {
   "stepName": "merge_sharding_files_and_upload",
@@ -70,7 +74,9 @@ erDiagram
 ```
 
 ## Job Request
+
 `JobRequest` is submitted by user, to create a new job instance. e.g.
+
 ``` json
 {
   "jobName": "balance-report",
@@ -86,7 +92,9 @@ erDiagram
 ```
 
 ## Job
+
 `Job` is created based on the `JobDefine`, triggered by `JobRequest`, identified by `jobName` and `trigger`. e.g.
+
 ``` json
 {
   "jobName": "balance-report",
@@ -97,7 +105,9 @@ erDiagram
 ```
 
 ## Step
+
 `Step` is created based on the `StepDefine`, identified by `stepName` within its belonged `Job`. e.g.
+
 ``` json
 {
   "name": "balance-report-calculate",
@@ -115,7 +125,9 @@ erDiagram
 ```
 
 ## Task
+
 `Task` is created based on the `Step`, globally identified by `jobName`, `trigger`, `stepName` and its partitioned information if any. e.g.
+
 ``` json
 {
   "jobName": "balance-report",
