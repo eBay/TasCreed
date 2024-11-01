@@ -1,4 +1,4 @@
-# TasCreed Planned Features
+# Planned Features
 
 ## 0.4.1-SNAPSHOT
 1. refine schedule, should be guaranteed

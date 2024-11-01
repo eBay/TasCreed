@@ -1,4 +1,2 @@
 nav:
-    - EnvConfig.md
-    - ApplicationConfig.md
-    - AppDetailedConfig.md
+    - Infra config: InfraConfig.md

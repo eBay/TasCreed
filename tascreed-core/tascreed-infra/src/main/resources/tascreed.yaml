@@ -78,4 +78,4 @@ tascreed:
     archive: "ES"
     bulletin: "ETCD"
   # logger
-  logger.default: "CAL"
+  logger: "std"

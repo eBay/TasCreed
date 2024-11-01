@@ -1,4 +1,4 @@
-# TasCreed Upgrade Guide
+# Upgrade Tips
 
 ## Extra version history
 
