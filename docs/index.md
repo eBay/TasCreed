@@ -30,4 +30,10 @@ You can have a [quick try](Quickstart.md) of the TasCreed framework with a sampl
 
 ## Tutorial
 
-You can refer to [more documents](Tutorial.md) to learn the details about TasCreed.
+You can refer to more documents to learn the details about TasCreed.
+
+- Design: concepts and architecture 
+- Detail: more details of features and usage
+- Spec: spec explanation of domain objects
+- Config: configuration properties
+- Misc: notes of released and planned features, as well as the tips for upgrade
