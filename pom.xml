@@ -70,7 +70,7 @@
         <jacoco.plugin.version>0.8.7</jacoco.plugin.version>
 
         <spring-boot.version>3.3.2</spring-boot.version>
-        <jakarta.version>3.0.2</jakarta.version>
+        <jakarta.version>3.1.1</jakarta.version>
     </properties>
 
     <dependencyManagement>
